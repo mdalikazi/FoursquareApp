@@ -2,10 +2,12 @@
     <string name="app_name">FoursquareApp</string>
     <string name="action_settings">Settings</string>
 
-    <string name="param_client_id">client_id=</string>
-    <string name="param_client_secret">&amp;client_secret=</string>
-    <string name="param_version">&amp;v=</string>
-    <string name="param_lat_lang">&amp;ll=%1$f,%2$f</string>
-    <string name="param_query">&amp;query=</string>
+    <string name="param_client_id">client_id</string>
+    <string name="param_client_secret">client_secret</string>
+    <string name="param_version">v</string>
+    <string name="param_lat_lang">ll=%1$f,%2$f</string>
+    <string name="param_query">query</string>
+
+
 
 </resources>
