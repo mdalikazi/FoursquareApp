@@ -10,7 +10,7 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RequestsProcessor mProcessor;
+    private QueryService mQueryService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,13 +22,13 @@ public class MainActivity extends AppCompatActivity {
         /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();*/
 
-        mProcessor = new RequestsProcessor(this);
+        mQueryService = new QueryService();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mProcessor.getQuery("coffee", 40.7, -74);
+                mQueryService.startQueryService("coffee", );
             }
         });
     }

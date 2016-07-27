@@ -3,7 +3,6 @@ package exercise.foursquare.ali.foursquareapp;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -16,7 +15,7 @@ import javax.net.ssl.HttpsURLConnection;
 /**
  * Created by kazi_ on 7/21/2016.
  */
-public class RequestsProcessor extends AsyncTask<String, Void, Void> {
+public class RequestsProcessor {
     //https://api.foursquare.com/v2/venues/search?client_id=CLIENT_ID&client_secret=CLIENT_SECRET&v=20130815&ll=40.7,-74&query=sushi
     /*and if link is simple like location uri, for example geo:0,0?q=29203
     Uri geoLocation = Uri.parse("geo:0,0?").buildUpon().appendQueryParameter("q",29203).build();*/
@@ -32,18 +31,30 @@ public class RequestsProcessor extends AsyncTask<String, Void, Void> {
     private StringBuilder mResponseContent;
     private Uri.Builder mUriBuilder;
     private URL mUrl;
-
     private int mResponseCode;
     private Context mContext;
 
-    public RequestsProcessor(Context context) {
-        mContext = context;
+    public RequestsProcessor(Context ctx) {
+        mContext = ctx;
     }
 
-    @Override
-    protected Void doInBackground(String... urls) {
+        public void getQuery(String query, double lat, double lang) {
+        Resources res = mContext.getResources();
+        String latLang = String.format(res.getString(R.string.param_lat_lang), lat, lang);
+        mUriBuilder = new Uri.Builder();
+        mUriBuilder.scheme("https")
+                .authority("api.foursquare.com")
+                .appendPath("v2")
+                .appendPath("venues")
+                .appendPath("search")
+                .appendQueryParameter("client_id", CLIENT_ID)
+                .appendQueryParameter("client_secret", CLIENT_SECRET)
+                .appendQueryParameter("v", VERSION_PARAMTER)
+                .appendQueryParameter("ll", latLang)
+                .appendQueryParameter("query", query);
+
         try {
-            mUrl = new URL(urls[0]);
+            mUrl = new URL(mUriBuilder.build().toString());
             Log.d(TAG, "mUrl: " + mUrl);
 
             mConnection = (HttpsURLConnection) mUrl.openConnection();
@@ -75,23 +86,5 @@ public class RequestsProcessor extends AsyncTask<String, Void, Void> {
                 mConnection.disconnect();
             }
         }
-        //return mResponseContent.toString();
-        return null;
-    }
-
-    public void getQuery(String query, double lat, double lang) {
-        Resources res = mContext.getResources();
-        String latLang = String.format(res.getString(R.string.param_lat_lang), lat, lang);
-        mUriBuilder = new Uri.Builder();
-        mUriBuilder.scheme("https")
-                .authority("api.foursquare.com")
-                .appendPath("v2")
-                .appendPath("venues")
-                .appendPath("search")
-                .appendQueryParameter("client_id", CLIENT_ID)
-                .appendQueryParameter("client_secret", CLIENT_SECRET)
-                .appendQueryParameter("v", VERSION_PARAMTER)
-                .appendQueryParameter("ll", latLang)
-                .appendQueryParameter("query", query);
     }
 }

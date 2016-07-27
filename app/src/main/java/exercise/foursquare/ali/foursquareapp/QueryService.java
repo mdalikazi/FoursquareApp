@@ -22,8 +22,11 @@ public class QueryService extends IntentService {
     private static final String LAT = "LAT";
     private static final String LANG = "LANG";
 
+    private RequestsProcessor mRequestsProcessor = new RequestsProcessor(this.getApplicationContext());
+    private static final String SERVICE_NAME = "QueryService";
+
     public QueryService() {
-        super("QueryService");
+        super(SERVICE_NAME);
     }
 
     /**
@@ -33,7 +36,7 @@ public class QueryService extends IntentService {
      * @see IntentService
      */
     // TODO: Customize helper method
-    public static void getQuery(Context context, String query, double lat, double lang) {
+    public static void startQueryService(Context context, String query, double lat, double lang) {
         Intent intent = new Intent(context, QueryService.class);
         intent.setAction(ACTION_GET);
         intent.putExtra(QUERY, query);
@@ -46,11 +49,12 @@ public class QueryService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             final String action = intent.getAction();
-            if (ACTION_GET.equals(action)) {
-                final String param1 = intent.getStringExtra(QUERY);
-                final String param2 = intent.getStringExtra(LAT);
-                RequestsProcessor.(param1, param2);
-            } else if (ACTION_POST.equals(action)) {
+            if (action.equals(ACTION_GET)) {
+                final String query = intent.getStringExtra(QUERY);
+                final double lat = intent.getDoubleExtra(LAT, 0);
+                final double lang = intent.getDoubleExtra(LANG, 0);
+                mRequestsProcessor.getQuery(query, lat, lang);
+            } else if (action.equals(ACTION_POST)) {
                 final String param1 = intent.getStringExtra(QUERY);
                 final String param2 = intent.getStringExtra(LAT);
                 handleActionFoo(param1, param2);
