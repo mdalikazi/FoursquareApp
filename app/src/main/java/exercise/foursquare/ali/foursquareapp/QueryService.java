@@ -22,7 +22,7 @@ public class QueryService extends IntentService {
     private static final String LAT = "LAT";
     private static final String LANG = "LANG";
 
-    private RequestsProcessor mRequestsProcessor = new RequestsProcessor(this.getApplicationContext());
+    private static RequestsProcessor mRequestsProcessor;
     private static final String SERVICE_NAME = "QueryService";
 
     public QueryService() {
@@ -37,6 +37,7 @@ public class QueryService extends IntentService {
      */
     // TODO: Customize helper method
     public static void startQueryService(Context context, String query, double lat, double lang) {
+        mRequestsProcessor = new RequestsProcessor(context);
         Intent intent = new Intent(context, QueryService.class);
         intent.setAction(ACTION_GET);
         intent.putExtra(QUERY, query);

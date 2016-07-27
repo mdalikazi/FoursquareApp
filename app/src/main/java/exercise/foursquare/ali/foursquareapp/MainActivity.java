@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mQueryService.startQueryService("coffee", );
+                mQueryService.startQueryService(MainActivity.this, "coffee", 40.7, -74);
             }
         });
     }

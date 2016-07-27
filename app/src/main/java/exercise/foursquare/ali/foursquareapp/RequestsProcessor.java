@@ -38,7 +38,7 @@ public class RequestsProcessor {
         mContext = ctx;
     }
 
-        public void getQuery(String query, double lat, double lang) {
+    public void getQuery(String query, double lat, double lang) {
         Resources res = mContext.getResources();
         String latLang = String.format(res.getString(R.string.param_lat_lang), lat, lang);
         mUriBuilder = new Uri.Builder();
