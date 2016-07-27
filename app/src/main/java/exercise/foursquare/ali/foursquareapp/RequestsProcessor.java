@@ -3,7 +3,12 @@ package exercise.foursquare.ali.foursquareapp;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.util.JsonReader;
 import android.util.Log;
+
+import com.google.gson.Gson;
+
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -24,15 +29,19 @@ public class RequestsProcessor {
     private static final String VERSION_PARAMTER = "20130815";
     private static final String TAG = "Exceptions";
 
+    private Context mContext;
+    private URL mUrl;
+    private int mResponseCode;
     private HttpsURLConnection mConnection;
     private BufferedInputStream mBufferedInputStream;
     private InputStreamReader mInputStreamReader;
     private BufferedReader mBufferedReader;
-    private StringBuilder mResponseContent;
     private Uri.Builder mUriBuilder;
-    private URL mUrl;
-    private int mResponseCode;
-    private Context mContext;
+
+    private StringBuilder mResponseContent;
+    private JSONObject mResponseJson;
+    private JsonReader mJsonReader;
+    private Gson mGsonObject;
 
     public RequestsProcessor(Context ctx) {
         mContext = ctx;
@@ -86,5 +95,12 @@ public class RequestsProcessor {
                 mConnection.disconnect();
             }
         }
+        if(mResponseContent.length() != 0) {
+            convertResponseToJson(mResponseContent.toString());
+        }
+    }
+
+    private void convertResponseToJson(String content) {
+
     }
 }
