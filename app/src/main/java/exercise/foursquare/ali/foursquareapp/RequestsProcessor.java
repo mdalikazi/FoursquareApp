@@ -7,6 +7,7 @@ import android.util.JsonReader;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONObject;
 
@@ -16,6 +17,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import Models.Response;
 
 /**
  * Created by kazi_ on 7/21/2016.
@@ -100,7 +103,15 @@ public class RequestsProcessor {
         }
     }
 
-    private void convertResponseToJson(String content) {
+    private void convertResponseToJson(InputStreamReader inputStreamReader) {
+        mGsonObject =  new GsonBuilder().create();
+        Response response = mGsonObject.fromJson(inputStreamReader, Response.class);
+        Log.d(TAG, response.toString());
+    }
 
+    private void convertResponseToJson(String responseString) {
+        mGsonObject =  new GsonBuilder().create();
+        Response response = mGsonObject.fromJson(responseString, Response.class);
+        Log.d(TAG, response.toString());
     }
 }
