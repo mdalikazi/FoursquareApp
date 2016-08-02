@@ -7,10 +7,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+
+import Models.Response;
 
 public class MainActivity extends AppCompatActivity {
 
     private QueryService mQueryService;
+
+    public static TextView mTvResponse;
+    private Response mResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mTvResponse = (TextView) findViewById(R.id.response);
 
         /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();*/
@@ -31,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
                 mQueryService.startQueryService(MainActivity.this, "coffee", 40.7, -74);
             }
         });
+
     }
 
     @Override

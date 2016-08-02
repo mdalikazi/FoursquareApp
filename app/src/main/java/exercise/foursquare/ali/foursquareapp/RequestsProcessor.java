@@ -86,7 +86,7 @@ public class RequestsProcessor {
                 while((line = mBufferedReader.readLine()) != null) {
                     mResponseContent.append(line);
                 }
-                Log.d(TAG, "response content: " + mResponseContent);
+                //Log.d(TAG, "response content: " + mResponseContent);
                 mBufferedReader.close();
                 mInputStreamReader.close();
                 mBufferedInputStream.close();
@@ -112,6 +112,6 @@ public class RequestsProcessor {
     private void convertResponseToJson(String responseString) {
         mGsonObject =  new GsonBuilder().create();
         Response response = mGsonObject.fromJson(responseString, Response.class);
-        Log.d(TAG, response.toString());
+        MainActivity.mTvResponse.setText(response.gsonToString());
     }
 }

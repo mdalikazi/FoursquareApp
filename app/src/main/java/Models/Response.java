@@ -36,4 +36,8 @@ public class Response {
         String mobileUrl;
     }
 
+    public String gsonToString() {
+        return venues[0].toString();
+    }
+
 }
