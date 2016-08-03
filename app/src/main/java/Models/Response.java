@@ -1,11 +1,14 @@
 package Models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by kazi_ on 7/28/2016.
  */
 public class Response {
 
-    private Venues[] venues;
+    private List<Venues> venues = new ArrayList<>();
 
     private class Venues {
         int id;
@@ -37,7 +40,7 @@ public class Response {
     }
 
     public String gsonToString() {
-        return venues[0].toString();
+        return venues.toString();
     }
 
 }

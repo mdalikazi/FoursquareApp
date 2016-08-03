@@ -1,9 +1,15 @@
 package exercise.foursquare.ali.foursquareapp;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,7 +19,11 @@ import Models.Response;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "Exceptions";
+    public static final String QUERY_COMPLETE = "query_complete";
     private QueryService mQueryService;
+    private LocalBroadcastManager mBroadcastManager;
+    private BroadcastReceiver mBrodcastReceiver;
 
     public static TextView mTvResponse;
     private Response mResponse;
@@ -40,6 +50,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /*IntentFilter filter = new IntentFilter(QUERY_COMPLETE);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBrodcastReceiver, filter);*/
+        mBrodcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d(TAG, "Result received");
+                mTvResponse.setText(intent.getStringExtra("response"));
+            }
+        };
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //LocalBroadcastManager.getInstance(this).unregisterReceiver(mBrodcastReceiver);
+        this.unregisterReceiver(mBrodcastReceiver);
+        //mBroadcastManager.unregisterReceiver(mBrodcastReceiver);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter(QUERY_COMPLETE);
+        this.registerReceiver(mBrodcastReceiver, filter);
+        //LocalBroadcastManager.getInstance(this).registerReceiver(mBrodcastReceiver, filter);
+        //mBroadcastManager.registerReceiver(mBrodcastReceiver, filter);
     }
 
     @Override

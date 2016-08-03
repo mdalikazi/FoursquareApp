@@ -1,6 +1,7 @@
 package exercise.foursquare.ali.foursquareapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.util.JsonReader;
@@ -70,6 +71,7 @@ public class RequestsProcessor {
             Log.d(TAG, "mUrl: " + mUrl);
 
             mConnection = (HttpsURLConnection) mUrl.openConnection();
+            mConnection.setDoInput(true);
             mConnection.setDoOutput(false);
             mConnection.setRequestMethod("GET");
             mConnection.setConnectTimeout(15000);
@@ -112,6 +114,8 @@ public class RequestsProcessor {
     private void convertResponseToJson(String responseString) {
         mGsonObject =  new GsonBuilder().create();
         Response response = mGsonObject.fromJson(responseString, Response.class);
-        MainActivity.mTvResponse.setText(response.gsonToString());
+        Intent intent = new Intent(MainActivity.QUERY_COMPLETE);
+        intent.putExtra("response", response.gsonToString());
+        mContext.sendBroadcast(intent);
     }
 }
