@@ -15,18 +15,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import Models.Response;
-
 public class MainActivity extends AppCompatActivity {
 
+    public static final String QUERY_RESPONSE = "queryResponse";
+    public static final String  QUERY_COMPLETE = "queryComplete";
     private static final String TAG = "Exceptions";
-    public static final String QUERY_COMPLETE = "query_complete";
     private QueryService mQueryService;
-    private LocalBroadcastManager mBroadcastManager;
     private BroadcastReceiver mBrodcastReceiver;
 
-    public static TextView mTvResponse;
-    private Response mResponse;
+    private TextView mTvResponse;
+    private FloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
 
         mQueryService = new QueryService();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mQueryService.startQueryService(MainActivity.this, "coffee", 40.7, -74);
@@ -56,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d(TAG, "Result received");
-                mTvResponse.setText(intent.getStringExtra("response"));
+                mTvResponse.setText(intent.getStringExtra(QUERY_RESPONSE));
             }
         };
     }
@@ -64,18 +62,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        //LocalBroadcastManager.getInstance(this).unregisterReceiver(mBrodcastReceiver);
-        this.unregisterReceiver(mBrodcastReceiver);
-        //mBroadcastManager.unregisterReceiver(mBrodcastReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBrodcastReceiver);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         IntentFilter filter = new IntentFilter(QUERY_COMPLETE);
-        this.registerReceiver(mBrodcastReceiver, filter);
-        //LocalBroadcastManager.getInstance(this).registerReceiver(mBrodcastReceiver, filter);
-        //mBroadcastManager.registerReceiver(mBrodcastReceiver, filter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBrodcastReceiver, filter);
     }
 
     @Override

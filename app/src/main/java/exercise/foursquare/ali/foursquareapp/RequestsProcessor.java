@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.JsonReader;
 import android.util.Log;
 
@@ -19,7 +20,7 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import Models.Response;
+import Models.QueryResponse;
 
 /**
  * Created by kazi_ on 7/21/2016.
@@ -46,6 +47,7 @@ public class RequestsProcessor {
     private JSONObject mResponseJson;
     private JsonReader mJsonReader;
     private Gson mGsonObject;
+
 
     public RequestsProcessor(Context ctx) {
         mContext = ctx;
@@ -81,15 +83,10 @@ public class RequestsProcessor {
             if(mResponseCode == 200) {
                 mBufferedInputStream = new BufferedInputStream(mConnection.getInputStream());
                 mInputStreamReader = new InputStreamReader(mBufferedInputStream);
-                mBufferedReader = new BufferedReader(mInputStreamReader);
-                mResponseContent = new StringBuilder();
-
-                String line;
-                while((line = mBufferedReader.readLine()) != null) {
-                    mResponseContent.append(line);
-                }
-                //Log.d(TAG, "response content: " + mResponseContent);
-                mBufferedReader.close();
+                //mBufferedReader = new BufferedReader(mInputStreamReader);
+                //mResponseContent = new StringBuilder();
+                convertResponseToJson(mInputStreamReader);
+                //mBufferedReader.close();
                 mInputStreamReader.close();
                 mBufferedInputStream.close();
             }
@@ -100,22 +97,31 @@ public class RequestsProcessor {
                 mConnection.disconnect();
             }
         }
-        if(mResponseContent.length() != 0) {
-            convertResponseToJson(mResponseContent.toString());
-        }
+        /*String line;
+                while((line = mBufferedReader.readLine()) != null) {
+                    mResponseContent.append(line);
+                }*/
+        /*if(mResponseContent.length() != 0) {
+            convertResponseFromStringToJson(mResponseContent.toString());
+        }*/
     }
 
     private void convertResponseToJson(InputStreamReader inputStreamReader) {
         mGsonObject =  new GsonBuilder().create();
-        Response response = mGsonObject.fromJson(inputStreamReader, Response.class);
-        Log.d(TAG, response.toString());
+        QueryResponse queryResponse = mGsonObject.fromJson(inputStreamReader, QueryResponse.class);
+        //Log.d(TAG, response.toString());
+        sendBroadcast(queryResponse);
     }
 
-    private void convertResponseToJson(String responseString) {
+    private void convertResponseFromStringToJson(String responseString) {
         mGsonObject =  new GsonBuilder().create();
-        Response response = mGsonObject.fromJson(responseString, Response.class);
+        QueryResponse queryResponse = mGsonObject.fromJson(responseString, QueryResponse.class);
+        sendBroadcast(queryResponse);
+    }
+
+    private void sendBroadcast(QueryResponse queryResponse) {
         Intent intent = new Intent(MainActivity.QUERY_COMPLETE);
-        intent.putExtra("response", response.gsonToString());
-        mContext.sendBroadcast(intent);
+        intent.putExtra(MainActivity.QUERY_RESPONSE, queryResponse.gsonToString());
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
     }
 }
