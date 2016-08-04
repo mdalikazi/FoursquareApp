@@ -118,4 +118,8 @@ public class QueryResponse {
     public String gsonToString() {
         return response.venues.get(0).name;
     }
+
+    public Response getResponse() {
+        return response;
+    }
 }

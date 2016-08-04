@@ -3,4 +3,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="recycler_view_scrollbar_size">2dp</dimen>
+    <dimen name="card_view_margin">5dp</dimen>
+    <dimen name="card_view_content_padding">5dp</dimen>
 </resources>

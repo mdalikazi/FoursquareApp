@@ -83,10 +83,7 @@ public class RequestsProcessor {
             if(mResponseCode == 200) {
                 mBufferedInputStream = new BufferedInputStream(mConnection.getInputStream());
                 mInputStreamReader = new InputStreamReader(mBufferedInputStream);
-                //mBufferedReader = new BufferedReader(mInputStreamReader);
-                //mResponseContent = new StringBuilder();
                 convertResponseToJson(mInputStreamReader);
-                //mBufferedReader.close();
                 mInputStreamReader.close();
                 mBufferedInputStream.close();
             }
@@ -97,25 +94,11 @@ public class RequestsProcessor {
                 mConnection.disconnect();
             }
         }
-        /*String line;
-                while((line = mBufferedReader.readLine()) != null) {
-                    mResponseContent.append(line);
-                }*/
-        /*if(mResponseContent.length() != 0) {
-            convertResponseFromStringToJson(mResponseContent.toString());
-        }*/
     }
 
     private void convertResponseToJson(InputStreamReader inputStreamReader) {
         mGsonObject =  new GsonBuilder().create();
         QueryResponse queryResponse = mGsonObject.fromJson(inputStreamReader, QueryResponse.class);
-        //Log.d(TAG, response.toString());
-        sendBroadcast(queryResponse);
-    }
-
-    private void convertResponseFromStringToJson(String responseString) {
-        mGsonObject =  new GsonBuilder().create();
-        QueryResponse queryResponse = mGsonObject.fromJson(responseString, QueryResponse.class);
         sendBroadcast(queryResponse);
     }
 
