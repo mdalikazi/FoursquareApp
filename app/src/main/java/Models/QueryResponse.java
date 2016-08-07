@@ -1,6 +1,7 @@
 package Models;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -121,5 +122,14 @@ public class QueryResponse {
 
     public Response getResponse() {
         return response;
+    }
+
+    public LinkedList<String> getNames() {
+        LinkedList<String> names = new LinkedList<>();
+        Response response = getResponse();
+        for(int i = 0; i < response.venues.size(); i++) {
+            names.add(response.venues.get(i).name);
+        }
+        return names;
     }
 }

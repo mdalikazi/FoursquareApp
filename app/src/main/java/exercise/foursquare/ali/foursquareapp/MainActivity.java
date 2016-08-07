@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,18 +17,25 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.LinkedList;
+
+import Models.QueryResponse;
+
 public class MainActivity extends AppCompatActivity {
 
     public static final String QUERY_RESPONSE = "queryResponse";
     public static final String QUERY_COMPLETE = "queryComplete";
     private static final String TAG = "Exceptions";
     private QueryService mQueryService;
+    private QueryResponse mQueryResponse;
     private BroadcastReceiver mBrodcastReceiver;
+    private LinkedList<String> mVenueTitleList;
 
     private TextView mTvResponse;
     private FloatingActionButton mFab;
     private RecyclerView mRecyclerView;
-    private TextView mVenueTitle;
+    private LinearLayoutManager mLayoutManager;
+    private VenueAdapter mVenueAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,14 +44,18 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mVenueTitleList = new LinkedList<>();
+
         /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
         .setAction("Action", null).show();*/
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mTvResponse = (TextView) findViewById(R.id.response);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mRecyclerView = (RecyclerView) findViewById(R.id.venue_list_recycler_view);
 
         mQueryService = new QueryService();
+        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,6 +71,10 @@ public class MainActivity extends AppCompatActivity {
                 mTvResponse.setText(intent.getStringExtra(QUERY_RESPONSE));
             }
         };
+
+
+        mVenueAdapter = new VenueAdapter(mQueryResponse.getNames());
+        mRecyclerView.setAdapter(mVenueAdapter);
 
     }
 
