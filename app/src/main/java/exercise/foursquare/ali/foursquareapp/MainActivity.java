@@ -15,7 +15,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+
+import com.google.gson.Gson;
 
 import java.util.LinkedList;
 
@@ -28,10 +29,11 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "Exceptions";
     private QueryService mQueryService;
     private QueryResponse mQueryResponse;
+    private Gson mQueryResponseGsonObject;
+    private String mQueryResponseString;
     private BroadcastReceiver mBrodcastReceiver;
     private LinkedList<String> mVenueTitleList;
 
-    private TextView mTvResponse;
     private FloatingActionButton mFab;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
@@ -50,10 +52,10 @@ public class MainActivity extends AppCompatActivity {
         .setAction("Action", null).show();*/
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mTvResponse = (TextView) findViewById(R.id.response);
         mRecyclerView = (RecyclerView) findViewById(R.id.venue_list_recycler_view);
 
         mQueryService = new QueryService();
+        mQueryResponse = new QueryResponse();
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
@@ -68,15 +70,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d(TAG, "Result received");
-                mTvResponse.setText(intent.getStringExtra(QUERY_RESPONSE));
+                //mTvResponse.setText(intent.getStringExtra(QUERY_RESPONSE));
+                //mVenueTitleList = (LinkedList<String>) intent.getSerializableExtra(QUERY_RESPONSE);
+                //mVenueAdapter = new VenueAdapter(mVenueTitleList);
+                mQueryResponseString = intent.getStringExtra(QUERY_RESPONSE);
+                mQueryResponse = mQueryResponseGsonObject.fromJson(mQueryResponseString, QueryResponse.class);
+                mRecyclerView.setAdapter(mVenueAdapter);
             }
         };
 
-
-        mVenueAdapter = new VenueAdapter(mQueryResponse.getNames());
-        mRecyclerView.setAdapter(mVenueAdapter);
-
     }
+
+    private void createAdapterData() {
+        for(int i = 0; i < mQueryResponse.getVenues().size(); i++) {
+            mQueryResponse.getVenues().get(i);
+        }
+    }
+
 
     @Override
     protected void onPause() {

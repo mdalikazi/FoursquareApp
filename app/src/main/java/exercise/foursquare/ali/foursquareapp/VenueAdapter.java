@@ -1,6 +1,8 @@
 package exercise.foursquare.ali.foursquareapp;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.LinkedList;
@@ -19,12 +21,13 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
 
     @Override
     public VenueViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return null;
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
+        return new VenueViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(VenueViewHolder holder, int position) {
-
+        holder.getVenueTitle().setText(mNamesList.get(position));
     }
 
     @Override

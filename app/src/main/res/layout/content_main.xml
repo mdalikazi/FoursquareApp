@@ -11,12 +11,6 @@
     tools:context="exercise.foursquare.ali.foursquareapp.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <TextView
-        android:id="@+id/response"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"/>
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/venue_list_recycler_view"
         android:layout_width="match_parent"

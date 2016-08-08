@@ -104,7 +104,7 @@ public class RequestsProcessor {
 
     private void sendBroadcast(QueryResponse queryResponse) {
         Intent intent = new Intent(MainActivity.QUERY_COMPLETE);
-        intent.putExtra(MainActivity.QUERY_RESPONSE, queryResponse.gsonToString());
+        intent.putExtra(MainActivity.QUERY_RESPONSE, mGsonObject.toJson(queryResponse));
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
     }
 }

@@ -1,7 +1,6 @@
 package Models;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -116,15 +115,18 @@ public class QueryResponse {
         String id;
     }
 
-    public String gsonToString() {
-        return response.venues.get(0).name;
-    }
+    //GETTERS
 
     public Response getResponse() {
         return response;
     }
 
-    public LinkedList<String> getNames() {
+    public List<Venues> getVenues() {
+        Response response = getResponse();
+        return response.venues;
+    }
+
+    /*public LinkedList<String> getNames() {
         LinkedList<String> names = new LinkedList<>();
         Response response = getResponse();
         for(int i = 0; i < response.venues.size(); i++) {
@@ -132,4 +134,14 @@ public class QueryResponse {
         }
         return names;
     }
+
+    public LinkedList<String> getFormattedPhones() {
+        LinkedList<String> formattedPhones = new LinkedList<>();
+        Response response = getResponse();
+        for(int i = 0; i < response.venues.size(); i++) {
+            formattedPhones.add(response.venues.get(i).contact.formattedPhone);
+        }
+        return formattedPhones;
+    }*/
+
 }
