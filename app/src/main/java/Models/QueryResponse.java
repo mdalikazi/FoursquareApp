@@ -20,7 +20,7 @@ public class QueryResponse {
         List<Venues> venues = new ArrayList<>();
     }
 
-    private class Venues {
+    public class Venues {
         String id;
         String name;
         Contact contact;
@@ -117,14 +117,55 @@ public class QueryResponse {
 
     //GETTERS
 
-    public Response getResponse() {
+    public String getName(int i) {
+        return getVenues().get(i).name;
+    }
+
+    public String getFormattedPhone(int i) {
+        return getVenues().get(i).contact.formattedPhone;
+    }
+
+    public String getFormattedAddress(int i) {
+        return getVenues().get(i).location.formattedAdress.toString();
+    }
+
+    public double getLang(int i) {
+        return getVenues().get(i).location.lng;
+    }
+
+    public double getLat(int i) {
+        return getVenues().get(i).location.lat;
+    }
+
+    public int getDistance(int i) {
+        return getVenues().get(i).location.distance;
+    }
+
+    public boolean getIsVerified(int i) {
+        return getVenues().get(i).verified;
+    }
+
+    public boolean getHasMenu(int i) {
+        return getVenues().get(i).hasMenu;
+    }
+
+    public String getMenuMobileUrl(int i) {
+        return getVenues().get(i).menu.mobileUrl;
+    }
+
+    public int getVenuesListSize() {
+        return getVenues().size();
+    }
+
+    private Response getResponse() {
         return response;
     }
 
-    public List<Venues> getVenues() {
+    private List<Venues> getVenues() {
         Response response = getResponse();
         return response.venues;
     }
+
 
     /*public LinkedList<String> getNames() {
         LinkedList<String> names = new LinkedList<>();

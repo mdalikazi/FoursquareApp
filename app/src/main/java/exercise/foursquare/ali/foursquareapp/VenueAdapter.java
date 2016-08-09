@@ -15,6 +15,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
     private LinkedList<String> mNamesList = new LinkedList<>();
 
     public VenueAdapter(LinkedList<String> names) {
+        //Create list of lists
         mNamesList = names;
 
     }

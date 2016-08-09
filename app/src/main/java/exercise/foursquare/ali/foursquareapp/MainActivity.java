@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         mQueryService = new QueryService();
         mQueryResponse = new QueryResponse();
+        mQueryResponseGsonObject = new Gson();
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
@@ -70,20 +71,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d(TAG, "Result received");
-                //mTvResponse.setText(intent.getStringExtra(QUERY_RESPONSE));
-                //mVenueTitleList = (LinkedList<String>) intent.getSerializableExtra(QUERY_RESPONSE);
-                //mVenueAdapter = new VenueAdapter(mVenueTitleList);
                 mQueryResponseString = intent.getStringExtra(QUERY_RESPONSE);
                 mQueryResponse = mQueryResponseGsonObject.fromJson(mQueryResponseString, QueryResponse.class);
-                mRecyclerView.setAdapter(mVenueAdapter);
+                createAdapterData();
+                //mRecyclerView.setAdapter(mVenueAdapter);
             }
         };
 
     }
 
     private void createAdapterData() {
-        for(int i = 0; i < mQueryResponse.getVenues().size(); i++) {
-            mQueryResponse.getVenues().get(i);
+
+        for(int i = 0; i < mQueryResponse.getVenuesListSize(); i++) {
+
+            Log.d(TAG, mQueryResponse.getName(i));
         }
     }
 

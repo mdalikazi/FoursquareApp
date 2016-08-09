@@ -7,7 +7,7 @@
     android:clickable="true"
     android:foreground="?attr/selectableItemBackground"
     android:orientation="vertical"
-    app:cardElevation="3dp"
+    app:cardElevation="@dimen/cardview_default_elevation"
     app:cardCornerRadius="3dp"
     app:contentPadding="@dimen/card_view_content_padding"
     app:cardUseCompatPadding="true">
