@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.util.SimpleArrayMap;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,21 +19,28 @@ import android.view.View;
 
 import com.google.gson.Gson;
 
-import java.util.LinkedList;
-
 import Models.QueryResponse;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String QUERY_RESPONSE = "queryResponse";
     public static final String QUERY_COMPLETE = "queryComplete";
+
+    public static final String VENUE_NAME = "venue_name";
+    private static final String VENUE_PHONE = "venue_phone";
+    private static final String VENUE_ADDRESS = "venue_address";
+    private static final String VENUE_LAT = "venue_lat";
+    private static final String VENUE_LANG = "venue_lang";
+    private static final String VENUE_DISTANCE = "venue_distance";
+    private static final String VENUE_MENU_URL = "venue_menu_url";
+
     private static final String TAG = "Exceptions";
     private QueryService mQueryService;
     private QueryResponse mQueryResponse;
     private Gson mQueryResponseGsonObject;
     private String mQueryResponseString;
     private BroadcastReceiver mBrodcastReceiver;
-    private LinkedList<String> mVenueTitleList;
+    private SimpleArrayMap<String, String> mVenues;
 
     private FloatingActionButton mFab;
     private RecyclerView mRecyclerView;
@@ -45,8 +53,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        mVenueTitleList = new LinkedList<>();
+        mVenues = new SimpleArrayMap<>();
 
         /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
         .setAction("Action", null).show();*/
@@ -73,19 +80,31 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "Result received");
                 mQueryResponseString = intent.getStringExtra(QUERY_RESPONSE);
                 mQueryResponse = mQueryResponseGsonObject.fromJson(mQueryResponseString, QueryResponse.class);
-                createAdapterData();
-                //mRecyclerView.setAdapter(mVenueAdapter);
+                mVenueAdapter = new VenueAdapter(createAdapterData());
+                mRecyclerView.setAdapter(mVenueAdapter);
             }
         };
 
     }
 
-    private void createAdapterData() {
-
+    private SimpleArrayMap<String, String> createAdapterData() {
+        mVenues = new SimpleArrayMap<>();
         for(int i = 0; i < mQueryResponse.getVenuesListSize(); i++) {
+            mVenues.put(VENUE_NAME, mQueryResponse.getName(i));
+            mVenues.put(VENUE_PHONE, mQueryResponse.getFormattedPhone(i));
+            mVenues.put(VENUE_ADDRESS, mQueryResponse.getFormattedAddress(i));
+            mVenues.put(VENUE_DISTANCE, String.valueOf(mQueryResponse.getDistance(i)));
+            mVenues.put(VENUE_LAT, mQueryResponse.getLat(i));
+            mVenues.put(VENUE_LANG, mQueryResponse.getLang(i));
+            if(mQueryResponse.getHasMenu(i)) {
+                mVenues.put(VENUE_MENU_URL, mQueryResponse.getMenuMobileUrl(i));
+            } else {
+                mVenues.put(VENUE_MENU_URL, null);
+            }
 
-            Log.d(TAG, mQueryResponse.getName(i));
         }
+        Log.d(TAG, mVenues.toString());
+        return mVenues;
     }
 
 

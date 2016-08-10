@@ -58,7 +58,7 @@ public class QueryResponse {
         String city;
         String state;
         String country;
-        String[] formattedAdress = {};
+        String[] formattedAddress = {};
     }
 
     private class Categories {
@@ -126,15 +126,15 @@ public class QueryResponse {
     }
 
     public String getFormattedAddress(int i) {
-        return getVenues().get(i).location.formattedAdress.toString();
+        return getVenues().get(i).location.formattedAddress.toString();
     }
 
-    public double getLang(int i) {
-        return getVenues().get(i).location.lng;
+    public String getLang(int i) {
+        return String.valueOf(getVenues().get(i).location.lng);
     }
 
-    public double getLat(int i) {
-        return getVenues().get(i).location.lat;
+    public String getLat(int i) {
+        return String.valueOf(getVenues().get(i).location.lat);
     }
 
     public int getDistance(int i) {

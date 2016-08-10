@@ -1,22 +1,21 @@
 package exercise.foursquare.ali.foursquareapp;
 
+import android.support.v4.util.SimpleArrayMap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import java.util.LinkedList;
 
 /**
  * Created by kazi_ on 8/4/2016.
  */
 public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
 
-    private LinkedList<String> mNamesList = new LinkedList<>();
+    private SimpleArrayMap<String, String> mVenuesList = new SimpleArrayMap<>();
 
-    public VenueAdapter(LinkedList<String> names) {
+    public VenueAdapter(SimpleArrayMap<String, String> venuesList) {
         //Create list of lists
-        mNamesList = names;
+        mVenuesList = venuesList;
 
     }
 
@@ -28,11 +27,11 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
 
     @Override
     public void onBindViewHolder(VenueViewHolder holder, int position) {
-        holder.getVenueTitle().setText(mNamesList.get(position));
+        holder.getVenueTitle().setText(mVenuesList.get(MainActivity.VENUE_NAME));
     }
 
     @Override
     public int getItemCount() {
-        return mNamesList.size();
+        return mVenuesList.size();
     }
 }
