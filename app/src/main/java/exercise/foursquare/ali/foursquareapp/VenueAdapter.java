@@ -27,7 +27,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
 
     @Override
     public void onBindViewHolder(VenueViewHolder holder, int position) {
-        holder.getVenueTitle().setText(mVenuesList.get(MainActivity.VENUE_NAME));
+        holder.getVenueTitle().setText(mVenuesList.get(Constants.VENUE_NAME));
     }
 
     @Override

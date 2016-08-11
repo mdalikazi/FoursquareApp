@@ -19,20 +19,11 @@ import android.view.View;
 
 import com.google.gson.Gson;
 
+import java.util.LinkedList;
+
 import Models.QueryResponse;
 
 public class MainActivity extends AppCompatActivity {
-
-    public static final String QUERY_RESPONSE = "queryResponse";
-    public static final String QUERY_COMPLETE = "queryComplete";
-
-    public static final String VENUE_NAME = "venue_name";
-    private static final String VENUE_PHONE = "venue_phone";
-    private static final String VENUE_ADDRESS = "venue_address";
-    private static final String VENUE_LAT = "venue_lat";
-    private static final String VENUE_LANG = "venue_lang";
-    private static final String VENUE_DISTANCE = "venue_distance";
-    private static final String VENUE_MENU_URL = "venue_menu_url";
 
     private static final String TAG = "Exceptions";
     private QueryService mQueryService;
@@ -40,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private Gson mQueryResponseGsonObject;
     private String mQueryResponseString;
     private BroadcastReceiver mBrodcastReceiver;
-    private SimpleArrayMap<String, String> mVenues;
+    private SimpleArrayMap<String, LinkedList<String>> mVenues;
 
     private FloatingActionButton mFab;
     private RecyclerView mRecyclerView;
@@ -78,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d(TAG, "Result received");
-                mQueryResponseString = intent.getStringExtra(QUERY_RESPONSE);
+                mQueryResponseString = intent.getStringExtra(Constants.QUERY_RESPONSE);
                 mQueryResponse = mQueryResponseGsonObject.fromJson(mQueryResponseString, QueryResponse.class);
                 mVenueAdapter = new VenueAdapter(createAdapterData());
                 mRecyclerView.setAdapter(mVenueAdapter);
@@ -89,20 +80,23 @@ public class MainActivity extends AppCompatActivity {
 
     private SimpleArrayMap<String, String> createAdapterData() {
         mVenues = new SimpleArrayMap<>();
-        for(int i = 0; i < mQueryResponse.getVenuesListSize(); i++) {
-            mVenues.put(VENUE_NAME, mQueryResponse.getName(i));
-            mVenues.put(VENUE_PHONE, mQueryResponse.getFormattedPhone(i));
-            mVenues.put(VENUE_ADDRESS, mQueryResponse.getFormattedAddress(i));
-            mVenues.put(VENUE_DISTANCE, String.valueOf(mQueryResponse.getDistance(i)));
-            mVenues.put(VENUE_LAT, mQueryResponse.getLat(i));
-            mVenues.put(VENUE_LANG, mQueryResponse.getLang(i));
+        for(int i = 0; i < mQueryResponse.getVenues().size(); i++) {
+            mVenues.put(Constants.VENUE_NAME, mQueryResponse.getName(i));
+            mVenues.put(Constants.VENUE_PHONE, mQueryResponse.getFormattedPhone(i));
+            mVenues.put(Constants.VENUE_ADDRESS, mQueryResponse.getFormattedAddress(i));
+            mVenues.put(Constants.VENUE_DISTANCE, String.valueOf(mQueryResponse.getDistance(i)));
+            mVenues.put(Constants.VENUE_LAT, mQueryResponse.getLat(i));
+            mVenues.put(Constants.VENUE_LANG, mQueryResponse.getLang(i));
             if(mQueryResponse.getHasMenu(i)) {
-                mVenues.put(VENUE_MENU_URL, mQueryResponse.getMenuMobileUrl(i));
+                mVenues.put(Constants.VENUE_MENU_URL, mQueryResponse.getMenuMobileUrl(i));
             } else {
-                mVenues.put(VENUE_MENU_URL, null);
+                mVenues.put(Constants.VENUE_MENU_URL, null);
             }
 
         }
+
+        mVenues.put(Constants.VENUE_NAME, mQueryResponse.getName());
+
         Log.d(TAG, mVenues.toString());
         return mVenues;
     }
@@ -117,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        IntentFilter filter = new IntentFilter(QUERY_COMPLETE);
+        IntentFilter filter = new IntentFilter(Constants.QUERY_COMPLETE);
         LocalBroadcastManager.getInstance(this).registerReceiver(mBrodcastReceiver, filter);
     }
 

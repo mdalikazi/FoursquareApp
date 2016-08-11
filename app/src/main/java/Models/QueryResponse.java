@@ -1,6 +1,7 @@
 package Models;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ public class QueryResponse {
 
     public class Venues {
         String id;
-        String name;
+        public String name;
         Contact contact;
         Location location;
         List<Categories> categories = new ArrayList<>();
@@ -153,17 +154,21 @@ public class QueryResponse {
         return getVenues().get(i).menu.mobileUrl;
     }
 
-    public int getVenuesListSize() {
-        return getVenues().size();
-    }
-
     private Response getResponse() {
         return response;
     }
 
-    private List<Venues> getVenues() {
+    public List<Venues> getVenues() {
         Response response = getResponse();
         return response.venues;
+    }
+
+    public LinkedList<String> getName() {
+        LinkedList<String> names = new LinkedList<>();
+       for(int i = 0; i < getVenues().size(); i++) {
+           names.add(getVenues().get(i).name);
+       }
+        return names;
     }
 
 

@@ -27,13 +27,8 @@ import Models.QueryResponse;
  */
 public class RequestsProcessor {
     //https://api.foursquare.com/v2/venues/search?client_id=CLIENT_ID&client_secret=CLIENT_SECRET&v=20130815&ll=40.7,-74&query=sushi
-    /*and if link is simple like location uri, for example geo:0,0?q=29203
-    Uri geoLocation = Uri.parse("geo:0,0?").buildUpon().appendQueryParameter("q",29203).build();*/
-    private static final String CLIENT_ID = "ACAO2JPKM1MXHQJCK45IIFKRFR2ZVL0QASMCBCG5NPJQWF2G";
-    private static final String CLIENT_SECRET = "YZCKUYJ1WHUV2QICBXUBEILZI1DMPUIDP5SHV043O04FKBHL";
-    private static final String VERSION_PARAMTER = "20130815";
-    private static final String TAG = "Exceptions";
 
+    private static final String TAG = "Exceptions";
     private Context mContext;
     private URL mUrl;
     private int mResponseCode;
@@ -48,7 +43,6 @@ public class RequestsProcessor {
     private JsonReader mJsonReader;
     private Gson mGsonObject;
 
-
     public RequestsProcessor(Context ctx) {
         mContext = ctx;
     }
@@ -62,9 +56,9 @@ public class RequestsProcessor {
                 .appendPath("v2")
                 .appendPath("venues")
                 .appendPath("search")
-                .appendQueryParameter("client_id", CLIENT_ID)
-                .appendQueryParameter("client_secret", CLIENT_SECRET)
-                .appendQueryParameter("v", VERSION_PARAMTER)
+                .appendQueryParameter("client_id", Constants.CLIENT_ID)
+                .appendQueryParameter("client_secret", Constants.CLIENT_SECRET)
+                .appendQueryParameter("v", Constants.VERSION_PARAMTER)
                 .appendQueryParameter("ll", latLang)
                 .appendQueryParameter("query", query);
 
@@ -103,8 +97,8 @@ public class RequestsProcessor {
     }
 
     private void sendBroadcast(QueryResponse queryResponse) {
-        Intent intent = new Intent(MainActivity.QUERY_COMPLETE);
-        intent.putExtra(MainActivity.QUERY_RESPONSE, mGsonObject.toJson(queryResponse));
+        Intent intent = new Intent(Constants.QUERY_COMPLETE);
+        intent.putExtra(Constants.QUERY_RESPONSE, mGsonObject.toJson(queryResponse));
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
     }
 }
