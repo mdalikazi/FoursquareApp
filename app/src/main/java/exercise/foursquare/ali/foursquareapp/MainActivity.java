@@ -25,7 +25,7 @@ import Models.QueryResponse;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "Exceptions";
+    private static final String TAG = Constants.LOG_TAG_QUERY;
     private QueryService mQueryService;
     private QueryResponse mQueryResponse;
     private Gson mQueryResponseGsonObject;
@@ -78,10 +78,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private SimpleArrayMap<String, String> createAdapterData() {
+    private SimpleArrayMap<String, LinkedList<String>> createAdapterData() {
         mVenues = new SimpleArrayMap<>();
-        for(int i = 0; i < mQueryResponse.getVenues().size(); i++) {
-            mVenues.put(Constants.VENUE_NAME, mQueryResponse.getName(i));
+
+        /*for(int i = 0; i < mQueryResponse.getVenues().size(); i++) {
             mVenues.put(Constants.VENUE_PHONE, mQueryResponse.getFormattedPhone(i));
             mVenues.put(Constants.VENUE_ADDRESS, mQueryResponse.getFormattedAddress(i));
             mVenues.put(Constants.VENUE_DISTANCE, String.valueOf(mQueryResponse.getDistance(i)));
@@ -92,12 +92,9 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 mVenues.put(Constants.VENUE_MENU_URL, null);
             }
+        }*/
 
-        }
-
-        mVenues.put(Constants.VENUE_NAME, mQueryResponse.getName());
-
-        Log.d(TAG, mVenues.toString());
+        mVenues.put(Constants.VENUE_NAME, mQueryResponse.getNames());
         return mVenues;
     }
 

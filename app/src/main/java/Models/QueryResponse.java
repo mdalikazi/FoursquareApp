@@ -163,12 +163,16 @@ public class QueryResponse {
         return response.venues;
     }
 
-    public LinkedList<String> getName() {
+    public LinkedList<String> getNames() {
         LinkedList<String> names = new LinkedList<>();
-       for(int i = 0; i < getVenues().size(); i++) {
-           names.add(getVenues().get(i).name);
-       }
+        for(int i = 0; i < getVenues().size(); i++) {
+            names.add(getName(i));
+        }
         return names;
+    }
+
+    public LinkedList<String> getFormattedPhone() {
+        return null;
     }
 
 

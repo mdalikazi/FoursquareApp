@@ -19,4 +19,6 @@ public class Constants {
     public static final String VENUE_LANG = "venue_lang";
     public static final String VENUE_DISTANCE = "venue_distance";
     public static final String VENUE_MENU_URL = "venue_menu_url";
+
+    public static final String LOG_TAG_QUERY = "Query";
 }
