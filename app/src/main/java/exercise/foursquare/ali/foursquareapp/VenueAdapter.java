@@ -1,5 +1,6 @@
 package exercise.foursquare.ali.foursquareapp;
 
+import android.location.Location;
 import android.support.v4.util.SimpleArrayMap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,13 +15,26 @@ import java.util.LinkedList;
 public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
 
     private static final String TAG = Constants.LOG_TAG_QUERY;
-    private SimpleArrayMap<String, LinkedList<String>> mVenuesList = new SimpleArrayMap<>();
+    private SimpleArrayMap<String, LinkedList> mVenuesList = new SimpleArrayMap<>();
     private LinkedList<String> mNames;
+    private LinkedList<String> mPhones;
+    private LinkedList<String> mAddresses;
+    private LinkedList<Location> mLocations;
+    private LinkedList<Integer> mDistances;
+    private LinkedList<Boolean> mHaveMenus;
+    private LinkedList<String> mMenuUrls;
 
-    public VenueAdapter(SimpleArrayMap<String, LinkedList<String>> venuesList) {
+
+    public VenueAdapter(SimpleArrayMap<String, LinkedList> venuesList) {
         //Create list of lists
         mVenuesList = venuesList;
         mNames = new LinkedList<>(mVenuesList.get(Constants.VENUE_NAME));
+        mPhones = new LinkedList<>(mVenuesList.get(Constants.VENUE_PHONE));
+        mAddresses = new LinkedList<>(mVenuesList.get(Constants.VENUE_ADDRESS));
+        mLocations = new LinkedList<>(mVenuesList.get(Constants.VENUE_LOCATION));
+        mDistances = new LinkedList<>(mVenuesList.get(Constants.VENUE_DISTANCE));
+        mHaveMenus = new LinkedList<>(mVenuesList.get(Constants.VENUE_HAS_MENU));
+        mMenuUrls = new LinkedList<>(mVenuesList.get(Constants.VENUE_MENU_URL));
     }
 
     @Override
@@ -32,6 +46,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
     @Override
     public void onBindViewHolder(VenueViewHolder holder, int position) {
         holder.getVenueTitle().setText(mNames.get(position));
+
     }
 
     @Override

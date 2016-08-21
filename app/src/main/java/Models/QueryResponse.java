@@ -1,5 +1,7 @@
 package Models;
 
+import android.location.LocationManager;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -116,41 +118,41 @@ public class QueryResponse {
         String id;
     }
 
-    //GETTERS
+    //PRIVATE GETTERS
 
-    public String getName(int i) {
+    private String getName(int i) {
         return getVenues().get(i).name;
     }
 
-    public String getFormattedPhone(int i) {
+    private String getFormattedPhone(int i) {
         return getVenues().get(i).contact.formattedPhone;
     }
 
-    public String getFormattedAddress(int i) {
+    private String getFormattedAddress(int i) {
         return getVenues().get(i).location.formattedAddress.toString();
     }
 
-    public String getLang(int i) {
-        return String.valueOf(getVenues().get(i).location.lng);
+    private double getLang(int i) {
+        return getVenues().get(i).location.lng;
     }
 
-    public String getLat(int i) {
-        return String.valueOf(getVenues().get(i).location.lat);
+    private double getLat(int i) {
+        return getVenues().get(i).location.lat;
     }
 
-    public int getDistance(int i) {
+    private int getDistance(int i) {
         return getVenues().get(i).location.distance;
     }
 
-    public boolean getIsVerified(int i) {
+    private boolean getIsVerified(int i) {
         return getVenues().get(i).verified;
     }
 
-    public boolean getHasMenu(int i) {
+    private boolean getHasMenu(int i) {
         return getVenues().get(i).hasMenu;
     }
 
-    public String getMenuMobileUrl(int i) {
+    private String getMenuMobileUrl(int i) {
         return getVenues().get(i).menu.mobileUrl;
     }
 
@@ -158,10 +160,12 @@ public class QueryResponse {
         return response;
     }
 
-    public List<Venues> getVenues() {
+    private List<Venues> getVenues() {
         Response response = getResponse();
         return response.venues;
     }
+
+    //PUBLIC GETTERS
 
     public LinkedList<String> getNames() {
         LinkedList<String> names = new LinkedList<>();
@@ -171,27 +175,63 @@ public class QueryResponse {
         return names;
     }
 
-    public LinkedList<String> getFormattedPhone() {
-        return null;
-    }
-
-
-    /*public LinkedList<String> getNames() {
-        LinkedList<String> names = new LinkedList<>();
-        Response response = getResponse();
-        for(int i = 0; i < response.venues.size(); i++) {
-            names.add(response.venues.get(i).name);
-        }
-        return names;
-    }
-
     public LinkedList<String> getFormattedPhones() {
-        LinkedList<String> formattedPhones = new LinkedList<>();
-        Response response = getResponse();
-        for(int i = 0; i < response.venues.size(); i++) {
-            formattedPhones.add(response.venues.get(i).contact.formattedPhone);
+        LinkedList<String> formattedPhones =  new LinkedList<>();
+        for(int i = 0; i < getVenues().size(); i++) {
+            formattedPhones.add(getFormattedPhone(i));
         }
         return formattedPhones;
-    }*/
+    }
 
+    public LinkedList<String> getFormattedAddresses() {
+        LinkedList<String> formattedAddresses =  new LinkedList<>();
+        for(int i = 0; i < getVenues().size(); i++) {
+            formattedAddresses.add(getFormattedAddress(i));
+        }
+        return formattedAddresses;
+    }
+
+    public LinkedList<android.location.Location> getLocations() {
+        LinkedList<android.location.Location> latLangs =  new LinkedList<>();
+        android.location.Location eachLocation = new android.location.Location(LocationManager.GPS_PROVIDER);
+        for(int i = 0; i < getVenues().size(); i++) {
+            eachLocation.setLatitude(getLat(i));
+            eachLocation.setLongitude(getLang(i));
+            latLangs.add(eachLocation);
+            eachLocation.reset();
+        }
+        return latLangs;
+    }
+
+    public LinkedList<Integer> getDistances() {
+        LinkedList<Integer> distances =  new LinkedList<>();
+        for(int i = 0; i < getVenues().size(); i++) {
+            distances.add(getDistance(i));
+        }
+        return distances;
+    }
+
+    public LinkedList<Boolean> getAreVerified() {
+        LinkedList<Boolean> areVerified =  new LinkedList<>();
+        for(int i = 0; i < getVenues().size(); i++) {
+            areVerified.add(getIsVerified(i));
+        }
+        return areVerified;
+    }
+
+    public LinkedList<Boolean> getHaveMenus() {
+        LinkedList<Boolean> haveMenus =  new LinkedList<>();
+        for(int i = 0; i < getVenues().size(); i++) {
+            haveMenus.add(getHasMenu(i));
+        }
+        return haveMenus;
+    }
+
+    public LinkedList<String> getMenuMobileUrls() {
+        LinkedList<String> menuMobileUrls =  new LinkedList<>();
+        for(int i = 0; i < getVenues().size(); i++) {
+            menuMobileUrls.add(getMenuMobileUrl(i));
+        }
+        return menuMobileUrls;
+    }
 }

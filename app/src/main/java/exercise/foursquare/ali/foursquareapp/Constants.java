@@ -15,9 +15,11 @@ public class Constants {
     public static final String VENUE_NAME = "venue_name";
     public static final String VENUE_PHONE = "venue_phone";
     public static final String VENUE_ADDRESS = "venue_address";
-    public static final String VENUE_LAT = "venue_lat";
-    public static final String VENUE_LANG = "venue_lang";
+    //public static final String VENUE_LAT = "venue_lat";
+    //public static final String VENUE_LANG = "venue_lang";
+    public static final String VENUE_LOCATION = "venue_location";
     public static final String VENUE_DISTANCE = "venue_distance";
+    public static final String VENUE_HAS_MENU = "venue_has_menu";
     public static final String VENUE_MENU_URL = "venue_menu_url";
 
     public static final String LOG_TAG_QUERY = "Query";

@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private Gson mQueryResponseGsonObject;
     private String mQueryResponseString;
     private BroadcastReceiver mBrodcastReceiver;
-    private SimpleArrayMap<String, LinkedList<String>> mVenues;
+    private SimpleArrayMap<String, LinkedList> mVenues;
 
     private FloatingActionButton mFab;
     private RecyclerView mRecyclerView;
@@ -78,26 +78,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private SimpleArrayMap<String, LinkedList<String>> createAdapterData() {
+    private SimpleArrayMap<String, LinkedList> createAdapterData() {
         mVenues = new SimpleArrayMap<>();
 
-        /*for(int i = 0; i < mQueryResponse.getVenues().size(); i++) {
-            mVenues.put(Constants.VENUE_PHONE, mQueryResponse.getFormattedPhone(i));
-            mVenues.put(Constants.VENUE_ADDRESS, mQueryResponse.getFormattedAddress(i));
-            mVenues.put(Constants.VENUE_DISTANCE, String.valueOf(mQueryResponse.getDistance(i)));
-            mVenues.put(Constants.VENUE_LAT, mQueryResponse.getLat(i));
-            mVenues.put(Constants.VENUE_LANG, mQueryResponse.getLang(i));
-            if(mQueryResponse.getHasMenu(i)) {
-                mVenues.put(Constants.VENUE_MENU_URL, mQueryResponse.getMenuMobileUrl(i));
-            } else {
-                mVenues.put(Constants.VENUE_MENU_URL, null);
-            }
-        }*/
-
         mVenues.put(Constants.VENUE_NAME, mQueryResponse.getNames());
+        mVenues.put(Constants.VENUE_ADDRESS, mQueryResponse.getFormattedAddresses());
+        mVenues.put(Constants.VENUE_DISTANCE, mQueryResponse.getDistances());
+        mVenues.put(Constants.VENUE_PHONE, mQueryResponse.getFormattedPhones());
+        mVenues.put(Constants.VENUE_LOCATION, mQueryResponse.getLocations());
+        mVenues.put(Constants.VENUE_HAS_MENU, mQueryResponse.getHaveMenus());
+        mVenues.put(Constants.VENUE_MENU_URL, mQueryResponse.getMenuMobileUrls());
+
         return mVenues;
     }
-
 
     @Override
     protected void onPause() {
