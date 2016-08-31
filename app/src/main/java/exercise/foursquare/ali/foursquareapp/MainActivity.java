@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
@@ -30,13 +31,17 @@ public class MainActivity extends AppCompatActivity {
     private QueryResponse mQueryResponse;
     private Gson mQueryResponseGsonObject;
     private String mQueryResponseString;
-    private BroadcastReceiver mBrodcastReceiver;
+    private BroadcastReceiver mQueryBrodcastReceiver;
+    private BroadcastReceiver mLocationBrodcastReceiver;
     private SimpleArrayMap<String, LinkedList> mVenues;
 
     private FloatingActionButton mFab;
+    private FloatingActionButton mLocationFab;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private VenueAdapter mVenueAdapter;
+    private GpsManager mGpsManager;
+    private Location mUserLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +50,13 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mVenues = new SimpleArrayMap<>();
+        mGpsManager = new GpsManager(this);
 
         /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
         .setAction("Action", null).show();*/
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mLocationFab = (FloatingActionButton) findViewById(R.id.fab_location);
         mRecyclerView = (RecyclerView) findViewById(R.id.venue_list_recycler_view);
 
         mQueryService = new QueryService();
@@ -58,6 +65,13 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        mLocationFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mGpsManager.connect();
+            }
+        });
+
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -65,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mBrodcastReceiver = new BroadcastReceiver() {
+        mQueryBrodcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d(TAG, "Result received");
@@ -76,11 +90,19 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        mLocationBrodcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                mUserLocation = intent.getParcelableExtra(Constants.USER_LOCATION);
+                Log.d(TAG, "User latitude: " + mUserLocation.getLatitude());
+                Log.d(TAG, "User longitude: " + mUserLocation.getLongitude());
+            }
+        };
+
     }
 
     private SimpleArrayMap<String, LinkedList> createAdapterData() {
         mVenues = new SimpleArrayMap<>();
-
         mVenues.put(Constants.VENUE_NAME, mQueryResponse.getNames());
         mVenues.put(Constants.VENUE_ADDRESS, mQueryResponse.getFormattedAddresses());
         mVenues.put(Constants.VENUE_DISTANCE, mQueryResponse.getDistances());
@@ -88,21 +110,23 @@ public class MainActivity extends AppCompatActivity {
         mVenues.put(Constants.VENUE_LOCATION, mQueryResponse.getLocations());
         mVenues.put(Constants.VENUE_HAS_MENU, mQueryResponse.getHaveMenus());
         mVenues.put(Constants.VENUE_MENU_URL, mQueryResponse.getMenuMobileUrls());
-
         return mVenues;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBrodcastReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mQueryBrodcastReceiver);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        IntentFilter filter = new IntentFilter(Constants.QUERY_COMPLETE);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mBrodcastReceiver, filter);
+        IntentFilter queryFilter = new IntentFilter(Constants.QUERY_COMPLETE);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mQueryBrodcastReceiver, queryFilter);
+
+        IntentFilter locationFilter = new IntentFilter(Constants.LOCATION_FETCHED);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mLocationBrodcastReceiver, locationFilter);
     }
 
     @Override

@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="wrap_content"
+    android:minHeight="100dp"
     android:clickable="true"
     android:foreground="?attr/selectableItemBackground"
     android:orientation="vertical"
@@ -57,15 +58,16 @@
             android:text="(02) 1234 5678"
             style="@style/TextAppearance.AppCompat.Body1"/>
 
-        <Button
+        <!--<Button
             android:id="@+id/btn_get_directions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-
             android:text="Get Directions"
-            style="@style/TextAppearance.AppCompat.Button"/>
+            android:textSize="10dp"
+            android:padding="0dp"
+            style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"/>-->
 
     </RelativeLayout>
 

@@ -29,10 +29,10 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
         //Create list of lists
         mVenuesList = venuesList;
         mNames = new LinkedList<>(mVenuesList.get(Constants.VENUE_NAME));
-        mPhones = new LinkedList<>(mVenuesList.get(Constants.VENUE_PHONE));
-        mAddresses = new LinkedList<>(mVenuesList.get(Constants.VENUE_ADDRESS));
-        mLocations = new LinkedList<>(mVenuesList.get(Constants.VENUE_LOCATION));
         mDistances = new LinkedList<>(mVenuesList.get(Constants.VENUE_DISTANCE));
+        mAddresses = new LinkedList<>(mVenuesList.get(Constants.VENUE_ADDRESS));
+        mPhones = new LinkedList<>(mVenuesList.get(Constants.VENUE_PHONE));
+        mLocations = new LinkedList<>(mVenuesList.get(Constants.VENUE_LOCATION));
         mHaveMenus = new LinkedList<>(mVenuesList.get(Constants.VENUE_HAS_MENU));
         mMenuUrls = new LinkedList<>(mVenuesList.get(Constants.VENUE_MENU_URL));
     }
@@ -46,7 +46,9 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
     @Override
     public void onBindViewHolder(VenueViewHolder holder, int position) {
         holder.getVenueTitle().setText(mNames.get(position));
-
+        holder.getVenueDistance().setText(String.valueOf(mDistances.get(position)));
+        holder.getVenueAddress().setText(mAddresses.get(position));
+        holder.getVenuePhone().setText(mPhones.get(position));
     }
 
     @Override

@@ -129,7 +129,12 @@ public class QueryResponse {
     }
 
     private String getFormattedAddress(int i) {
-        return getVenues().get(i).location.formattedAddress.toString();
+        StringBuilder formattedAddressFromArray = new StringBuilder();
+        for(int j = 0; j < getVenues().get(i).location.formattedAddress.length-2; j++) {
+            formattedAddressFromArray.append(getVenues().get(i).location.formattedAddress[j]);
+            formattedAddressFromArray.append(" ");
+        }
+        return formattedAddressFromArray.toString();
     }
 
     private double getLang(int i) {
@@ -153,7 +158,11 @@ public class QueryResponse {
     }
 
     private String getMenuMobileUrl(int i) {
-        return getVenues().get(i).menu.mobileUrl;
+        if(getHasMenu(i)) {
+            return getVenues().get(i).menu.mobileUrl;
+        } else {
+            return null;
+        }
     }
 
     private Response getResponse() {
