@@ -5,12 +5,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -24,11 +26,14 @@ import com.google.android.gms.location.LocationServices;
 public class GpsManager implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
+    private static final String TAG = Constants.LOG_TAG_QUERY;
     private GoogleApiClient mApiClient;
     private LocationRequest mLocationRequest;
+    private LocationManager mLocationManager;
     private Activity mActivityContext;
 
     public GpsManager(Activity activity) {
+        Log.d(TAG, "GpsManager");
         mActivityContext = activity;
         /*if(ContextCompat.checkSelfPermission(mActivityContext, Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED) {*/
@@ -37,7 +42,8 @@ public class GpsManager implements GoogleApiClient.ConnectionCallbacks,
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
-        mLocationRequest = new LocationRequest()
+
+            mLocationRequest = new LocationRequest()
                 .setFastestInterval(2000)
                 .setInterval(2000)
                 .setMaxWaitTime(10000)
@@ -68,18 +74,20 @@ public class GpsManager implements GoogleApiClient.ConnectionCallbacks,
     }*/
 
     public void connect() {
+        Log.d(TAG, "Connect");
         mApiClient.connect();
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+        Log.d(TAG, "onConnected");
         if(ContextCompat.checkSelfPermission(mActivityContext, Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED) {
-            /*Location location = LocationServices.FusedLocationApi.getLastLocation(mApiClient);
+            Location location = LocationServices.FusedLocationApi.getLastLocation(mApiClient);
             Intent locationIntent = new Intent(Constants.LOCATION_FETCHED);
             locationIntent.putExtra(Constants.USER_LOCATION, location);
-            LocalBroadcastManager.getInstance(mActivityContext).sendBroadcast(locationIntent);*/
-
+            Log.d(TAG, "location: " + location.getLongitude() + " " + location.getLatitude());
+            //LocalBroadcastManager.getInstance(mActivityContext).sendBroadcast(locationIntent);
             LocationServices.FusedLocationApi.requestLocationUpdates(mApiClient, mLocationRequest, this);
         } else {
             if(ActivityCompat.shouldShowRequestPermissionRationale(mActivityContext, Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -106,6 +114,7 @@ public class GpsManager implements GoogleApiClient.ConnectionCallbacks,
 
     @Override
     public void onLocationChanged(Location location) {
+        Log.d(TAG, "onLocationChanged");
         //Location location = LocationServices.FusedLocationApi.getLastLocation(mApiClient);
         Intent locationIntent = new Intent(Constants.LOCATION_FETCHED);
         locationIntent.putExtra(Constants.USER_LOCATION, location);
