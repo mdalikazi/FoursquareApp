@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
@@ -17,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 
@@ -37,11 +37,14 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton mFab;
     private FloatingActionButton mLocationFab;
+    private TextView lat;
+    private TextView lng;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private VenueAdapter mVenueAdapter;
     private GpsManager mGpsManager;
-    private Location mUserLocation;
+    private double mUserLocationLat;
+    private double mUserLocationLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mLocationFab = (FloatingActionButton) findViewById(R.id.fab_location);
+        lat = (TextView) findViewById(R.id.lat);
+        lng = (TextView) findViewById(R.id.lng);
         mRecyclerView = (RecyclerView) findViewById(R.id.venue_list_recycler_view);
 
         mQueryService = new QueryService();
@@ -93,9 +98,12 @@ public class MainActivity extends AppCompatActivity {
         mLocationBrodcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                mUserLocation = intent.getParcelableExtra(Constants.USER_LOCATION);
-                Log.d(TAG, "User latitude: " + mUserLocation.getLatitude());
-                Log.d(TAG, "User longitude: " + mUserLocation.getLongitude());
+                mUserLocationLat = intent.getDoubleExtra(Constants.USER_LOCATION_LAT, 0);
+                mUserLocationLng = intent.getDoubleExtra(Constants.USER_LOCATION_LNG, 0);
+                Log.d(TAG, "User latitude: " + mUserLocationLat);
+                Log.d(TAG, "User longitude: " + mUserLocationLng);
+                lat.setText(String.valueOf(mUserLocationLat));
+                lng.setText(String.valueOf(mUserLocationLng));
             }
         };
 

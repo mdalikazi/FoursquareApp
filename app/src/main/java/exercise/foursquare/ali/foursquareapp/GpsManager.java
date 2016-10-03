@@ -75,7 +75,9 @@ public class GpsManager implements GoogleApiClient.ConnectionCallbacks,
 
     public void connect() {
         Log.d(TAG, "Connect");
-        mApiClient.connect();
+        if(mApiClient.isConnected() || mApiClient.isConnecting()) {
+            mApiClient.connect();
+        }
     }
 
     @Override
@@ -83,11 +85,10 @@ public class GpsManager implements GoogleApiClient.ConnectionCallbacks,
         Log.d(TAG, "onConnected");
         if(ContextCompat.checkSelfPermission(mActivityContext, Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED) {
-            Location location = LocationServices.FusedLocationApi.getLastLocation(mApiClient);
-            Intent locationIntent = new Intent(Constants.LOCATION_FETCHED);
-            locationIntent.putExtra(Constants.USER_LOCATION, location);
-            Log.d(TAG, "location: " + location.getLongitude() + " " + location.getLatitude());
-            //LocalBroadcastManager.getInstance(mActivityContext).sendBroadcast(locationIntent);
+            /*Location location = LocationServices.FusedLocationApi.getLastLocation(mApiClient);
+            if(location != null) {
+                sendLocation(location);
+            }*/
             LocationServices.FusedLocationApi.requestLocationUpdates(mApiClient, mLocationRequest, this);
         } else {
             if(ActivityCompat.shouldShowRequestPermissionRationale(mActivityContext, Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -100,6 +101,12 @@ public class GpsManager implements GoogleApiClient.ConnectionCallbacks,
         }
     }
 
+    private void sendLocation(Location location) {
+        Intent locationIntent = new Intent(Constants.LOCATION_FETCHED);
+        locationIntent.putExtra(Constants.USER_LOCATION_LAT, location.getLatitude());
+        locationIntent.putExtra(Constants.USER_LOCATION_LAT, location.getLongitude());
+        LocalBroadcastManager.getInstance(mActivityContext).sendBroadcast(locationIntent);
+    }
 
 
     @Override
@@ -115,9 +122,6 @@ public class GpsManager implements GoogleApiClient.ConnectionCallbacks,
     @Override
     public void onLocationChanged(Location location) {
         Log.d(TAG, "onLocationChanged");
-        //Location location = LocationServices.FusedLocationApi.getLastLocation(mApiClient);
-        Intent locationIntent = new Intent(Constants.LOCATION_FETCHED);
-        locationIntent.putExtra(Constants.USER_LOCATION, location);
-        LocalBroadcastManager.getInstance(mActivityContext).sendBroadcast(locationIntent);
+        sendLocation(location);
     }
 }

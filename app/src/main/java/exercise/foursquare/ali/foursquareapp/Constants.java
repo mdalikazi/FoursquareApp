@@ -12,7 +12,8 @@ public class Constants {
 
     //Broadcast Intent extras
     public static final String QUERY_RESPONSE = "queryResponse";
-    public static final String USER_LOCATION = "fusedLocation";
+    public static final String USER_LOCATION_LAT = "location_lat";
+    public static final String USER_LOCATION_LNG = "location_lng";
 
     //Broadcast Intent filters
     public static final String QUERY_COMPLETE = "queryComplete";
