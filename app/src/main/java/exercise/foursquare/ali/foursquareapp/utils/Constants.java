@@ -1,4 +1,4 @@
-package exercise.foursquare.ali.foursquareapp;
+package exercise.foursquare.ali.foursquareapp.utils;
 
 /**
  * Created by kazi_ on 8/11/2016.

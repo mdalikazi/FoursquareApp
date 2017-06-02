@@ -1,4 +1,4 @@
-package exercise.foursquare.ali.foursquareapp;
+package exercise.foursquare.ali.foursquareapp.main;
 
 import android.location.Location;
 import android.support.v4.util.SimpleArrayMap;
@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.LinkedList;
+
+import exercise.foursquare.ali.foursquareapp.R;
+import exercise.foursquare.ali.foursquareapp.utils.Constants;
 
 /**
  * Created by kazi_ on 8/4/2016.

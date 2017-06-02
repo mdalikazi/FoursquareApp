@@ -1,4 +1,4 @@
-package exercise.foursquare.ali.foursquareapp;
+package exercise.foursquare.ali.foursquareapp.main;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -22,7 +22,11 @@ import com.google.gson.Gson;
 
 import java.util.LinkedList;
 
-import Models.QueryResponse;
+import exercise.foursquare.ali.foursquareapp.R;
+import exercise.foursquare.ali.foursquareapp.models.QueryResponse;
+import exercise.foursquare.ali.foursquareapp.processor.QueryService;
+import exercise.foursquare.ali.foursquareapp.utils.Constants;
+import exercise.foursquare.ali.foursquareapp.utils.GpsManager;
 
 public class MainActivity extends AppCompatActivity {
 

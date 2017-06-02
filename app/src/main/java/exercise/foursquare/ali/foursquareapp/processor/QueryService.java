@@ -1,4 +1,4 @@
-package exercise.foursquare.ali.foursquareapp;
+package exercise.foursquare.ali.foursquareapp.processor;
 
 import android.app.IntentService;
 import android.content.Intent;

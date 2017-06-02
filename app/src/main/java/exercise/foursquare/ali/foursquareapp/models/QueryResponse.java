@@ -1,4 +1,4 @@
-package Models;
+package exercise.foursquare.ali.foursquareapp.models;
 
 import android.location.LocationManager;
 
@@ -94,7 +94,7 @@ public class QueryResponse {
 
     private class Specials {
         int count;
-        String[] items = {};
+        String message;
     }
 
     private class VenuePage {
@@ -174,7 +174,7 @@ public class QueryResponse {
         return response.venues;
     }
 
-    //PUBLIC GETTERS
+    // GETTERS
 
     public LinkedList<String> getNames() {
         LinkedList<String> names = new LinkedList<>();

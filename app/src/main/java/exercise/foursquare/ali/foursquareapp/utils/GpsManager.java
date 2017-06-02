@@ -1,4 +1,4 @@
-package exercise.foursquare.ali.foursquareapp;
+package exercise.foursquare.ali.foursquareapp.utils;
 
 import android.Manifest;
 import android.app.Activity;
@@ -35,8 +35,8 @@ public class GpsManager implements GoogleApiClient.ConnectionCallbacks,
     public GpsManager(Activity activity) {
         Log.d(TAG, "GpsManager");
         mActivityContext = activity;
-        /*if(ContextCompat.checkSelfPermission(mActivityContext, Manifest.permission.ACCESS_FINE_LOCATION) ==
-                PackageManager.PERMISSION_GRANTED) {*/
+        if(ContextCompat.checkSelfPermission(mActivityContext, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED) {
             mApiClient = new GoogleApiClient.Builder(mActivityContext)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
@@ -48,7 +48,7 @@ public class GpsManager implements GoogleApiClient.ConnectionCallbacks,
                 .setInterval(2000)
                 .setMaxWaitTime(10000)
                 .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        /*} else {
+        } else {
             if(ActivityCompat.shouldShowRequestPermissionRationale(mActivityContext, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 // TODO: 8/31/2016 Show explanation dialog
             } else {
@@ -56,7 +56,7 @@ public class GpsManager implements GoogleApiClient.ConnectionCallbacks,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         Constants.PERMISSION_ACCESS_FINE_LOCATION);
             }
-        }*/
+        }
 
     }
 

@@ -1,4 +1,4 @@
-package exercise.foursquare.ali.foursquareapp;
+package exercise.foursquare.ali.foursquareapp.processor;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,7 +20,9 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import Models.QueryResponse;
+import exercise.foursquare.ali.foursquareapp.models.QueryResponse;
+import exercise.foursquare.ali.foursquareapp.R;
+import exercise.foursquare.ali.foursquareapp.utils.Constants;
 
 /**
  * Created by kazi_ on 7/21/2016.

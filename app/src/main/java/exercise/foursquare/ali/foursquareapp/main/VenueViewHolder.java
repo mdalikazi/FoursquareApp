@@ -1,8 +1,10 @@
-package exercise.foursquare.ali.foursquareapp;
+package exercise.foursquare.ali.foursquareapp.main;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
+
+import exercise.foursquare.ali.foursquareapp.R;
 
 /**
  * Created by kazi_ on 8/4/2016.
