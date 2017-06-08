@@ -1,11 +1,16 @@
 package exercise.foursquare.ali.foursquareapp.main;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.SimpleArrayMap;
 import android.support.v7.app.AppCompatActivity;
@@ -21,16 +26,16 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 import java.util.LinkedList;
-
 import exercise.foursquare.ali.foursquareapp.R;
 import exercise.foursquare.ali.foursquareapp.models.QueryResponse;
 import exercise.foursquare.ali.foursquareapp.processor.QueryService;
 import exercise.foursquare.ali.foursquareapp.utils.Constants;
-import exercise.foursquare.ali.foursquareapp.utils.GpsManager;
+import exercise.foursquare.ali.foursquareapp.utils.LocationManager;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = Constants.LOG_TAG_QUERY;
+
     private QueryService mQueryService;
     private QueryResponse mQueryResponse;
     private Gson mQueryResponseGsonObject;
@@ -46,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private VenueAdapter mVenueAdapter;
-    private GpsManager mGpsManager;
+    private LocationManager mGpsManager;
     private double mUserLocationLat;
     private double mUserLocationLng;
 
@@ -57,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mVenues = new SimpleArrayMap<>();
-        mGpsManager = new GpsManager(this);
+        getLocationManager();
 
         /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
         .setAction("Action", null).show();*/
@@ -110,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
                 lng.setText(String.valueOf(mUserLocationLng));
             }
         };
-
     }
 
     private SimpleArrayMap<String, LinkedList> createAdapterData() {
@@ -139,6 +143,35 @@ public class MainActivity extends AppCompatActivity {
 
         IntentFilter locationFilter = new IntentFilter(Constants.LOCATION_FETCHED);
         LocalBroadcastManager.getInstance(this).registerReceiver(mLocationBrodcastReceiver, locationFilter);
+    }
+
+    private void getLocationManager() {
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED) {
+            mGpsManager = new LocationManager(this);
+        } else {
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // TODO: 8/31/2016 Show explanation dialog
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        Constants.PERMISSION_ACCESS_FINE_LOCATION);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case Constants.PERMISSION_ACCESS_FINE_LOCATION:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mGpsManager = new LocationManager(this);
+                    //mPermissionGranted = true;
+                } else {
+                    //mPermissionGranted = false;
+                }
+                break;
+        }
     }
 
     @Override
