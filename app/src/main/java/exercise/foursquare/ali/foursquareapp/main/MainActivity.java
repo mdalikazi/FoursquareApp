@@ -33,24 +33,24 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = Constants.LOG_TAG_QUERY;
 
+    private double mUserLocationLat;
+    private double mUserLocationLng;
     private QueryService mQueryService;
     private QueryResponse mQueryResponse;
     private Gson mQueryResponseGsonObject;
     private String mQueryResponseString;
+    private VenueAdapter mVenueAdapter;
+    private FsLocationManager mGpsManager;
     private BroadcastReceiver mQueryBrodcastReceiver;
     private BroadcastReceiver mLocationBrodcastReceiver;
     private SimpleArrayMap<String, LinkedList> mVenues;
-
-    private FloatingActionButton mFab;
-    private FloatingActionButton mLocationFab;
     private TextView lat;
     private TextView lng;
+
+    private FloatingActionButton mLocationFab;
     private RecyclerView mRecyclerView;
+    private Snackbar mSnackbar;
     private LinearLayoutManager mLayoutManager;
-    private VenueAdapter mVenueAdapter;
-    private FsLocationManager mGpsManager;
-    private double mUserLocationLat;
-    private double mUserLocationLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +58,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //getLocationManager();
 
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mLocationFab = (FloatingActionButton) findViewById(R.id.fab_location);
         lat = (TextView) findViewById(R.id.lat);
         lng = (TextView) findViewById(R.id.lng);
+        mLocationFab = (FloatingActionButton) findViewById(R.id.fab_location);
         mRecyclerView = (RecyclerView) findViewById(R.id.venue_list_recycler_view);
 
         mVenues = new SimpleArrayMap<>();
@@ -73,27 +71,20 @@ public class MainActivity extends AppCompatActivity {
         mQueryResponseGsonObject = new Gson();
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mSnackbar = Snackbar.make(mLocationFab, "Getting your location...", Snackbar.LENGTH_INDEFINITE)
+                .setAction("Cancel", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSnackbar.dismiss();
+                        mGpsManager.disconnect();
+                    }
+                });
 
         mLocationFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(mRecyclerView, "Getting your location...", Snackbar.LENGTH_INDEFINITE)
-                        .setAction("Cancel", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                mGpsManager.disconnect();
-                            }
-                        })
-                        .show();
-
+                mSnackbar.show();
                 mGpsManager.connect();
-            }
-        });
-
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mQueryService.startQueryService(MainActivity.this, "coffee", 40.7, -74);
             }
         });
 
@@ -115,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
                 mUserLocationLng = intent.getDoubleExtra(Constants.USER_LOCATION_LNG, 0);
                 lat.setText(String.valueOf(mUserLocationLat));
                 lng.setText(String.valueOf(mUserLocationLng));
+                mQueryService.startQueryService(MainActivity.this, "coffee", mUserLocationLat, mUserLocationLng);
+                mSnackbar.dismiss();
             }
         };
     }
