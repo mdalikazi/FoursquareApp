@@ -95,10 +95,10 @@ public class RequestsProcessor {
     private void convertResponseToJson(InputStreamReader inputStreamReader) {
         mGsonObject =  new GsonBuilder().create();
         QueryResponse queryResponse = mGsonObject.fromJson(inputStreamReader, QueryResponse.class);
-        sendBroadcast(queryResponse);
+        sendQueryResponseBroadcast(queryResponse);
     }
 
-    private void sendBroadcast(QueryResponse queryResponse) {
+    private void sendQueryResponseBroadcast(QueryResponse queryResponse) {
         Intent intent = new Intent(Constants.QUERY_COMPLETE);
         intent.putExtra(Constants.QUERY_RESPONSE, mGsonObject.toJson(queryResponse));
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
