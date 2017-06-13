@@ -23,20 +23,19 @@ import com.google.android.gms.location.LocationServices;
 /**
  * Created by kazi_ on 8/25/2016.
  */
-public class GpsManager implements GoogleApiClient.ConnectionCallbacks,
+public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    private static final String TAG = Constants.LOG_TAG_QUERY;
+    private static final String LOG_TAG = Constants.LOG_TAG_QUERY;
+
+    private Activity mActivityContext;
     private GoogleApiClient mApiClient;
     private LocationRequest mLocationRequest;
     private LocationManager mLocationManager;
-    private Activity mActivityContext;
 
-    public GpsManager(Activity activity) {
-        Log.d(TAG, "GpsManager");
+    public FsLocationManager(Activity activity) {
+        Log.d(LOG_TAG, "FsLocationManager");
         mActivityContext = activity;
-        if(ContextCompat.checkSelfPermission(mActivityContext, Manifest.permission.ACCESS_FINE_LOCATION) ==
-                PackageManager.PERMISSION_GRANTED) {
             mApiClient = new GoogleApiClient.Builder(mActivityContext)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
@@ -44,52 +43,35 @@ public class GpsManager implements GoogleApiClient.ConnectionCallbacks,
                     .build();
 
             mLocationRequest = new LocationRequest()
-                .setFastestInterval(2000)
+                .setFastestInterval(1000)
                 .setInterval(2000)
                 .setMaxWaitTime(10000)
                 .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        } else {
-            if(ActivityCompat.shouldShowRequestPermissionRationale(mActivityContext, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // TODO: 8/31/2016 Show explanation dialog
-            } else {
-                ActivityCompat.requestPermissions(mActivityContext,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        Constants.PERMISSION_ACCESS_FINE_LOCATION);
-            }
-        }
+
 
     }
 
-    /*@Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case Constants.PERMISSION_ACCESS_FINE_LOCATION:
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mPermissionGranted = true;
-                } else {
-                    mPermissionGranted = false;
-                }
-                break;
-        }
-    }*/
-
     public void connect() {
-        Log.d(TAG, "Connect");
-        if(mApiClient.isConnected() || mApiClient.isConnecting()) {
+        Log.d(LOG_TAG, "Connect");
+        if(!mApiClient.isConnected() || !mApiClient.isConnecting()) {
             mApiClient.connect();
+        }
+    }
+
+    public void disconnect() {
+        Log.d(LOG_TAG, "Disconnect");
+        if (mApiClient.isConnected() || mApiClient.isConnecting()) {
+            mApiClient.disconnect();
         }
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Log.d(TAG, "onConnected");
+        Log.d(LOG_TAG, "onConnected");
         if(ContextCompat.checkSelfPermission(mActivityContext, Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED) {
-            /*Location location = LocationServices.FusedLocationApi.getLastLocation(mApiClient);
-            if(location != null) {
-                sendLocation(location);
-            }*/
             LocationServices.FusedLocationApi.requestLocationUpdates(mApiClient, mLocationRequest, this);
+
         } else {
             if(ActivityCompat.shouldShowRequestPermissionRationale(mActivityContext, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 // TODO: 8/31/2016 SHow explanation dialog
@@ -99,13 +81,6 @@ public class GpsManager implements GoogleApiClient.ConnectionCallbacks,
                         Constants.PERMISSION_ACCESS_FINE_LOCATION);
             }
         }
-    }
-
-    private void sendLocation(Location location) {
-        Intent locationIntent = new Intent(Constants.LOCATION_FETCHED);
-        locationIntent.putExtra(Constants.USER_LOCATION_LAT, location.getLatitude());
-        locationIntent.putExtra(Constants.USER_LOCATION_LAT, location.getLongitude());
-        LocalBroadcastManager.getInstance(mActivityContext).sendBroadcast(locationIntent);
     }
 
 
@@ -121,7 +96,14 @@ public class GpsManager implements GoogleApiClient.ConnectionCallbacks,
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d(TAG, "onLocationChanged");
+        Log.d(LOG_TAG, "onLocationChanged");
         sendLocation(location);
+    }
+
+    private void sendLocation(Location location) {
+        Intent locationIntent = new Intent(Constants.LOCATION_FETCHED);
+        locationIntent.putExtra(Constants.USER_LOCATION_LAT, location.getLatitude());
+        locationIntent.putExtra(Constants.USER_LOCATION_LNG, location.getLongitude());
+        LocalBroadcastManager.getInstance(mActivityContext).sendBroadcast(locationIntent);
     }
 }

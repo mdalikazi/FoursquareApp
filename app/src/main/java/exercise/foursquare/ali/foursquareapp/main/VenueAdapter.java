@@ -17,7 +17,7 @@ import exercise.foursquare.ali.foursquareapp.utils.Constants;
  */
 public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
 
-    private static final String TAG = Constants.LOG_TAG_QUERY;
+    private static final String LOG_TAG = Constants.LOG_TAG_QUERY;
     private SimpleArrayMap<String, LinkedList> mVenuesList = new SimpleArrayMap<>();
     private LinkedList<String> mNames;
     private LinkedList<String> mPhones;

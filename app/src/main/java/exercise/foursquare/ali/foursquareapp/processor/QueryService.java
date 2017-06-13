@@ -29,13 +29,6 @@ public class QueryService extends IntentService {
         super(SERVICE_NAME);
     }
 
-    /**
-     * Starts this service to perform action Foo with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    // TODO: Customize helper method
     public static void startQueryService(Context context, String query, double lat, double lang) {
         mRequestsProcessor = new RequestsProcessor(context);
         Intent intent = new Intent(context, QueryService.class);
