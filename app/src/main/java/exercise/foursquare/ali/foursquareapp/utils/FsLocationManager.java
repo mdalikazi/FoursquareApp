@@ -39,6 +39,7 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
             mApiClient = new GoogleApiClient.Builder(mActivityContext)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
+                    .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
 
@@ -71,6 +72,8 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
         if(ContextCompat.checkSelfPermission(mActivityContext, Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mApiClient, mLocationRequest, this);
+            LocationServices.FusedLocationApi.getLastLocation(mApiClient);
+            mApiClient.
 
         } else {
             if(ActivityCompat.shouldShowRequestPermissionRationale(mActivityContext, Manifest.permission.ACCESS_FINE_LOCATION)) {
