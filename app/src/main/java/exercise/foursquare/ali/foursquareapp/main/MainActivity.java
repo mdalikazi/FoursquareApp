@@ -1,12 +1,19 @@
 package exercise.foursquare.ali.foursquareapp.main;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.SimpleArrayMap;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -40,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
     private Gson mQueryResponseGsonObject;
     private String mQueryResponseString;
     private VenueAdapter mVenueAdapter;
-    private FsLocationManager mGpsManager;
+    private FsLocationManager mLocationManager;
+//    private FusedLocationProviderApi mFusedLocationProviderApi;
     private BroadcastReceiver mQueryBrodcastReceiver;
     private BroadcastReceiver mLocationBrodcastReceiver;
     private SimpleArrayMap<String, LinkedList> mVenues;
@@ -65,7 +74,8 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.venue_list_recycler_view);
 
         mVenues = new SimpleArrayMap<>();
-        mGpsManager = new FsLocationManager(this);
+        mLocationManager = new FsLocationManager(this);
+//        mFusedLocationProviderApi = LocationServices.FusedLocationApi;
         mQueryService = new QueryService();
         mQueryResponse = new QueryResponse();
         mQueryResponseGsonObject = new Gson();
@@ -76,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         mSnackbar.dismiss();
-                        mGpsManager.disconnect();
+                        mLocationManager.disconnect();
                     }
                 });
 
@@ -84,7 +94,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mSnackbar.show();
-                mGpsManager.connect();
+                if (hasLocationPermission()) {
+                    mLocationManager.connect();
+                }
             }
         });
 
@@ -108,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 lng.setText(String.valueOf(mUserLocationLng));
                 mQueryService.startQueryService(MainActivity.this, "coffee", mUserLocationLat, mUserLocationLng);
                 mSnackbar.dismiss();
+                Toast.makeText(MainActivity.this, "Your location is: " + mUserLocationLat + "," + mUserLocationLng, Toast.LENGTH_SHORT).show();
             }
         };
     }
@@ -142,23 +155,65 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public boolean hasLocationPermission() {
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                showLocationPermissionExplanation();
+            } else {
+                requestLocationPermission();
+            }
+            return false;
+        }
+    }
+
+    private void showLocationPermissionExplanation() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Please allow Location services to use this app.")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        requestLocationPermission();
+                    }
+                })
+                .show();
+    }
+
+    private void requestLocationPermission() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                Constants.PERMISSION_ACCESS_FINE_LOCATION);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case Constants.PERMISSION_ACCESS_FINE_LOCATION:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mLocationManager.connect();
+                } else {
+                    mSnackbar.dismiss();
+                    mLocationManager.disconnect();
+                }
+                break;
+        }
+
     }
 }
