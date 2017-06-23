@@ -11,16 +11,22 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
 
 /**
  * Created by kazi_ on 8/25/2016.
  */
 public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<LocationSettingsResult> {
 
     private static final String LOG_TAG = Constants.LOG_TAG_QUERY;
 
@@ -43,6 +49,32 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+
+        checkLocationSettings();
+    }
+
+    private void checkLocationSettings() {
+        Log.i(LOG_TAG, "checkLocationSettings");
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+               .addLocationRequest(mLocationRequest);
+        LocationSettingsRequest request = builder.build();
+        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(mApiClient, request);
+        result.setResultCallback(this);
+    }
+
+    @Override
+    public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
+//        https://developers.google.com/android/reference/com/google/android/gms/location/SettingsApi
+//        https://developer.android.com/training/location/change-location-settings.html
+        LocationSettingsStates states = locationSettingsResult.getLocationSettingsStates();
+        Status status = locationSettingsResult.getStatus();
+        switch (status.getStatusCode()) {
+            
+        }
+        Log.d(LOG_TAG, "isGpsPresent: " + states.isGpsPresent());
+        Log.d(LOG_TAG, "isGpsUsable: " + states.isGpsUsable());
+        Log.d(LOG_TAG, "isLocationPresent: " + states.isLocationPresent());
+        Log.d(LOG_TAG, "isLocationUsable: " + states.isLocationUsable());
     }
 
     public void connect() {
