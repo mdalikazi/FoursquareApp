@@ -55,6 +55,8 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
     public void disconnect() {
         Log.i(LOG_TAG, "Disconnect");
         if (mApiClient.isConnected() || mApiClient.isConnecting()) {
+            mApiClient.disconnect();
+            mFusedLocationProviderApi.removeLocationUpdates(mApiClient, this);
         }
     }
 

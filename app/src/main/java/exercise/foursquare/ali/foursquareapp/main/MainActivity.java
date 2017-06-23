@@ -24,7 +24,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -49,12 +48,9 @@ public class MainActivity extends AppCompatActivity {
     private String mQueryResponseString;
     private VenueAdapter mVenueAdapter;
     private FsLocationManager mLocationManager;
-//    private FusedLocationProviderApi mFusedLocationProviderApi;
     private BroadcastReceiver mQueryBrodcastReceiver;
     private BroadcastReceiver mLocationBrodcastReceiver;
     private SimpleArrayMap<String, LinkedList> mVenues;
-    private TextView lat;
-    private TextView lng;
 
     private FloatingActionButton mLocationFab;
     private RecyclerView mRecyclerView;
@@ -68,14 +64,11 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        lat = (TextView) findViewById(R.id.lat);
-        lng = (TextView) findViewById(R.id.lng);
         mLocationFab = (FloatingActionButton) findViewById(R.id.fab_location);
         mRecyclerView = (RecyclerView) findViewById(R.id.venue_list_recycler_view);
 
         mVenues = new SimpleArrayMap<>();
         mLocationManager = new FsLocationManager(this);
-//        mFusedLocationProviderApi = LocationServices.FusedLocationApi;
         mQueryService = new QueryService();
         mQueryResponse = new QueryResponse();
         mQueryResponseGsonObject = new Gson();
@@ -116,8 +109,6 @@ public class MainActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 mUserLocationLat = intent.getDoubleExtra(Constants.USER_LOCATION_LAT, 0);
                 mUserLocationLng = intent.getDoubleExtra(Constants.USER_LOCATION_LNG, 0);
-                lat.setText(String.valueOf(mUserLocationLat));
-                lng.setText(String.valueOf(mUserLocationLng));
                 mQueryService.startQueryService(MainActivity.this, "coffee", mUserLocationLat, mUserLocationLng);
                 mSnackbar.dismiss();
                 Toast.makeText(MainActivity.this, "Your location is: " + mUserLocationLat + "," + mUserLocationLng, Toast.LENGTH_SHORT).show();
