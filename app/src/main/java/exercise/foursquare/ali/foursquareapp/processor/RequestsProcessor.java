@@ -5,24 +5,20 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.JsonReader;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.json.JSONObject;
-
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import exercise.foursquare.ali.foursquareapp.models.QueryResponse;
 import exercise.foursquare.ali.foursquareapp.R;
-import exercise.foursquare.ali.foursquareapp.utils.Constants;
+import exercise.foursquare.ali.foursquareapp.models.QueryResponse;
+import exercise.foursquare.ali.foursquareapp.utils.AppConstants;
 
 /**
  * Created by kazi_ on 7/21/2016.
@@ -30,20 +26,16 @@ import exercise.foursquare.ali.foursquareapp.utils.Constants;
 public class RequestsProcessor {
     //https://api.foursquare.com/v2/venues/search?client_id=CLIENT_ID&client_secret=CLIENT_SECRET&v=20130815&ll=40.7,-74&query=sushi
 
-    private static final String TAG = Constants.LOG_TAG_QUERY;
-    private Context mContext;
-    private URL mUrl;
+    private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
+
     private int mResponseCode;
+    private URL mUrl;
+    private Gson mGsonObject;
+    private Context mContext;
     private HttpsURLConnection mConnection;
     private BufferedInputStream mBufferedInputStream;
     private InputStreamReader mInputStreamReader;
-    private BufferedReader mBufferedReader;
     private Uri.Builder mUriBuilder;
-
-    private StringBuilder mResponseContent;
-    private JSONObject mResponseJson;
-    private JsonReader mJsonReader;
-    private Gson mGsonObject;
 
     public RequestsProcessor(Context ctx) {
         mContext = ctx;
@@ -58,15 +50,15 @@ public class RequestsProcessor {
                 .appendPath("v2")
                 .appendPath("venues")
                 .appendPath("search")
-                .appendQueryParameter("client_id", Constants.CLIENT_ID)
-                .appendQueryParameter("client_secret", Constants.CLIENT_SECRET)
-                .appendQueryParameter("v", Constants.VERSION_PARAMTER)
+                .appendQueryParameter("client_id", AppConstants.CLIENT_ID)
+                .appendQueryParameter("client_secret", AppConstants.CLIENT_SECRET)
+                .appendQueryParameter("v", AppConstants.VERSION_PARAMTER)
                 .appendQueryParameter("ll", latLang)
                 .appendQueryParameter("query", query);
 
         try {
             mUrl = new URL(mUriBuilder.build().toString());
-            Log.d(TAG, "mUrl: " + mUrl);
+            Log.d(LOG_TAG, "mUrl: " + mUrl);
 
             mConnection = (HttpsURLConnection) mUrl.openConnection();
             mConnection.setDoInput(true);
@@ -84,7 +76,7 @@ public class RequestsProcessor {
                 mBufferedInputStream.close();
             }
         } catch(Exception e) {
-            Log.d(TAG, "IO Exception: " + e);
+            Log.d(LOG_TAG, "IO Exception: " + e);
         } finally {
             if(mConnection != null) {
                 mConnection.disconnect();
@@ -99,8 +91,8 @@ public class RequestsProcessor {
     }
 
     private void sendQueryResponseBroadcast(QueryResponse queryResponse) {
-        Intent intent = new Intent(Constants.QUERY_COMPLETE);
-        intent.putExtra(Constants.QUERY_RESPONSE, mGsonObject.toJson(queryResponse));
+        Intent intent = new Intent(AppConstants.QUERY_COMPLETE);
+        intent.putExtra(AppConstants.QUERY_RESPONSE, mGsonObject.toJson(queryResponse));
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
     }
 }

@@ -30,7 +30,7 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<LocationSettingsResult> {
 
-    private static final String LOG_TAG = Constants.LOG_TAG_QUERY;
+    private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
 
     private Activity mActivityContext;
     private GoogleApiClient mApiClient;
@@ -77,7 +77,7 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                 Log.d(LOG_TAG, "LocationSettingsStatusCodes.RESOLUTION_REQUIRED");
                 try {
-                    status.startResolutionForResult(mActivityContext, Constants.ENABLE_LOCATION_SETTINGS_DIALOG);
+                    status.startResolutionForResult(mActivityContext, AppConstants.ENABLE_LOCATION_SETTINGS_DIALOG);
                 } catch (IntentSender.SendIntentException e) {
                     Log.d(LOG_TAG, "startResolutionForResult exception. e: " + e.getMessage());
                 }
@@ -140,9 +140,9 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
 
     private void sendLocation(Location location) {
         Log.i(LOG_TAG, "sendLocation");
-        Intent locationIntent = new Intent(Constants.LOCATION_FETCHED);
-        locationIntent.putExtra(Constants.USER_LOCATION_LAT, location.getLatitude());
-        locationIntent.putExtra(Constants.USER_LOCATION_LNG, location.getLongitude());
+        Intent locationIntent = new Intent(AppConstants.LOCATION_FETCHED);
+        locationIntent.putExtra(AppConstants.USER_LOCATION_LAT, location.getLatitude());
+        locationIntent.putExtra(AppConstants.USER_LOCATION_LNG, location.getLongitude());
         LocalBroadcastManager.getInstance(mActivityContext).sendBroadcast(locationIntent);
     }
 }

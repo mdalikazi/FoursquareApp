@@ -34,12 +34,12 @@ import java.util.LinkedList;
 import exercise.foursquare.ali.foursquareapp.R;
 import exercise.foursquare.ali.foursquareapp.models.QueryResponse;
 import exercise.foursquare.ali.foursquareapp.processor.QueryService;
-import exercise.foursquare.ali.foursquareapp.utils.Constants;
+import exercise.foursquare.ali.foursquareapp.utils.AppConstants;
 import exercise.foursquare.ali.foursquareapp.utils.FsLocationManager;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String LOG_TAG = Constants.LOG_TAG_QUERY;
+    private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
 
     private double mUserLocationLat;
     private double mUserLocationLng;
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d(LOG_TAG, "Result received");
-                mQueryResponseString = intent.getStringExtra(Constants.QUERY_RESPONSE);
+                mQueryResponseString = intent.getStringExtra(AppConstants.QUERY_RESPONSE);
                 mQueryResponse = mQueryResponseGsonObject.fromJson(mQueryResponseString, QueryResponse.class);
                 mVenueAdapter = new VenueAdapter(createAdapterData());
                 mRecyclerView.setAdapter(mVenueAdapter);
@@ -108,8 +108,8 @@ public class MainActivity extends AppCompatActivity {
         mLocationBrodcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                mUserLocationLat = intent.getDoubleExtra(Constants.USER_LOCATION_LAT, 0);
-                mUserLocationLng = intent.getDoubleExtra(Constants.USER_LOCATION_LNG, 0);
+                mUserLocationLat = intent.getDoubleExtra(AppConstants.USER_LOCATION_LAT, 0);
+                mUserLocationLng = intent.getDoubleExtra(AppConstants.USER_LOCATION_LNG, 0);
                 mQueryService.startQueryService(MainActivity.this, "coffee", mUserLocationLat, mUserLocationLng);
                 mSnackbar.dismiss();
                 Toast.makeText(MainActivity.this, "Your location is: " + mUserLocationLat + "," + mUserLocationLng, Toast.LENGTH_SHORT).show();
@@ -119,13 +119,13 @@ public class MainActivity extends AppCompatActivity {
 
     private SimpleArrayMap<String, LinkedList> createAdapterData() {
         mVenues = new SimpleArrayMap<>();
-        mVenues.put(Constants.VENUE_NAME, mQueryResponse.getNames());
-        mVenues.put(Constants.VENUE_ADDRESS, mQueryResponse.getFormattedAddresses());
-        mVenues.put(Constants.VENUE_DISTANCE, mQueryResponse.getDistances());
-        mVenues.put(Constants.VENUE_PHONE, mQueryResponse.getFormattedPhones());
-        mVenues.put(Constants.VENUE_LOCATION, mQueryResponse.getLocations());
-        mVenues.put(Constants.VENUE_HAS_MENU, mQueryResponse.getHaveMenus());
-        mVenues.put(Constants.VENUE_MENU_URL, mQueryResponse.getMenuMobileUrls());
+        mVenues.put(AppConstants.VENUE_NAME, mQueryResponse.getNames());
+        mVenues.put(AppConstants.VENUE_ADDRESS, mQueryResponse.getFormattedAddresses());
+        mVenues.put(AppConstants.VENUE_DISTANCE, mQueryResponse.getDistances());
+        mVenues.put(AppConstants.VENUE_PHONE, mQueryResponse.getFormattedPhones());
+        mVenues.put(AppConstants.VENUE_LOCATION, mQueryResponse.getLocations());
+        mVenues.put(AppConstants.VENUE_HAS_MENU, mQueryResponse.getHaveMenus());
+        mVenues.put(AppConstants.VENUE_MENU_URL, mQueryResponse.getMenuMobileUrls());
         return mVenues;
     }
 
@@ -138,10 +138,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        IntentFilter queryFilter = new IntentFilter(Constants.QUERY_COMPLETE);
+        IntentFilter queryFilter = new IntentFilter(AppConstants.QUERY_COMPLETE);
         LocalBroadcastManager.getInstance(this).registerReceiver(mQueryBrodcastReceiver, queryFilter);
 
-        IntentFilter locationFilter = new IntentFilter(Constants.LOCATION_FETCHED);
+        IntentFilter locationFilter = new IntentFilter(AppConstants.LOCATION_FETCHED);
         LocalBroadcastManager.getInstance(this).registerReceiver(mLocationBrodcastReceiver, locationFilter);
     }
 
@@ -191,13 +191,13 @@ public class MainActivity extends AppCompatActivity {
     private void requestLocationPermission() {
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                Constants.PERMISSION_ACCESS_FINE_LOCATION);
+                AppConstants.PERMISSION_ACCESS_FINE_LOCATION);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case Constants.PERMISSION_ACCESS_FINE_LOCATION:
+            case AppConstants.PERMISSION_ACCESS_FINE_LOCATION:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mLocationManager.connect();
                 } else {
@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.i(LOG_TAG, "onActivityResult");
-        if (requestCode == Constants.ENABLE_LOCATION_SETTINGS_DIALOG) {
+        if (requestCode == AppConstants.ENABLE_LOCATION_SETTINGS_DIALOG) {
             if (resultCode == Activity.RESULT_OK) {
                 Log.d(LOG_TAG, "RESULT_OK. Location enabled.");
                 mLocationManager.requestLocationUpdates();

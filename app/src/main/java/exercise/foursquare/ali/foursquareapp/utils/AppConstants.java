@@ -3,7 +3,7 @@ package exercise.foursquare.ali.foursquareapp.utils;
 /**
  * Created by kazi_ on 8/11/2016.
  */
-public class Constants {
+public class AppConstants {
 
     //Foursquare
     public static final String CLIENT_ID = "ACAO2JPKM1MXHQJCK45IIFKRFR2ZVL0QASMCBCG5NPJQWF2G";

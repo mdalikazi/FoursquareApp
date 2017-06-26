@@ -10,14 +10,14 @@ import android.view.ViewGroup;
 import java.util.LinkedList;
 
 import exercise.foursquare.ali.foursquareapp.R;
-import exercise.foursquare.ali.foursquareapp.utils.Constants;
+import exercise.foursquare.ali.foursquareapp.utils.AppConstants;
 
 /**
  * Created by kazi_ on 8/4/2016.
  */
 public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
 
-    private static final String LOG_TAG = Constants.LOG_TAG_QUERY;
+    private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
     private SimpleArrayMap<String, LinkedList> mVenuesList = new SimpleArrayMap<>();
     private LinkedList<String> mNames;
     private LinkedList<String> mPhones;
@@ -31,13 +31,13 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
     public VenueAdapter(SimpleArrayMap<String, LinkedList> venuesList) {
         //Create list of lists
         mVenuesList = venuesList;
-        mNames = new LinkedList<>(mVenuesList.get(Constants.VENUE_NAME));
-        mDistances = new LinkedList<>(mVenuesList.get(Constants.VENUE_DISTANCE));
-        mAddresses = new LinkedList<>(mVenuesList.get(Constants.VENUE_ADDRESS));
-        mPhones = new LinkedList<>(mVenuesList.get(Constants.VENUE_PHONE));
-        mLocations = new LinkedList<>(mVenuesList.get(Constants.VENUE_LOCATION));
-        mHaveMenus = new LinkedList<>(mVenuesList.get(Constants.VENUE_HAS_MENU));
-        mMenuUrls = new LinkedList<>(mVenuesList.get(Constants.VENUE_MENU_URL));
+        mNames = new LinkedList<>(mVenuesList.get(AppConstants.VENUE_NAME));
+        mDistances = new LinkedList<>(mVenuesList.get(AppConstants.VENUE_DISTANCE));
+        mAddresses = new LinkedList<>(mVenuesList.get(AppConstants.VENUE_ADDRESS));
+        mPhones = new LinkedList<>(mVenuesList.get(AppConstants.VENUE_PHONE));
+        mLocations = new LinkedList<>(mVenuesList.get(AppConstants.VENUE_LOCATION));
+        mHaveMenus = new LinkedList<>(mVenuesList.get(AppConstants.VENUE_HAS_MENU));
+        mMenuUrls = new LinkedList<>(mVenuesList.get(AppConstants.VENUE_MENU_URL));
     }
 
     @Override
