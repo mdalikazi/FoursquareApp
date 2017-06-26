@@ -2,6 +2,7 @@ package exercise.foursquare.ali.foursquareapp.utils;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,6 +22,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 /**
  * Created by kazi_ on 8/25/2016.
@@ -49,14 +51,13 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-
-        checkLocationSettings();
+        //checkLocationSettings();
     }
 
-    private void checkLocationSettings() {
+    public void checkLocationSettings() {
         Log.i(LOG_TAG, "checkLocationSettings");
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-               .addLocationRequest(mLocationRequest);
+                .addLocationRequest(mLocationRequest).setAlwaysShow(true);
         LocationSettingsRequest request = builder.build();
         PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(mApiClient, request);
         result.setResultCallback(this);
@@ -69,7 +70,22 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
         LocationSettingsStates states = locationSettingsResult.getLocationSettingsStates();
         Status status = locationSettingsResult.getStatus();
         switch (status.getStatusCode()) {
-            
+            case LocationSettingsStatusCodes.SUCCESS:
+                Log.d(LOG_TAG, "LocationSettingsStatusCodes.SUCCESS");
+                requestLocationUpdates();
+                break;
+            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                Log.d(LOG_TAG, "LocationSettingsStatusCodes.RESOLUTION_REQUIRED");
+                try {
+                    status.startResolutionForResult(mActivityContext, Constants.ENABLE_LOCATION_SETTINGS_DIALOG);
+                } catch (IntentSender.SendIntentException e) {
+                    Log.d(LOG_TAG, "startResolutionForResult exception. e: " + e.getMessage());
+                }
+                break;
+            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                Log.d(LOG_TAG, "LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE");
+                //Nothing can be done
+                break;
         }
         Log.d(LOG_TAG, "isGpsPresent: " + states.isGpsPresent());
         Log.d(LOG_TAG, "isGpsUsable: " + states.isGpsUsable());
@@ -92,14 +108,18 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
         }
     }
 
+    public void requestLocationUpdates() {
+        try {
+            mFusedLocationProviderApi.requestLocationUpdates(mApiClient, mLocationRequest, this);
+        } catch (SecurityException e) {
+            Log.d(LOG_TAG, "Security Exception with location permission: " + e.getMessage());
+        }
+    }
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.i(LOG_TAG, "onConnected");
-            try {
-                mFusedLocationProviderApi.requestLocationUpdates(mApiClient, mLocationRequest, this);
-            } catch (SecurityException e) {
-                Log.d(LOG_TAG, "Security Exception with location: " + e.getMessage());
-            }
+        checkLocationSettings();
     }
 
     @Override

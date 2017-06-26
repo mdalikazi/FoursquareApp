@@ -33,4 +33,5 @@ public class Constants {
 
     //Permission requestCodes
     public static final int PERMISSION_ACCESS_FINE_LOCATION = 1;
+    public static final int ENABLE_LOCATION_SETTINGS_DIALOG = 2;
 }

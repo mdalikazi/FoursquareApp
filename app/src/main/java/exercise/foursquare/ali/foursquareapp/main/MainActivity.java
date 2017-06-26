@@ -1,6 +1,7 @@
 package exercise.foursquare.ali.foursquareapp.main;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -38,7 +39,7 @@ import exercise.foursquare.ali.foursquareapp.utils.FsLocationManager;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = Constants.LOG_TAG_QUERY;
+    private static final String LOG_TAG = Constants.LOG_TAG_QUERY;
 
     private double mUserLocationLat;
     private double mUserLocationLng;
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         mQueryBrodcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.d(TAG, "Result received");
+                Log.d(LOG_TAG, "Result received");
                 mQueryResponseString = intent.getStringExtra(Constants.QUERY_RESPONSE);
                 mQueryResponse = mQueryResponseGsonObject.fromJson(mQueryResponseString, QueryResponse.class);
                 mVenueAdapter = new VenueAdapter(createAdapterData());
@@ -206,5 +207,19 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i(LOG_TAG, "onActivityResult");
+        if (requestCode == Constants.ENABLE_LOCATION_SETTINGS_DIALOG) {
+            if (resultCode == Activity.RESULT_OK) {
+                Log.d(LOG_TAG, "RESULT_OK. Location enabled.");
+                mLocationManager.requestLocationUpdates();
+            } else {
+                Log.d(LOG_TAG, "RESULT_CANCELED. Location disabled :(");
+                mLocationManager.disconnect();
+            }
+        }
     }
 }
