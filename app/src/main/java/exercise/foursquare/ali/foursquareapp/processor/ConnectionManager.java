@@ -22,6 +22,7 @@ public class ConnectionManager {
 
     private Context mContext;
     private HttpsURLConnection mConnection;
+    private BufferedInputStream mBufferedInputStream;
 
     public ConnectionManager(Context context) {
         mContext = context;
@@ -37,8 +38,8 @@ public class ConnectionManager {
             mConnection.setConnectTimeout(NetConstants.REQUEST_CONNECTION_TIMEOUT);
             mConnection.connect();
             if(mConnection.getResponseCode() == NetConstants.RESPONSE_CODE_OK) {
-                BufferedInputStream bufferedInputStream = new BufferedInputStream(mConnection.getInputStream());
-                return new InputStreamReader(bufferedInputStream);
+                mBufferedInputStream = new BufferedInputStream(mConnection.getInputStream());
+                return new InputStreamReader(mBufferedInputStream);
             } else {
                 return null;
             }

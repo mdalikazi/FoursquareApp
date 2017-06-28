@@ -38,7 +38,7 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
     private FusedLocationProviderApi mFusedLocationProviderApi;
 
     public FsLocationManager(Activity activity) {
-        Log.i(LOG_TAG, "FsLocationManager");
+        Log.i(LOG_TAG, "new FsLocationManager");
         mActivityContext = activity;
         mFusedLocationProviderApi = LocationServices.FusedLocationApi;
         mLocationRequest = LocationRequest.create();
@@ -51,7 +51,6 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-        //checkLocationSettings();
     }
 
     public void checkLocationSettings() {
@@ -102,17 +101,22 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
 
     public void disconnect() {
         Log.i(LOG_TAG, "Disconnect");
-        if (mApiClient.isConnected() || mApiClient.isConnecting()) {
+        if (mApiClient != null && mApiClient.isConnected() || mApiClient.isConnecting()) {
             mApiClient.disconnect();
-            mFusedLocationProviderApi.removeLocationUpdates(mApiClient, this);
+            if (mFusedLocationProviderApi != null) {
+                mFusedLocationProviderApi.removeLocationUpdates(mApiClient, this);
+            }
         }
     }
 
     public void requestLocationUpdates() {
+        Log.i(LOG_TAG, "requestLocationUpdates");
         try {
             mFusedLocationProviderApi.requestLocationUpdates(mApiClient, mLocationRequest, this);
         } catch (SecurityException e) {
             Log.d(LOG_TAG, "Security Exception with location permission: " + e.getMessage());
+        } catch (Exception e) {
+            Log.d(LOG_TAG, "Exception with requestLocationUpdates: " + e.getMessage());
         }
     }
 

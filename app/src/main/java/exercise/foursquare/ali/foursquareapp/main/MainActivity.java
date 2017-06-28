@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(LOG_TAG, "onCreate");
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -132,12 +133,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        Log.i(LOG_TAG, "onPause");
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mQueryBrodcastReceiver);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        Log.i(LOG_TAG, "onResume");
         IntentFilter queryFilter = new IntentFilter(AppConstants.QUERY_COMPLETE);
         LocalBroadcastManager.getInstance(this).registerReceiver(mQueryBrodcastReceiver, queryFilter);
 
@@ -162,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean hasLocationPermission() {
+        Log.i(LOG_TAG, "hasLocationPermission");
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED) {
             return true;
@@ -176,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showLocationPermissionExplanation() {
+        Log.i(LOG_TAG, "showLocationPermissionExplanation");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Please allow Location services to use this app.")
                 .setCancelable(false)
@@ -189,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestLocationPermission() {
+        Log.i(LOG_TAG, "requestLocationPermission");
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                 AppConstants.PERMISSION_ACCESS_FINE_LOCATION);
@@ -196,6 +202,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.i(LOG_TAG, "onRequestPermissionsResult");
         switch (requestCode) {
             case AppConstants.PERMISSION_ACCESS_FINE_LOCATION:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

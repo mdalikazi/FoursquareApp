@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -58,7 +57,7 @@ public class RequestsProcessor {
                 streamReader.close();
             }
         } catch (Exception e) {
-            Log.d(LOG_TAG, "Exception with getQuery. e: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
