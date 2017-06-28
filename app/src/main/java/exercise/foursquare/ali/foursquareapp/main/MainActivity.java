@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.venue_list_recycler_view);
 
         mVenues = new SimpleArrayMap<>();
-        mLocationManager = new FsLocationManager(this);
         mQueryService = new QueryService();
         mQueryResponse = new QueryResponse();
         mQueryResponseGsonObject = new Gson();
@@ -131,10 +130,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        Log.i(LOG_TAG, "onPause");
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mQueryBrodcastReceiver);
+    protected void onStart() {
+        super.onStart();
+        Log.i(LOG_TAG, "onStart");
+        mLocationManager = new FsLocationManager(this);
     }
 
     @Override
@@ -146,6 +145,20 @@ public class MainActivity extends AppCompatActivity {
 
         IntentFilter locationFilter = new IntentFilter(AppConstants.LOCATION_FETCHED);
         LocalBroadcastManager.getInstance(this).registerReceiver(mLocationBrodcastReceiver, locationFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i(LOG_TAG, "onPause");
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mQueryBrodcastReceiver);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i(LOG_TAG, "onStop");
+        mLocationManager.disconnect();
     }
 
     @Override
