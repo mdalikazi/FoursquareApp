@@ -10,15 +10,13 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.BufferedInputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import exercise.foursquare.ali.foursquareapp.R;
 import exercise.foursquare.ali.foursquareapp.models.QueryResponse;
 import exercise.foursquare.ali.foursquareapp.utils.AppConstants;
+import exercise.foursquare.ali.foursquareapp.utils.NetConstants;
 
 /**
  * Created by kazi_ on 7/21/2016.
@@ -28,59 +26,39 @@ public class RequestsProcessor {
 
     private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
 
-    private int mResponseCode;
-    private URL mUrl;
     private Gson mGsonObject;
     private Context mContext;
-    private HttpsURLConnection mConnection;
-    private BufferedInputStream mBufferedInputStream;
-    private InputStreamReader mInputStreamReader;
     private Uri.Builder mUriBuilder;
+    private ConnectionManager mConnectionManager;
 
     public RequestsProcessor(Context ctx) {
         mContext = ctx;
+        mConnectionManager = new ConnectionManager(mContext);
     }
 
     public void getQuery(String query, double lat, double lang) {
         Resources res = mContext.getResources();
         String latLang = String.format(res.getString(R.string.param_lat_lang), lat, lang);
         mUriBuilder = new Uri.Builder();
-        mUriBuilder.scheme("https")
-                .authority("api.foursquare.com")
-                .appendPath("v2")
-                .appendPath("venues")
-                .appendPath("search")
-                .appendQueryParameter("client_id", AppConstants.CLIENT_ID)
-                .appendQueryParameter("client_secret", AppConstants.CLIENT_SECRET)
-                .appendQueryParameter("v", AppConstants.VERSION_PARAMTER)
-                .appendQueryParameter("ll", latLang)
-                .appendQueryParameter("query", query);
+        mUriBuilder.scheme(NetConstants.SCHEME_HTTPS)
+                .authority(NetConstants.FS_AUTHORITY)
+                .appendPath(NetConstants.FS_API_V2)
+                .appendPath(NetConstants.FS_PATH_VENUES_SEARCH)
+                .appendQueryParameter(NetConstants.FS_CLIENT_ID, AppConstants.CLIENT_ID)
+                .appendQueryParameter(NetConstants.FS_CLIENT_SECRET, AppConstants.CLIENT_SECRET)
+                .appendQueryParameter(NetConstants.FS_VERSION_PARAMETER, AppConstants.VERSION_PARAMTER)
+                .appendQueryParameter(NetConstants.FS_LATITUDE_LONGITUDE, latLang)
+                .appendQueryParameter(NetConstants.FS_PARAMETER_QUERY, query);
 
         try {
-            mUrl = new URL(mUriBuilder.build().toString());
-            Log.d(LOG_TAG, "mUrl: " + mUrl);
-
-            mConnection = (HttpsURLConnection) mUrl.openConnection();
-            mConnection.setDoInput(true);
-            mConnection.setDoOutput(false);
-            mConnection.setRequestMethod("GET");
-            mConnection.setConnectTimeout(15000);
-            mConnection.connect();
-            mResponseCode = mConnection.getResponseCode();
-
-            if(mResponseCode == 200) {
-                mBufferedInputStream = new BufferedInputStream(mConnection.getInputStream());
-                mInputStreamReader = new InputStreamReader(mBufferedInputStream);
-                convertResponseToJson(mInputStreamReader);
-                mInputStreamReader.close();
-                mBufferedInputStream.close();
+            URL url = new URL(mUriBuilder.build().toString());
+            if (mConnectionManager != null) {
+                InputStreamReader streamReader = mConnectionManager.get(url);
+                convertResponseToJson(streamReader);
+                streamReader.close();
             }
-        } catch(Exception e) {
-            Log.d(LOG_TAG, "IO Exception: " + e);
-        } finally {
-            if(mConnection != null) {
-                mConnection.disconnect();
-            }
+        } catch (Exception e) {
+            Log.d(LOG_TAG, "Exception with getQuery. e: " + e.getMessage());
         }
     }
 
