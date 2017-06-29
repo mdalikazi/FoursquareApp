@@ -10,7 +10,8 @@
      * Each item has to show name, distance and address
      * Bonus: Add some extra features to improve the user experience, such as ability to call the coffee shop or find it on the map (via Maps app)
 
-### How do I get set up? ### (Coming soon)
+### How do I get set up? ###
+(Coming soon)
 
 * Summary of set up
 * Configuration
@@ -19,7 +20,8 @@
 * How to run tests
 * Deployment instructions
 
-### Contribution guidelines ### (Coming soon)
+### Contribution guidelines ###
+(Coming soon)
 
 * Writing tests
 * Code review
