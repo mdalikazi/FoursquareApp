@@ -6,8 +6,8 @@ package exercise.foursquare.ali.foursquareapp.utils;
 public class AppConstants {
 
     //Foursquare
-    public static final String CLIENT_ID = "ACAO2JPKM1MXHQJCK45IIFKRFR2ZVL0QASMCBCG5NPJQWF2G";
-    public static final String CLIENT_SECRET = "YZCKUYJ1WHUV2QICBXUBEILZI1DMPUIDP5SHV043O04FKBHL";
+    public static final String CLIENT_ID = "L31DQPOQFTTFD5VBCADTCUJDAVMA42XHJR0WDPYABXHX03N2";
+    public static final String CLIENT_SECRET = "AKGCIU1ZSGLTF31R20O3DCUNJAT5IRMOPGPRK5FAEJ1LG4Y4";
     public static final String VERSION_PARAMTER = "20130815";
 
     //Broadcast Intent extras
