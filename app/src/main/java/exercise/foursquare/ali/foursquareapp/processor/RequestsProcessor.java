@@ -5,12 +5,16 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.BufferedInputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import exercise.foursquare.ali.foursquareapp.R;
 import exercise.foursquare.ali.foursquareapp.models.QueryResponse;
@@ -29,6 +33,8 @@ public class RequestsProcessor {
     private Context mContext;
     private Uri.Builder mUriBuilder;
     private ConnectionManager mConnectionManager;
+    private BufferedInputStream mBufferedInputStream;
+    private InputStreamReader mInputStreamReader;
 
     public RequestsProcessor(Context ctx) {
         mContext = ctx;
@@ -52,11 +58,17 @@ public class RequestsProcessor {
         try {
             URL url = new URL(mUriBuilder.build().toString());
             if (mConnectionManager != null) {
-                InputStreamReader streamReader = mConnectionManager.get(url);
-                convertResponseToJson(streamReader);
-                streamReader.close();
+                HttpsURLConnection connection = mConnectionManager.get(url);
+                if(connection != null && connection.getResponseCode() == NetConstants.RESPONSE_CODE_OK) {
+                    mBufferedInputStream = new BufferedInputStream(connection.getInputStream());
+                    mInputStreamReader = new InputStreamReader(mBufferedInputStream);
+                    convertResponseToJson(mInputStreamReader);
+                    mBufferedInputStream.close();
+                    mInputStreamReader.close();
+                }
             }
         } catch (Exception e) {
+            Log.d(LOG_TAG, "Exception with get. e: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
     }

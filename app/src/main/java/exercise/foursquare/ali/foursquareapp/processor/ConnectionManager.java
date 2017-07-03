@@ -3,8 +3,6 @@ package exercise.foursquare.ali.foursquareapp.processor;
 import android.content.Context;
 import android.util.Log;
 
-import java.io.BufferedInputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -22,13 +20,12 @@ public class ConnectionManager {
 
     private Context mContext;
     private HttpsURLConnection mConnection;
-    private BufferedInputStream mBufferedInputStream;
 
     public ConnectionManager(Context context) {
         mContext = context;
     }
 
-    public InputStreamReader get(URL url) {
+    public HttpsURLConnection get(URL url) {
         Log.i(LOG_TAG, "get: " + url.toString());
         try  {
             mConnection = (HttpsURLConnection) url.openConnection();
@@ -37,14 +34,9 @@ public class ConnectionManager {
             mConnection.setRequestMethod(NetConstants.REQUEST_METHOD_GET);
             mConnection.setConnectTimeout(NetConstants.REQUEST_CONNECTION_TIMEOUT);
             mConnection.connect();
-            if(mConnection.getResponseCode() == NetConstants.RESPONSE_CODE_OK) {
-                mBufferedInputStream = new BufferedInputStream(mConnection.getInputStream());
-                return new InputStreamReader(mBufferedInputStream);
-            } else {
-                return null;
-            }
+            return mConnection;
         } catch(Exception e) {
-            Log.d(LOG_TAG, "IO Exception: " + e);
+            Log.d(LOG_TAG, "Exception with get: " + url + " " + e.getMessage());
             return null;
         } finally {
             if(mConnection != null) {
@@ -53,4 +45,23 @@ public class ConnectionManager {
         }
     }
 
+    public HttpsURLConnection post(URL url) {
+        Log.i(LOG_TAG, "get: " + url.toString());
+        try  {
+            mConnection = (HttpsURLConnection) url.openConnection();
+            mConnection.setDoInput(true);
+            mConnection.setDoOutput(true);
+            mConnection.setRequestMethod(NetConstants.REQUEST_METHOD_POST);
+            mConnection.setConnectTimeout(NetConstants.REQUEST_CONNECTION_TIMEOUT);
+            mConnection.connect();
+            return mConnection;
+        } catch(Exception e) {
+            Log.d(LOG_TAG, "Exception with post: " + url + " " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        } finally {
+            if(mConnection != null) {
+                mConnection.disconnect();
+            }
+        }
+    }
 }
