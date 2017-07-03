@@ -3,11 +3,11 @@ package exercise.foursquare.ali.foursquareapp.utils;
 /**
  * Created by kazi_ on 8/11/2016.
  */
-public class Constants {
+public class AppConstants {
 
     //Foursquare
-    public static final String CLIENT_ID = "ACAO2JPKM1MXHQJCK45IIFKRFR2ZVL0QASMCBCG5NPJQWF2G";
-    public static final String CLIENT_SECRET = "YZCKUYJ1WHUV2QICBXUBEILZI1DMPUIDP5SHV043O04FKBHL";
+    public static final String CLIENT_ID = "L31DQPOQFTTFD5VBCADTCUJDAVMA42XHJR0WDPYABXHX03N2";
+    public static final String CLIENT_SECRET = "AKGCIU1ZSGLTF31R20O3DCUNJAT5IRMOPGPRK5FAEJ1LG4Y4";
     public static final String VERSION_PARAMTER = "20130815";
 
     //Broadcast Intent extras
@@ -33,4 +33,5 @@ public class Constants {
 
     //Permission requestCodes
     public static final int PERMISSION_ACCESS_FINE_LOCATION = 1;
+    public static final int ENABLE_LOCATION_SETTINGS_DIALOG = 2;
 }
