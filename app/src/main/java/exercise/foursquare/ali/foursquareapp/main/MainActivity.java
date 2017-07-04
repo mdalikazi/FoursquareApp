@@ -3,7 +3,6 @@ package exercise.foursquare.ali.foursquareapp.main;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,6 +13,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.transition.TransitionManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -168,12 +169,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        MenuItem searchMenuItem = menu.findItem(R.id.menu_action_search);
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) searchMenuItem.getActionView();
+        final MenuItem searchMenuItem = menu.findItem(R.id.menu_action_search);
+        final SearchView searchView = (SearchView) searchMenuItem.getActionView();
         searchView.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -182,33 +180,35 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                Log.d(LOG_TAG, "onQueryTextChange newText: " + newText);
                 return false;
             }
         });
 
+        /*LinearLayout searchBar = (LinearLayout) searchView.findViewById(R.id.search_bar);
+        LayoutTransition transition = new LayoutTransition();
+        transition.setDuration(1000);
+        searchBar.setLayoutTransition(transition);*/
+
         MenuItemCompat.setOnActionExpandListener(searchMenuItem, new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                return false;
+                animateSearchView();
+                return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                return false;
+                animateSearchView();
+                return true;
             }
-        })
+        });
 
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    private void animateSearchView() {
+        TransitionManager.beginDelayedTransition((ViewGroup) findViewById(R.id.toolbar));
     }
 
     public boolean hasLocationPermission() {
