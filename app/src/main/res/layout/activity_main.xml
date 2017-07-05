@@ -22,6 +22,12 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/search_view_reveal_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:foreground="@color/colorAccent" />
+
     <include layout="@layout/content_main"/>
 
     <android.support.design.widget.FloatingActionButton

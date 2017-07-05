@@ -2,7 +2,12 @@
 
     <string name="app_name">FoursquareApp</string>
     <string name="param_lat_lang">%1$.1f,%2$.1f</string>
-    <string name="menu_search_title">Search...</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="snackbar_message_getting_your_location">Getting your location...</string>
+    <string name="menu_search_title">Search</string>
     <string name="menu_search_hint">Coffee, pizza, chinese?</string>
+    <string name="main_activity_empty_list_message">What are you looking for?\nCoffee, lunch or pizza - whatever it is search and see results in your area.</string>
+    <string name="permission_message_location">Please allow Location services to use this app.</string>
 
 </resources>

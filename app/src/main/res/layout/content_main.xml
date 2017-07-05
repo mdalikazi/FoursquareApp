@@ -1,21 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/activity_horizontal_margin"
-    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="exercise.foursquare.ali.foursquareapp.main.MainActivity"
     tools:showIn="@layout/activity_main">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/venue_list_recycler_view"
+        android:id="@+id/main_activity_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbarStyle="insideInset"
-        android:scrollbarSize="@dimen/recycler_view_scrollbar_size"/>
+        android:scrollbarSize="@dimen/recycler_view_scrollbar_size"
+        android:scrollbarStyle="insideInset"/>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/main_activity_empty_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:paddingEnd="24dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingStart="24dp"
+        android:text="@string/main_activity_empty_list_message"
+        android:textSize="18sp"/>
+
+</RelativeLayout>
