@@ -3,10 +3,9 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="exercise.foursquare.ali.foursquareapp.main.MainActivity">
 
-    <item android:id="@+id/menu_action_search"
+    <item android:id="@+id/menu_home_search_icon"
           android:title="@string/menu_search_title"
           android:icon="@mipmap/ic_menu_search"
-          app:actionViewClass="android.support.v7.widget.SearchView"
-          app:showAsAction="collapseActionView|always" />
+          app:showAsAction="always" />
 
 </menu>

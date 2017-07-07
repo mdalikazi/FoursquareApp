@@ -64,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private Snackbar mSnackbar;
     private TextView mEmptyListMessage;
+    private Toolbar mSearchViewRevealToolbar;
+    private MenuItem mSearchMenuItem;
 
     @Override
     protected void onStart() {
@@ -83,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
         mLocationFab = (FloatingActionButton) findViewById(R.id.fab_location);
         mRecyclerView = (RecyclerView) findViewById(R.id.main_activity_recycler_view);
         mEmptyListMessage = (TextView) findViewById(R.id.main_activity_empty_message);
+        mSearchViewRevealToolbar = (Toolbar) findViewById(R.id.search_view_reveal_toolbar);
+        setupSearchViewRevealToolbar();
 
         mVenues = new SimpleArrayMap<>();
         mQueryService = new QueryService();
@@ -179,11 +183,10 @@ public class MainActivity extends AppCompatActivity {
         mLocationManager.disconnect();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        final MenuItem searchMenuItem = menu.findItem(R.id.menu_action_search);
-        final SearchView searchView = (SearchView) searchMenuItem.getActionView();
+    private void setupSearchViewRevealToolbar() {
+        mSearchViewRevealToolbar.inflateMenu(R.menu.menu_search);
+        mSearchMenuItem = mSearchViewRevealToolbar.getMenu().findItem(R.id.menu_action_search);
+        final SearchView searchView = (SearchView) mSearchMenuItem.getActionView();
         searchView.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -201,10 +204,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        MenuItemCompat.setOnActionExpandListener(searchMenuItem, new MenuItemCompat.OnActionExpandListener() {
+        MenuItemCompat.setOnActionExpandListener(mSearchMenuItem, new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                animateSearchView(true);
                 return true;
             }
 
@@ -215,13 +217,38 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+//        mSearchViewRevealToolbar.setNavigationIcon(R.mipmap.ic_navigation_arrow_back);
+//        mSearchViewRevealToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.d(LOG_TAG, "mSearchViewRevealToolbar navigation click");
+//                animateSearchView(true);
+//            }
+//        });
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_home_search_icon:
+                animateSearchView(true);
+                mSearchMenuItem.expandActionView();
+                break;
+        }
         return true;
     }
 
     private void animateSearchView(boolean reveal) {
         //TransitionManager.beginDelayedTransition((ViewGroup) findViewById(R.id.toolbar));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            AnimationUtils.circleReveal(this, findViewById(R.id.search_view_reveal_toolbar), 1, true, reveal);
+            AnimationUtils.circleReveal(this, mSearchViewRevealToolbar, 0, true, reveal);
         }
     }
 

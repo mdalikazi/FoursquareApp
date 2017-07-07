@@ -20,8 +20,8 @@ public class AnimationUtils {
     public static void circleReveal(Context context, final View myView, int posFromRight, boolean containsOverflow, final boolean isShow) {
         int width = myView.getWidth();
         if(posFromRight > 0) {
-            width -= (posFromRight*context.getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_material)) -
-                    (context.getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_material) / 2);
+            width -= (posFromRight*context.getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_material)) - (context.getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_material) / 2);
+            //width -= (posFromRight*30) - (30/2);
         }
 
         if(containsOverflow) {
@@ -38,7 +38,7 @@ public class AnimationUtils {
             anim = ViewAnimationUtils.createCircularReveal(myView, cx, cy, (float) width, 0);
         }
 
-        anim.setDuration(250);
+        anim.setDuration(400);
         // make the view invisible when the animation is done
         anim.addListener(new AnimatorListenerAdapter() {
             @Override
