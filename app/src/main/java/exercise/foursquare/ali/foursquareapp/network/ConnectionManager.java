@@ -1,4 +1,4 @@
-package exercise.foursquare.ali.foursquareapp.processor;
+package exercise.foursquare.ali.foursquareapp.network;
 
 import android.content.Context;
 import android.util.Log;

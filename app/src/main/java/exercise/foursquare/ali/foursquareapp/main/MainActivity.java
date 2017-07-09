@@ -37,7 +37,7 @@ import java.util.LinkedList;
 
 import exercise.foursquare.ali.foursquareapp.R;
 import exercise.foursquare.ali.foursquareapp.models.QueryResponse;
-import exercise.foursquare.ali.foursquareapp.processor.QueryService;
+import exercise.foursquare.ali.foursquareapp.network.QueryService;
 import exercise.foursquare.ali.foursquareapp.utils.AppConstants;
 import exercise.foursquare.ali.foursquareapp.utils.FsLocationManager;
 
@@ -216,16 +216,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-//        mSearchViewRevealToolbar.setNavigationIcon(R.mipmap.ic_navigation_arrow_back);
-//        mSearchViewRevealToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Log.d(LOG_TAG, "mSearchViewRevealToolbar navigation click");
-//                animateSearchView(true);
-//            }
-//        });
-
     }
 
     @Override

@@ -101,10 +101,14 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
 
     public void disconnect() {
         Log.i(LOG_TAG, "Disconnect");
-        if (mApiClient != null && mApiClient.isConnected() || mApiClient.isConnecting()) {
-            mApiClient.disconnect();
-            if (mFusedLocationProviderApi != null) {
-                mFusedLocationProviderApi.removeLocationUpdates(mApiClient, this);
+        if (mApiClient != null && (mApiClient.isConnected() || mApiClient.isConnecting())) {
+            try {
+                mApiClient.disconnect();
+                if (mFusedLocationProviderApi != null) {
+                    mFusedLocationProviderApi.removeLocationUpdates(mApiClient, this);
+                }
+            } catch (IllegalStateException e) {
+                Log.d(LOG_TAG, "IllegalStateException with mApiClient.disconnect: " + e.getMessage());
             }
         }
     }
