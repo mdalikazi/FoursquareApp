@@ -8,21 +8,27 @@
     android:fitsSystemWindows="true"
     tools:context="exercise.foursquare.ali.foursquareapp.main.MainActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:theme="@style/AppTheme.AppBarOverlay"
-        app:popupTheme="@style/AppTheme.PopupOverlay"/>
+        android:layout_height="?attr/actionBarSize">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/search_view_reveal_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorToolbarReveal"
-        android:visibility="invisible"
-        app:theme="@style/AppTheme.AppBarOverlay"/>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/colorPrimary"
+            app:theme="@style/AppTheme.AppBarOverlay"
+            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/search_view_reveal_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorToolbarReveal"
+            android:visibility="invisible"
+            app:theme="@style/AppTheme.AppBarOverlay"/>
+
+    </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_main"/>
 

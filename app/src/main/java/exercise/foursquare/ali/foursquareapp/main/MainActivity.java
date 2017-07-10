@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
                 mQueryResponse = mQueryResponseGsonObject.fromJson(mQueryResponseString, QueryResponse.class);
                 mVenueAdapter = new VenueAdapter(createAdapterData());
                 mRecyclerView.setAdapter(mVenueAdapter);
+                showEmptyMesssage(false);
             }
         };
 
@@ -130,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 mUserLocationLat = intent.getDoubleExtra(AppConstants.USER_LOCATION_LAT, 0);
                 mUserLocationLng = intent.getDoubleExtra(AppConstants.USER_LOCATION_LNG, 0);
-                mQueryService.startQueryService(MainActivity.this, "coffee", mUserLocationLat, mUserLocationLng);
                 mSnackbar.dismiss();
             }
         };
@@ -151,9 +151,9 @@ public class MainActivity extends AppCompatActivity {
     private void showEmptyMesssage(boolean show) {
         if (show) {
             mEmptyListMessage.setVisibility(View.VISIBLE);
-            mRecyclerView.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.INVISIBLE);
         } else {
-            mEmptyListMessage.setVisibility(View.GONE);
+            mEmptyListMessage.setVisibility(View.INVISIBLE);
             mRecyclerView.setVisibility(View.VISIBLE);
         }
     }
@@ -247,13 +247,17 @@ public class MainActivity extends AppCompatActivity {
         if (mUserLocationLat == 0 || mUserLocationLng == 0) {
             checkLocationPermissionAndConnect();
         } else {
-            mQueryService.startQueryService(MainActivity.this, query, mUserLocationLat, mUserLocationLng);
+            makeRequest(query);
         }
+    }
+
+    private void makeRequest(String query) {
+        mQueryService.startQueryService(MainActivity.this, query, mUserLocationLat, mUserLocationLng);
     }
 
     public void checkLocationPermissionAndConnect() {
         Log.i(LOG_TAG, "checkLocationPermissionAndConnect");
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission_group.LOCATION) ==
                 PackageManager.PERMISSION_GRANTED) {
             mLocationManager.connect();
         } else {
@@ -308,7 +312,8 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == AppConstants.ENABLE_LOCATION_SETTINGS_DIALOG) {
             if (resultCode == Activity.RESULT_OK) {
                 Log.d(LOG_TAG, "RESULT_OK. Location enabled.");
-                mLocationManager.requestLocationUpdates();
+//                mLocationManager.requestLocationUpdates();
+                mLocationManager.getLastKnownLocation();
             } else {
                 Log.d(LOG_TAG, "RESULT_CANCELED. Location disabled :(");
                 mLocationManager.disconnect();

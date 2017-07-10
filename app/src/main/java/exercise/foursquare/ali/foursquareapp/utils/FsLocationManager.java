@@ -72,6 +72,7 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
             case LocationSettingsStatusCodes.SUCCESS:
                 Log.d(LOG_TAG, "LocationSettingsStatusCodes.SUCCESS");
                 requestLocationUpdates();
+//                getLastKnownLocation();
                 break;
             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                 Log.d(LOG_TAG, "LocationSettingsStatusCodes.RESOLUTION_REQUIRED");
@@ -121,6 +122,18 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
             Log.d(LOG_TAG, "Security Exception with location permission: " + e.getMessage());
         } catch (Exception e) {
             Log.d(LOG_TAG, "Exception with requestLocationUpdates: " + e.getMessage());
+        }
+    }
+
+    public void getLastKnownLocation() {
+        Log.i(LOG_TAG, "getLastKnownLocation");
+        try {
+            Location lastLocation = mFusedLocationProviderApi.getLastLocation(mApiClient);
+            sendLocation(lastLocation);
+        } catch (SecurityException e) {
+            Log.d(LOG_TAG, "Security Exception with location permission: " + e.getMessage());
+        } catch (Exception e) {
+            Log.d(LOG_TAG, "Exception with getLastKnownLocation: " + e.getMessage());
         }
     }
 
