@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.transition.TransitionManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -31,6 +32,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -40,10 +43,15 @@ import java.util.LinkedList;
 import exercise.foursquare.ali.foursquareapp.R;
 import exercise.foursquare.ali.foursquareapp.models.QueryResponse;
 import exercise.foursquare.ali.foursquareapp.network.QueryService;
+import exercise.foursquare.ali.foursquareapp.network.RequestsProcessor;
 import exercise.foursquare.ali.foursquareapp.utils.AppConstants;
 import exercise.foursquare.ali.foursquareapp.utils.FsLocationManager;
 
-public class MainActivity extends AppCompatActivity implements FsLocationManager.LocationUpdateListener {
+import static exercise.foursquare.ali.foursquareapp.R.id.main_activity_empty_message;
+
+public class MainActivity extends AppCompatActivity implements
+        FsLocationManager.LocationUpdateListener,
+        RequestsProcessor.RequestResponseListener {
 
     private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
 
@@ -63,8 +71,9 @@ public class MainActivity extends AppCompatActivity implements FsLocationManager
 
     // Views
     private FloatingActionButton mLocationFab;
-    private RecyclerView mRecyclerView;
     private Snackbar mGettingLocationSnackbar;
+    private ProgressBar mProgressBar;
+    private RecyclerView mRecyclerView;
     private TextView mEmptyListMessage;
     private Toolbar mSearchViewRevealToolbar;
     private AppBarLayout mSearchViewRevealAppBar;
@@ -87,7 +96,8 @@ public class MainActivity extends AppCompatActivity implements FsLocationManager
 
         mLocationFab = (FloatingActionButton) findViewById(R.id.fab_location);
         mRecyclerView = (RecyclerView) findViewById(R.id.main_activity_recycler_view);
-        mEmptyListMessage = (TextView) findViewById(R.id.main_activity_empty_message);
+        mEmptyListMessage = (TextView) findViewById(main_activity_empty_message);
+        mProgressBar = (ProgressBar) findViewById(R.id.main_activity_progress_bar);
         mSearchViewRevealToolbar = (Toolbar) findViewById(R.id.search_view_reveal_toolbar);
         mSearchViewRevealAppBar = (AppBarLayout) findViewById(R.id.search_view_reveal_appbar_layout);
         setupSearchViewRevealToolbar();
@@ -122,11 +132,11 @@ public class MainActivity extends AppCompatActivity implements FsLocationManager
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d(LOG_TAG, "Result received");
+                mProgressBar.setVisibility(View.GONE);
                 mQueryResponseString = intent.getStringExtra(AppConstants.QUERY_RESPONSE);
                 mQueryResponse = mQueryResponseGsonObject.fromJson(mQueryResponseString, QueryResponse.class);
                 mVenueAdapter = new VenueAdapter(createAdapterData());
                 mRecyclerView.setAdapter(mVenueAdapter);
-                showEmptyMesssage(false);
             }
         };
     }
@@ -231,6 +241,10 @@ public class MainActivity extends AppCompatActivity implements FsLocationManager
     private void animateSearchView(boolean reveal) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             AnimationUtils.circleReveal(this, mSearchViewRevealAppBar, 0, true, reveal);
+        } else {
+            // TODO: 11/7/17 Test this
+            TransitionManager.beginDelayedTransition((ViewGroup) findViewById(R.id.toolbar));
+            mSearchViewRevealAppBar.setVisibility(reveal ? View.VISIBLE : View.INVISIBLE);
         }
     }
 
@@ -245,8 +259,23 @@ public class MainActivity extends AppCompatActivity implements FsLocationManager
 
     private void makeRequest(String query) {
         Log.i(LOG_TAG, "makeRequest");
+        showEmptyMesssage(false);
+        mProgressBar.setVisibility(View.VISIBLE);
         mQueryService.startQueryService(MainActivity.this, query, mUserLocationLat, mUserLocationLng);
         mSearchSubmitted = false;
+    }
+
+    @Override
+    public void responseOk() {
+        showEmptyMesssage(false);
+        mProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void responseError() {
+        showEmptyMesssage(true);
+        mProgressBar.setVisibility(View.GONE);
+        mLocationManager.disconnect();
     }
 
     @Override

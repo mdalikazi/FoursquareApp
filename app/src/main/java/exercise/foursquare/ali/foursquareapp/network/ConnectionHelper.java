@@ -14,14 +14,14 @@ import exercise.foursquare.ali.foursquareapp.utils.NetConstants;
  * Created by alikazi on 28/6/17.
  */
 
-public class ConnectionManager {
+public class ConnectionHelper {
 
     public static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
 
     private Context mContext;
     private HttpsURLConnection mConnection;
 
-    public ConnectionManager(Context context) {
+    public ConnectionHelper(Context context) {
         mContext = context;
     }
 
@@ -36,8 +36,7 @@ public class ConnectionManager {
             mConnection.connect();
             return mConnection;
         } catch(Exception e) {
-            Log.d(LOG_TAG, "Exception with get: " + url + " " + e.getMessage());
-            return null;
+            return mConnection;
         } finally {
             if(mConnection != null) {
                 mConnection.disconnect();
@@ -56,8 +55,7 @@ public class ConnectionManager {
             mConnection.connect();
             return mConnection;
         } catch(Exception e) {
-            Log.d(LOG_TAG, "Exception with post: " + url + " " + e.getMessage());
-            throw new RuntimeException(e.getMessage());
+            return mConnection;
         } finally {
             if(mConnection != null) {
                 mConnection.disconnect();

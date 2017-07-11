@@ -32,13 +32,15 @@ public class RequestsProcessor {
     private Gson mGsonObject;
     private Context mContext;
     private Uri.Builder mUriBuilder;
-    private ConnectionManager mConnectionManager;
+    private ConnectionHelper mConnectionManager;
     private BufferedInputStream mBufferedInputStream;
     private InputStreamReader mInputStreamReader;
+    private RequestResponseListener mRequestResponseListener;
 
-    public RequestsProcessor(Context ctx) {
-        mContext = ctx;
-        mConnectionManager = new ConnectionManager(mContext);
+    public RequestsProcessor(Context context, RequestResponseListener requestResponseListener) {
+        mContext = context;
+        mRequestResponseListener = requestResponseListener;
+        mConnectionManager = new ConnectionHelper(mContext);
     }
 
     public void getQuery(String query, double lat, double lang) {
@@ -66,11 +68,13 @@ public class RequestsProcessor {
                     convertResponseToJson(mInputStreamReader);
                     mBufferedInputStream.close();
                     mInputStreamReader.close();
+                } else {
+                    mRequestResponseListener.responseError();
                 }
             }
         } catch (Exception e) {
             Log.d(LOG_TAG, "Exception with get. e: " + e.getMessage());
-            throw new RuntimeException(e.getMessage());
+            mRequestResponseListener.responseError();
         }
     }
 
@@ -84,5 +88,11 @@ public class RequestsProcessor {
         Intent intent = new Intent(AppConstants.QUERY_COMPLETE);
         intent.putExtra(AppConstants.QUERY_RESPONSE, mGsonObject.toJson(queryResponse));
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+    }
+
+    public interface RequestResponseListener {
+        void responseOk();
+
+        void responseError();
     }
 }
