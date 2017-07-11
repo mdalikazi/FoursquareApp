@@ -9,9 +9,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -41,17 +43,17 @@ import exercise.foursquare.ali.foursquareapp.network.QueryService;
 import exercise.foursquare.ali.foursquareapp.utils.AppConstants;
 import exercise.foursquare.ali.foursquareapp.utils.FsLocationManager;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FsLocationManager.LocationUpdateListener {
 
     private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
 
     private double mUserLocationLat;
     private double mUserLocationLng;
+    private boolean mSearchSubmitted;
     private String mSearchQuery;
     private VenueAdapter mVenueAdapter;
     private FsLocationManager mLocationManager;
     private BroadcastReceiver mQueryBrodcastReceiver;
-    private BroadcastReceiver mLocationBrodcastReceiver;
     private SimpleArrayMap<String, LinkedList> mVenues;
 
     private QueryService mQueryService;
@@ -62,16 +64,17 @@ public class MainActivity extends AppCompatActivity {
     // Views
     private FloatingActionButton mLocationFab;
     private RecyclerView mRecyclerView;
-    private Snackbar mSnackbar;
+    private Snackbar mGettingLocationSnackbar;
     private TextView mEmptyListMessage;
     private Toolbar mSearchViewRevealToolbar;
+    private AppBarLayout mSearchViewRevealAppBar;
     private MenuItem mSearchMenuItem;
 
     @Override
     protected void onStart() {
         super.onStart();
         Log.i(LOG_TAG, "onStart");
-        mLocationManager = new FsLocationManager(this);
+        mLocationManager = new FsLocationManager(this, this);
     }
 
     @Override
@@ -86,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.main_activity_recycler_view);
         mEmptyListMessage = (TextView) findViewById(R.id.main_activity_empty_message);
         mSearchViewRevealToolbar = (Toolbar) findViewById(R.id.search_view_reveal_toolbar);
+        mSearchViewRevealAppBar = (AppBarLayout) findViewById(R.id.search_view_reveal_appbar_layout);
         setupSearchViewRevealToolbar();
 
         mVenues = new SimpleArrayMap<>();
@@ -97,11 +101,11 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(layoutManager);
         showEmptyMesssage(true);
 
-        mSnackbar = Snackbar.make(mLocationFab, getString(R.string.snackbar_message_getting_your_location), Snackbar.LENGTH_INDEFINITE)
+        mGettingLocationSnackbar = Snackbar.make(mLocationFab, getString(R.string.snackbar_message_getting_your_location), Snackbar.LENGTH_INDEFINITE)
                 .setAction(getString(R.string.cancel), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mSnackbar.dismiss();
+                        mGettingLocationSnackbar.dismiss();
                         mLocationManager.disconnect();
                     }
                 });
@@ -109,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         mLocationFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mSnackbar.show();
+                mGettingLocationSnackbar.show();
                 checkLocationPermissionAndConnect();
             }
         });
@@ -123,15 +127,6 @@ public class MainActivity extends AppCompatActivity {
                 mVenueAdapter = new VenueAdapter(createAdapterData());
                 mRecyclerView.setAdapter(mVenueAdapter);
                 showEmptyMesssage(false);
-            }
-        };
-
-        mLocationBrodcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                mUserLocationLat = intent.getDoubleExtra(AppConstants.USER_LOCATION_LAT, 0);
-                mUserLocationLng = intent.getDoubleExtra(AppConstants.USER_LOCATION_LNG, 0);
-                mSnackbar.dismiss();
             }
         };
     }
@@ -164,9 +159,6 @@ public class MainActivity extends AppCompatActivity {
         Log.i(LOG_TAG, "onResume");
         IntentFilter queryFilter = new IntentFilter(AppConstants.QUERY_COMPLETE);
         LocalBroadcastManager.getInstance(this).registerReceiver(mQueryBrodcastReceiver, queryFilter);
-
-        IntentFilter locationFilter = new IntentFilter(AppConstants.LOCATION_FETCHED);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mLocationBrodcastReceiver, locationFilter);
     }
 
     @Override
@@ -192,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.d(LOG_TAG, "onQueryTextChange newText: " + query);
+                mSearchSubmitted = true;
                 processSearch(query);
                 searchView.clearFocus();
                 return true;
@@ -236,9 +229,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void animateSearchView(boolean reveal) {
-        //TransitionManager.beginDelayedTransition((ViewGroup) findViewById(R.id.toolbar));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            AnimationUtils.circleReveal(this, mSearchViewRevealToolbar, 0, true, reveal);
+            AnimationUtils.circleReveal(this, mSearchViewRevealAppBar, 0, true, reveal);
         }
     }
 
@@ -252,7 +244,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void makeRequest(String query) {
+        Log.i(LOG_TAG, "makeRequest");
         mQueryService.startQueryService(MainActivity.this, query, mUserLocationLat, mUserLocationLng);
+        mSearchSubmitted = false;
+    }
+
+    @Override
+    public void sendLocation(Location location) {
+        mGettingLocationSnackbar.dismiss();
+        mUserLocationLat = location.getLatitude();
+        mUserLocationLng = location.getLongitude();
+        if (mSearchSubmitted && mSearchQuery != null && !mSearchQuery.isEmpty()) {
+            makeRequest(mSearchQuery);
+        }
     }
 
     public void checkLocationPermissionAndConnect() {
@@ -298,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mLocationManager.connect();
                 } else {
-                    mSnackbar.dismiss();
+                    mGettingLocationSnackbar.dismiss();
                     mLocationManager.disconnect();
                 }
                 break;
