@@ -1,10 +1,8 @@
 package exercise.foursquare.ali.foursquareapp.network;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -17,7 +15,7 @@ import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 
 import exercise.foursquare.ali.foursquareapp.R;
-import exercise.foursquare.ali.foursquareapp.models.QueryResponse;
+import exercise.foursquare.ali.foursquareapp.models.SearchResponse;
 import exercise.foursquare.ali.foursquareapp.utils.AppConstants;
 import exercise.foursquare.ali.foursquareapp.utils.NetConstants;
 
@@ -43,7 +41,7 @@ public class RequestsProcessor {
         mConnectionManager = new ConnectionHelper(mContext);
     }
 
-    public void getQuery(String query, double lat, double lang) {
+    public void searchQuery(String query, double lat, double lang) {
         Resources res = mContext.getResources();
         String latLang = String.format(res.getString(R.string.param_lat_lang), lat, lang);
         mUriBuilder = new Uri.Builder();
@@ -65,9 +63,9 @@ public class RequestsProcessor {
                 if(connection != null && connection.getResponseCode() == NetConstants.RESPONSE_CODE_OK) {
                     mBufferedInputStream = new BufferedInputStream(connection.getInputStream());
                     mInputStreamReader = new InputStreamReader(mBufferedInputStream);
-                    convertResponseToJson(mInputStreamReader);
                     mBufferedInputStream.close();
                     mInputStreamReader.close();
+                    mRequestResponseListener.responseOk(convertResponseToJson(mInputStreamReader));
                 } else {
                     mRequestResponseListener.responseError();
                 }
@@ -78,20 +76,13 @@ public class RequestsProcessor {
         }
     }
 
-    private void convertResponseToJson(InputStreamReader inputStreamReader) {
+    private SearchResponse convertResponseToJson(InputStreamReader inputStreamReader) {
         mGsonObject =  new GsonBuilder().create();
-        QueryResponse queryResponse = mGsonObject.fromJson(inputStreamReader, QueryResponse.class);
-        sendQueryResponseBroadcast(queryResponse);
-    }
-
-    private void sendQueryResponseBroadcast(QueryResponse queryResponse) {
-        Intent intent = new Intent(AppConstants.QUERY_COMPLETE);
-        intent.putExtra(AppConstants.QUERY_RESPONSE, mGsonObject.toJson(queryResponse));
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+        return mGsonObject.fromJson(inputStreamReader, SearchResponse.class);
     }
 
     public interface RequestResponseListener {
-        void responseOk();
+        void responseOk(SearchResponse searchResponse);
 
         void responseError();
     }

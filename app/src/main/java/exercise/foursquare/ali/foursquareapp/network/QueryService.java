@@ -1,8 +1,8 @@
 package exercise.foursquare.ali.foursquareapp.network;
 
 import android.app.IntentService;
-import android.content.Intent;
 import android.content.Context;
+import android.content.Intent;
 
 import exercise.foursquare.ali.foursquareapp.utils.NetConstants;
 
@@ -23,6 +23,7 @@ public class QueryService extends IntentService {
     private static final String QUERY = "QUERY";
     private static final String LAT = "LAT";
     private static final String LANG = "LANG";
+    public static final String Listener ="Listener";
 
     private RequestsProcessor mRequestsProcessor;
 
@@ -30,7 +31,7 @@ public class QueryService extends IntentService {
         super(SERVICE_NAME);
     }
 
-    public void startQueryService(Context context, String query, double lat, double lang) {
+    public void searchQuery(Context context, String query, double lat, double lang) {
         Intent intent = new Intent(context, QueryService.class);
         intent.setAction(NetConstants.REQUEST_METHOD_GET);
         intent.putExtra(QUERY, query);
@@ -47,8 +48,8 @@ public class QueryService extends IntentService {
                 final String query = intent.getStringExtra(QUERY);
                 final double lat = intent.getDoubleExtra(LAT, 0);
                 final double lang = intent.getDoubleExtra(LANG, 0);
-                RequestsProcessor requestsProcessor = new RequestsProcessor(getApplicationContext());
-                requestsProcessor.getQuery(query, lat, lang);
+//                RequestsProcessor requestsProcessor = new RequestsProcessor(getApplicationContext()));
+//                requestsProcessor.getQuery(query, lat, lang);
             } else if (action.equals(NetConstants.REQUEST_METHOD_POST)) {
                 final String param1 = intent.getStringExtra(QUERY);
                 final String param2 = intent.getStringExtra(LAT);

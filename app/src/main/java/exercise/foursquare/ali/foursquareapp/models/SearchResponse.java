@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by kazi_ on 7/28/2016.
  */
-public class QueryResponse {
+public class SearchResponse {
 
     private Meta meta;
     private Response response;

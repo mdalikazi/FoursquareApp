@@ -41,8 +41,7 @@ import com.google.gson.Gson;
 import java.util.LinkedList;
 
 import exercise.foursquare.ali.foursquareapp.R;
-import exercise.foursquare.ali.foursquareapp.models.QueryResponse;
-import exercise.foursquare.ali.foursquareapp.network.QueryService;
+import exercise.foursquare.ali.foursquareapp.models.SearchResponse;
 import exercise.foursquare.ali.foursquareapp.network.RequestsProcessor;
 import exercise.foursquare.ali.foursquareapp.utils.AppConstants;
 import exercise.foursquare.ali.foursquareapp.utils.FsLocationManager;
@@ -64,10 +63,10 @@ public class MainActivity extends AppCompatActivity implements
     private BroadcastReceiver mQueryBrodcastReceiver;
     private SimpleArrayMap<String, LinkedList> mVenues;
 
-    private QueryService mQueryService;
-    private QueryResponse mQueryResponse;
-    private Gson mQueryResponseGsonObject;
+    private SearchResponse mSearchResponse;
+    private Gson mSearchResponseGsonObject;
     private String mQueryResponseString;
+    private RequestsProcessor mRequestsProcessor;
 
     // Views
     private FloatingActionButton mLocationFab;
@@ -103,9 +102,9 @@ public class MainActivity extends AppCompatActivity implements
         setupSearchViewRevealToolbar();
 
         mVenues = new SimpleArrayMap<>();
-        mQueryService = new QueryService();
-        mQueryResponse = new QueryResponse();
-        mQueryResponseGsonObject = new Gson();
+        mSearchResponse = new SearchResponse();
+        mSearchResponseGsonObject = new Gson();
+        mRequestsProcessor = new RequestsProcessor(this, this);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -134,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements
                 Log.d(LOG_TAG, "Result received");
                 mProgressBar.setVisibility(View.GONE);
                 mQueryResponseString = intent.getStringExtra(AppConstants.QUERY_RESPONSE);
-                mQueryResponse = mQueryResponseGsonObject.fromJson(mQueryResponseString, QueryResponse.class);
+                mSearchResponse = mSearchResponseGsonObject.fromJson(mQueryResponseString, SearchResponse.class);
                 mVenueAdapter = new VenueAdapter(createAdapterData());
                 mRecyclerView.setAdapter(mVenueAdapter);
             }
@@ -143,13 +142,13 @@ public class MainActivity extends AppCompatActivity implements
 
     private SimpleArrayMap<String, LinkedList> createAdapterData() {
         mVenues = new SimpleArrayMap<>();
-        mVenues.put(AppConstants.VENUE_NAME, mQueryResponse.getNames());
-        mVenues.put(AppConstants.VENUE_ADDRESS, mQueryResponse.getFormattedAddresses());
-        mVenues.put(AppConstants.VENUE_DISTANCE, mQueryResponse.getDistances());
-        mVenues.put(AppConstants.VENUE_PHONE, mQueryResponse.getFormattedPhones());
-        mVenues.put(AppConstants.VENUE_LOCATION, mQueryResponse.getLocations());
-        mVenues.put(AppConstants.VENUE_HAS_MENU, mQueryResponse.getHaveMenus());
-        mVenues.put(AppConstants.VENUE_MENU_URL, mQueryResponse.getMenuMobileUrls());
+        mVenues.put(AppConstants.VENUE_NAME, mSearchResponse.getNames());
+        mVenues.put(AppConstants.VENUE_ADDRESS, mSearchResponse.getFormattedAddresses());
+        mVenues.put(AppConstants.VENUE_DISTANCE, mSearchResponse.getDistances());
+        mVenues.put(AppConstants.VENUE_PHONE, mSearchResponse.getFormattedPhones());
+        mVenues.put(AppConstants.VENUE_LOCATION, mSearchResponse.getLocations());
+        mVenues.put(AppConstants.VENUE_HAS_MENU, mSearchResponse.getHaveMenus());
+        mVenues.put(AppConstants.VENUE_MENU_URL, mSearchResponse.getMenuMobileUrls());
         return mVenues;
     }
 
@@ -261,12 +260,12 @@ public class MainActivity extends AppCompatActivity implements
         Log.i(LOG_TAG, "makeRequest");
         showEmptyMesssage(false);
         mProgressBar.setVisibility(View.VISIBLE);
-        mQueryService.startQueryService(MainActivity.this, query, mUserLocationLat, mUserLocationLng);
+        mRequestsProcessor.searchQuery(query, mUserLocationLat, mUserLocationLng);
         mSearchSubmitted = false;
     }
 
     @Override
-    public void responseOk() {
+    public void responseOk(SearchResponse searchResponse) {
         showEmptyMesssage(false);
         mProgressBar.setVisibility(View.GONE);
     }
