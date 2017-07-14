@@ -27,7 +27,7 @@ public class ConnectionHelper {
 
     public HttpsURLConnection get(URL url) {
         Log.i(LOG_TAG, "get: " + url.toString());
-        try  {
+        try {
             mConnection = (HttpsURLConnection) url.openConnection();
             mConnection.setDoInput(true);
             mConnection.setDoOutput(false);
@@ -45,8 +45,8 @@ public class ConnectionHelper {
     }
 
     public HttpsURLConnection post(URL url) {
-        Log.i(LOG_TAG, "get: " + url.toString());
-        try  {
+        Log.i(LOG_TAG, "post: " + url.toString());
+        try {
             mConnection = (HttpsURLConnection) url.openConnection();
             mConnection.setDoInput(true);
             mConnection.setDoOutput(true);

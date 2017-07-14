@@ -1,12 +1,10 @@
 package exercise.foursquare.ali.foursquareapp.network;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.io.BufferedInputStream;
 import java.io.InputStreamReader;
@@ -27,10 +25,9 @@ public class RequestsProcessor {
 
     private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
 
-    private Gson mGsonObject;
     private Context mContext;
     private Uri.Builder mUriBuilder;
-    private ConnectionHelper mConnectionManager;
+    private ConnectionHelper mConnectionHelper;
     private BufferedInputStream mBufferedInputStream;
     private InputStreamReader mInputStreamReader;
     private RequestResponseListener mRequestResponseListener;
@@ -38,12 +35,11 @@ public class RequestsProcessor {
     public RequestsProcessor(Context context, RequestResponseListener requestResponseListener) {
         mContext = context;
         mRequestResponseListener = requestResponseListener;
-        mConnectionManager = new ConnectionHelper(mContext);
+        mConnectionHelper = new ConnectionHelper(mContext);
     }
 
     public void searchQuery(String query, double lat, double lang) {
-        Resources res = mContext.getResources();
-        String latLang = String.format(res.getString(R.string.param_lat_lang), lat, lang);
+        String latLang = String.format(mContext.getString(R.string.param_lat_lang), lat, lang);
         mUriBuilder = new Uri.Builder();
         mUriBuilder.scheme(NetConstants.SCHEME_HTTPS)
                 .authority(NetConstants.FS_AUTHORITY)
@@ -58,27 +54,24 @@ public class RequestsProcessor {
 
         try {
             URL url = new URL(mUriBuilder.build().toString());
-            if (mConnectionManager != null) {
-                HttpsURLConnection connection = mConnectionManager.get(url);
+            Gson gson =  new Gson();
+            if (mConnectionHelper != null) {
+                HttpsURLConnection connection = mConnectionHelper.get(url);
                 if(connection != null && connection.getResponseCode() == NetConstants.RESPONSE_CODE_OK) {
                     mBufferedInputStream = new BufferedInputStream(connection.getInputStream());
                     mInputStreamReader = new InputStreamReader(mBufferedInputStream);
+                    SearchResponse searchResponse = gson.fromJson(mInputStreamReader, SearchResponse.class);
                     mBufferedInputStream.close();
                     mInputStreamReader.close();
-                    mRequestResponseListener.responseOk(convertResponseToJson(mInputStreamReader));
+                    mRequestResponseListener.responseOk(searchResponse);
                 } else {
                     mRequestResponseListener.responseError();
                 }
             }
         } catch (Exception e) {
-            Log.d(LOG_TAG, "Exception with get. e: " + e.getMessage());
+            Log.d(LOG_TAG, "Exception with get. e: " + e.getLocalizedMessage());
             mRequestResponseListener.responseError();
         }
-    }
-
-    private SearchResponse convertResponseToJson(InputStreamReader inputStreamReader) {
-        mGsonObject =  new GsonBuilder().create();
-        return mGsonObject.fromJson(inputStreamReader, SearchResponse.class);
     }
 
     public interface RequestResponseListener {

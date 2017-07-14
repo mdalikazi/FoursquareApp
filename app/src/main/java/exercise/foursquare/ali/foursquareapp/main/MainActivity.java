@@ -3,11 +3,8 @@ package exercise.foursquare.ali.foursquareapp.main;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -19,8 +16,6 @@ import android.support.design.widget.Snackbar;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.util.SimpleArrayMap;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -35,10 +30,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.google.gson.Gson;
-
-import java.util.LinkedList;
 
 import exercise.foursquare.ali.foursquareapp.R;
 import exercise.foursquare.ali.foursquareapp.models.SearchResponse;
@@ -60,12 +51,6 @@ public class MainActivity extends AppCompatActivity implements
     private String mSearchQuery;
     private VenueAdapter mVenueAdapter;
     private FsLocationManager mLocationManager;
-    private BroadcastReceiver mQueryBrodcastReceiver;
-    private SimpleArrayMap<String, LinkedList> mVenues;
-
-    private SearchResponse mSearchResponse;
-    private Gson mSearchResponseGsonObject;
-    private String mQueryResponseString;
     private RequestsProcessor mRequestsProcessor;
 
     // Views
@@ -101,11 +86,6 @@ public class MainActivity extends AppCompatActivity implements
         mSearchViewRevealAppBar = (AppBarLayout) findViewById(R.id.search_view_reveal_appbar_layout);
         setupSearchViewRevealToolbar();
 
-        mVenues = new SimpleArrayMap<>();
-        mSearchResponse = new SearchResponse();
-        mSearchResponseGsonObject = new Gson();
-        mRequestsProcessor = new RequestsProcessor(this, this);
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
         showEmptyMesssage(true);
@@ -127,29 +107,7 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
-        mQueryBrodcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Log.d(LOG_TAG, "Result received");
-                mProgressBar.setVisibility(View.GONE);
-                mQueryResponseString = intent.getStringExtra(AppConstants.QUERY_RESPONSE);
-                mSearchResponse = mSearchResponseGsonObject.fromJson(mQueryResponseString, SearchResponse.class);
-                mVenueAdapter = new VenueAdapter(createAdapterData());
-                mRecyclerView.setAdapter(mVenueAdapter);
-            }
-        };
-    }
-
-    private SimpleArrayMap<String, LinkedList> createAdapterData() {
-        mVenues = new SimpleArrayMap<>();
-        mVenues.put(AppConstants.VENUE_NAME, mSearchResponse.getNames());
-        mVenues.put(AppConstants.VENUE_ADDRESS, mSearchResponse.getFormattedAddresses());
-        mVenues.put(AppConstants.VENUE_DISTANCE, mSearchResponse.getDistances());
-        mVenues.put(AppConstants.VENUE_PHONE, mSearchResponse.getFormattedPhones());
-        mVenues.put(AppConstants.VENUE_LOCATION, mSearchResponse.getLocations());
-        mVenues.put(AppConstants.VENUE_HAS_MENU, mSearchResponse.getHaveMenus());
-        mVenues.put(AppConstants.VENUE_MENU_URL, mSearchResponse.getMenuMobileUrls());
-        return mVenues;
+        mRequestsProcessor = new RequestsProcessor(this, this);
     }
 
     private void showEmptyMesssage(boolean show) {
@@ -166,15 +124,12 @@ public class MainActivity extends AppCompatActivity implements
     public void onResume() {
         super.onResume();
         Log.i(LOG_TAG, "onResume");
-        IntentFilter queryFilter = new IntentFilter(AppConstants.QUERY_COMPLETE);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mQueryBrodcastReceiver, queryFilter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Log.i(LOG_TAG, "onPause");
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mQueryBrodcastReceiver);
     }
 
     @Override
@@ -249,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void processSearch(String query) {
         mSearchQuery = query;
-        if (mUserLocationLat == 0 || mUserLocationLng == 0) {
+        if (mUserLocationLat <= 0 || mUserLocationLng <= 0) {
             checkLocationPermissionAndConnect();
         } else {
             makeRequest(query);
@@ -265,16 +220,30 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void responseOk(SearchResponse searchResponse) {
-        showEmptyMesssage(false);
-        mProgressBar.setVisibility(View.GONE);
+    public void responseOk(final SearchResponse searchResponse) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.i(LOG_TAG, "responseOk");
+                showEmptyMesssage(false);
+                mProgressBar.setVisibility(View.GONE);
+                mVenueAdapter = new VenueAdapter(MainActivity.this, searchResponse);
+                mRecyclerView.setAdapter(mVenueAdapter);
+            }
+        });
     }
 
     @Override
     public void responseError() {
-        showEmptyMesssage(true);
-        mProgressBar.setVisibility(View.GONE);
-        mLocationManager.disconnect();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.i(LOG_TAG, "responseError");
+                showEmptyMesssage(true);
+                mProgressBar.setVisibility(View.GONE);
+                mLocationManager.disconnect();
+            }
+        });
     }
 
     @Override
