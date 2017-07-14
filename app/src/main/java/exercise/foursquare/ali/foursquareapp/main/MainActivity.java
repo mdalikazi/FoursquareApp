@@ -247,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void sendLocation(Location location) {
+    public void onLocationUpdate(Location location) {
         mGettingLocationSnackbar.dismiss();
         mUserLocationLat = location.getLatitude();
         mUserLocationLng = location.getLongitude();

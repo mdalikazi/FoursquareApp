@@ -2,6 +2,7 @@ package exercise.foursquare.ali.foursquareapp.network;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -38,40 +39,61 @@ public class RequestsProcessor {
         mConnectionHelper = new ConnectionHelper(mContext);
     }
 
-    public void searchQuery(String query, double lat, double lang) {
-        String latLang = String.format(mContext.getString(R.string.param_lat_lang), lat, lang);
-        mUriBuilder = new Uri.Builder();
-        mUriBuilder.scheme(NetConstants.SCHEME_HTTPS)
-                .authority(NetConstants.FS_AUTHORITY)
-                .appendPath(NetConstants.FS_API_V2)
-                .appendPath(NetConstants.FS_PATH_VENUES)
-                .appendPath(NetConstants.FS_PATH_SEARCH)
-                .appendQueryParameter(NetConstants.FS_CLIENT_ID, AppConstants.CLIENT_ID)
-                .appendQueryParameter(NetConstants.FS_CLIENT_SECRET, AppConstants.CLIENT_SECRET)
-                .appendQueryParameter(NetConstants.FS_VERSION_PARAMETER, AppConstants.VERSION_PARAMTER)
-                .appendQueryParameter(NetConstants.FS_LATITUDE_LONGITUDE, latLang)
-                .appendQueryParameter(NetConstants.FS_PARAMETER_QUERY, query);
+    public void searchQuery(final String query, final double lat, final double lang) {
+        Log.i(LOG_TAG, "searchQuery");
+        new AsyncTask<Void, Void, SearchResponse>() {
+            @Override
+            protected void onPreExecute() {
+                Log.i(LOG_TAG, "onPreExecute");
+                String latLang = String.format(mContext.getString(R.string.param_lat_lang), lat, lang);
+                mUriBuilder = new Uri.Builder();
+                mUriBuilder.scheme(NetConstants.SCHEME_HTTPS)
+                        .authority(NetConstants.FS_AUTHORITY)
+                        .appendPath(NetConstants.FS_API_V2)
+                        .appendPath(NetConstants.FS_PATH_VENUES)
+                        .appendPath(NetConstants.FS_PATH_SEARCH)
+                        .appendQueryParameter(NetConstants.FS_CLIENT_ID, AppConstants.CLIENT_ID)
+                        .appendQueryParameter(NetConstants.FS_CLIENT_SECRET, AppConstants.CLIENT_SECRET)
+                        .appendQueryParameter(NetConstants.FS_VERSION_PARAMETER, AppConstants.VERSION_PARAMTER)
+                        .appendQueryParameter(NetConstants.FS_LATITUDE_LONGITUDE, latLang)
+                        .appendQueryParameter(NetConstants.FS_PARAMETER_QUERY, query);
+            }
 
-        try {
-            URL url = new URL(mUriBuilder.build().toString());
-            Gson gson =  new Gson();
-            if (mConnectionHelper != null) {
-                HttpsURLConnection connection = mConnectionHelper.get(url);
-                if(connection != null && connection.getResponseCode() == NetConstants.RESPONSE_CODE_OK) {
-                    mBufferedInputStream = new BufferedInputStream(connection.getInputStream());
-                    mInputStreamReader = new InputStreamReader(mBufferedInputStream);
-                    SearchResponse searchResponse = gson.fromJson(mInputStreamReader, SearchResponse.class);
-                    mBufferedInputStream.close();
-                    mInputStreamReader.close();
+            @Override
+            protected SearchResponse doInBackground(Void... params) {
+                Log.i(LOG_TAG, "doInBackground");
+                try {
+                    URL url = new URL(mUriBuilder.build().toString());
+                    Gson gson =  new Gson();
+                    SearchResponse searchResponse;
+                    if (mConnectionHelper != null) {
+                        HttpsURLConnection connection = mConnectionHelper.get(url);
+                        if(connection != null && connection.getResponseCode() == NetConstants.RESPONSE_CODE_OK) {
+                            mBufferedInputStream = new BufferedInputStream(connection.getInputStream());
+                            mInputStreamReader = new InputStreamReader(mBufferedInputStream);
+                            searchResponse = gson.fromJson(mInputStreamReader, SearchResponse.class);
+                            mBufferedInputStream.close();
+                            mInputStreamReader.close();
+                            return searchResponse;
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.d(LOG_TAG, "Exception with get. e: " + e.getLocalizedMessage());
+                    Log.d(LOG_TAG, "Exception with get. e: " + e.getCause());
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(SearchResponse searchResponse) {
+                Log.i(LOG_TAG, "onPostExecute");
+                if (searchResponse != null) {
                     mRequestResponseListener.responseOk(searchResponse);
                 } else {
                     mRequestResponseListener.responseError();
                 }
             }
-        } catch (Exception e) {
-            Log.d(LOG_TAG, "Exception with get. e: " + e.getLocalizedMessage());
-            mRequestResponseListener.responseError();
-        }
+        }.execute();
     }
 
     public interface RequestResponseListener {
