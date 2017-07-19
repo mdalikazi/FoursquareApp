@@ -29,20 +29,37 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
     private LinkedList<Boolean> mHaveMenus;
     private LinkedList<String> mMenuUrls;
 
-    public VenueAdapter(Context context, SearchResponse searchResponse) {
+    public VenueAdapter(Context context) {
         mContext = context;
-        mNames = new LinkedList<>(searchResponse.getNames());
-        mDistances = new LinkedList<>(searchResponse.getDistances());
-        mAddresses = new LinkedList<>(searchResponse.getFormattedAddresses());
-        mPhones = new LinkedList<>(searchResponse.getFormattedPhones());
-        mLocations = new LinkedList<>(searchResponse.getLocations());
-        mHaveMenus = new LinkedList<>(searchResponse.getHaveMenus());
-        mMenuUrls = new LinkedList<>(searchResponse.getMenuMobileUrls());
+        mNames = new LinkedList<>();
+        mDistances = new LinkedList<>();
+        mAddresses = new LinkedList<>();
+        mPhones = new LinkedList<>();
+        mLocations = new LinkedList<>();
+        mHaveMenus = new LinkedList<>();
+        mMenuUrls = new LinkedList<>();
+    }
+
+    public void setSearchResponse(SearchResponse searchResponse) {
+        mNames.clear();
+        mDistances.clear();
+        mAddresses.clear();
+        mPhones.clear();
+        mLocations.clear();
+        mHaveMenus.clear();
+        mMenuUrls.clear();
+        mNames = searchResponse.getNames();
+        mDistances = searchResponse.getDistances();
+        mAddresses = searchResponse.getFormattedAddresses();
+        mPhones = searchResponse.getFormattedPhones();
+        mLocations = searchResponse.getLocations();
+        mHaveMenus = searchResponse.getHaveMenus();
+        mMenuUrls = searchResponse.getMenuMobileUrls();
     }
 
     @Override
     public VenueViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.list_item, parent, false);
         return new VenueViewHolder(view);
     }
 

@@ -88,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
+        mVenueAdapter = new VenueAdapter(MainActivity.this);
+        mRecyclerView.setAdapter(mVenueAdapter);
         showEmptyMesssage(true);
 
         mGettingLocationSnackbar = Snackbar.make(mLocationFab, getString(R.string.snackbar_message_getting_your_location), Snackbar.LENGTH_INDEFINITE)
@@ -225,9 +227,10 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void run() {
                 Log.i(LOG_TAG, "responseOk");
+//                Log.d(LOG_TAG, "searchResponse: " + searchResponse.getNames().get(0));
                 showEmptyMesssage(false);
                 mProgressBar.setVisibility(View.GONE);
-                mVenueAdapter = new VenueAdapter(MainActivity.this, searchResponse);
+                mVenueAdapter.setSearchResponse(searchResponse);
                 mRecyclerView.setAdapter(mVenueAdapter);
             }
         });
@@ -239,6 +242,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void run() {
                 Log.i(LOG_TAG, "responseError");
+                mEmptyListMessage.setText("Sorry, your search did not return any results. Please try again.");
                 showEmptyMesssage(true);
                 mProgressBar.setVisibility(View.GONE);
                 mLocationManager.disconnect();
@@ -268,6 +272,12 @@ public class MainActivity extends AppCompatActivity implements
                 requestLocationPermission();
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.i(LOG_TAG, "onBackPressed");
+        // TODO: 17/7/17 close searchreveal with backpress then exit app 
     }
 
     private void showLocationPermissionExplanation() {

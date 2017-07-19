@@ -107,11 +107,10 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
         if (mApiClient != null && (mApiClient.isConnected() || mApiClient.isConnecting())) {
             try {
                 mApiClient.disconnect();
-                if (mFusedLocationProviderApi != null) {
-                    mFusedLocationProviderApi.removeLocationUpdates(mApiClient, this);
-                }
             } catch (IllegalStateException e) {
                 Log.d(LOG_TAG, "IllegalStateException with mApiClient.disconnect: " + e.getMessage());
+//                mApiClient.reconnect();
+                /*mApiClient = null;
                 mApiClient = new GoogleApiClient.Builder(mActivityContext)
                         .addConnectionCallbacks(this)
                         .addOnConnectionFailedListener(this)
@@ -119,8 +118,13 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
                         .build();
                 if (!mApiClient.isConnected() || !mApiClient.isConnecting()) {
                     mApiClient.connect();
-                }
+                }*/
             }
+        }
+
+        if (mFusedLocationProviderApi != null) {
+            mFusedLocationProviderApi.flushLocations(mApiClient);
+            mFusedLocationProviderApi.removeLocationUpdates(mApiClient, this);
         }
     }
 

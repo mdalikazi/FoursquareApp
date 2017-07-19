@@ -64,22 +64,21 @@ public class RequestsProcessor {
                 Log.i(LOG_TAG, "doInBackground");
                 try {
                     URL url = new URL(mUriBuilder.build().toString());
-                    Gson gson =  new Gson();
-                    SearchResponse searchResponse;
                     if (mConnectionHelper != null) {
                         HttpsURLConnection connection = mConnectionHelper.get(url);
                         if(connection != null && connection.getResponseCode() == NetConstants.RESPONSE_CODE_OK) {
                             mBufferedInputStream = new BufferedInputStream(connection.getInputStream());
                             mInputStreamReader = new InputStreamReader(mBufferedInputStream);
-                            searchResponse = gson.fromJson(mInputStreamReader, SearchResponse.class);
+                            Gson gson =  new Gson();
+                            SearchResponse searchResponse = gson.fromJson(mInputStreamReader, SearchResponse.class);
                             mBufferedInputStream.close();
                             mInputStreamReader.close();
                             return searchResponse;
                         }
                     }
                 } catch (Exception e) {
-                    Log.d(LOG_TAG, "Exception with get. e: " + e.getLocalizedMessage());
-                    Log.d(LOG_TAG, "Exception with get. e: " + e.getCause());
+                    Log.d(LOG_TAG, "Exception with get. getLocalizedMessage " + e.getLocalizedMessage());
+                    Log.d(LOG_TAG, "Exception with get. getCause: " + e.getCause());
                 }
                 return null;
             }
