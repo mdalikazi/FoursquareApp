@@ -1,4 +1,4 @@
-package exercise.foursquare.ali.foursquareapp.processor;
+package exercise.foursquare.ali.foursquareapp.network;
 
 import android.content.Context;
 import android.util.Log;
@@ -14,20 +14,20 @@ import exercise.foursquare.ali.foursquareapp.utils.NetConstants;
  * Created by alikazi on 28/6/17.
  */
 
-public class ConnectionManager {
+public class ConnectionHelper {
 
     public static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
 
     private Context mContext;
     private HttpsURLConnection mConnection;
 
-    public ConnectionManager(Context context) {
+    public ConnectionHelper(Context context) {
         mContext = context;
     }
 
     public HttpsURLConnection get(URL url) {
         Log.i(LOG_TAG, "get: " + url.toString());
-        try  {
+        try {
             mConnection = (HttpsURLConnection) url.openConnection();
             mConnection.setDoInput(true);
             mConnection.setDoOutput(false);
@@ -36,8 +36,7 @@ public class ConnectionManager {
             mConnection.connect();
             return mConnection;
         } catch(Exception e) {
-            Log.d(LOG_TAG, "Exception with get: " + url + " " + e.getMessage());
-            return null;
+            return mConnection;
         } finally {
             if(mConnection != null) {
                 mConnection.disconnect();
@@ -46,8 +45,8 @@ public class ConnectionManager {
     }
 
     public HttpsURLConnection post(URL url) {
-        Log.i(LOG_TAG, "get: " + url.toString());
-        try  {
+        Log.i(LOG_TAG, "post: " + url.toString());
+        try {
             mConnection = (HttpsURLConnection) url.openConnection();
             mConnection.setDoInput(true);
             mConnection.setDoOutput(true);
@@ -56,8 +55,7 @@ public class ConnectionManager {
             mConnection.connect();
             return mConnection;
         } catch(Exception e) {
-            Log.d(LOG_TAG, "Exception with post: " + url + " " + e.getMessage());
-            throw new RuntimeException(e.getMessage());
+            return mConnection;
         } finally {
             if(mConnection != null) {
                 mConnection.disconnect();

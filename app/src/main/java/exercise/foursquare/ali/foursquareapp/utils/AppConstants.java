@@ -12,12 +12,9 @@ public class AppConstants {
 
     //Broadcast Intent extras
     public static final String QUERY_RESPONSE = "queryResponse";
-    public static final String USER_LOCATION_LAT = "location_lat";
-    public static final String USER_LOCATION_LNG = "location_lng";
 
     //Broadcast Intent filters
     public static final String QUERY_COMPLETE = "queryComplete";
-    public static final String LOCATION_FETCHED = "locationFetched";
 
     //Model getter helpers
     public static final String VENUE_NAME = "venue_name";

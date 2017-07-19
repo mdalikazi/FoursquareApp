@@ -9,7 +9,8 @@ public class NetConstants {
     // Foursquare APi
     public static final String FS_AUTHORITY = "api.foursquare.com";
     public static final String FS_API_V2 = "v2";
-    public static final String FS_PATH_VENUES_SEARCH = "venues/search";
+    public static final String FS_PATH_VENUES = "venues";
+    public static final String FS_PATH_SEARCH = "search";
 
     // params
     public static final String FS_CLIENT_ID = "client_id";
@@ -27,5 +28,5 @@ public class NetConstants {
     public static final String SCHEME_HTTPS = "https";
     public static final int RESPONSE_CODE_OK = 200;
     public static final int RESPONSE_CODE_ERROR = 404;
-    public static final int REQUEST_CONNECTION_TIMEOUT = 15000;
+    public static final int REQUEST_CONNECTION_TIMEOUT = 10000;
 }
