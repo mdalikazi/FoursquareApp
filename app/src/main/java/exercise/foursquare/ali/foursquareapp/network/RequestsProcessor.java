@@ -1,4 +1,4 @@
-package exercise.foursquare.ali.foursquareapp.processor;
+package exercise.foursquare.ali.foursquareapp.network;
 
 import android.content.Context;
 import android.content.Intent;
@@ -48,7 +48,8 @@ public class RequestsProcessor {
         mUriBuilder.scheme(NetConstants.SCHEME_HTTPS)
                 .authority(NetConstants.FS_AUTHORITY)
                 .appendPath(NetConstants.FS_API_V2)
-                .appendPath(NetConstants.FS_PATH_VENUES_SEARCH)
+                .appendPath(NetConstants.FS_PATH_VENUES)
+                .appendPath(NetConstants.FS_PATH_SEARCH)
                 .appendQueryParameter(NetConstants.FS_CLIENT_ID, AppConstants.CLIENT_ID)
                 .appendQueryParameter(NetConstants.FS_CLIENT_SECRET, AppConstants.CLIENT_SECRET)
                 .appendQueryParameter(NetConstants.FS_VERSION_PARAMETER, AppConstants.VERSION_PARAMTER)

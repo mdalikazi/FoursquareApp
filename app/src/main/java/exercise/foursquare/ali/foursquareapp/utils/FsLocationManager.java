@@ -1,13 +1,11 @@
 package exercise.foursquare.ali.foursquareapp.utils;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -28,7 +26,9 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
  * Created by kazi_ on 8/25/2016.
  */
 public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback<LocationSettingsResult> {
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener,
+        ResultCallback<LocationSettingsResult> {
 
     private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
 
@@ -36,10 +36,12 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
     private GoogleApiClient mApiClient;
     private LocationRequest mLocationRequest;
     private FusedLocationProviderApi mFusedLocationProviderApi;
+    private LocationUpdateListener mLocationUpdateListener;
 
-    public FsLocationManager(Activity activity) {
+    public FsLocationManager(Activity activity, LocationUpdateListener locationUpdateListener) {
         Log.i(LOG_TAG, "new FsLocationManager");
         mActivityContext = activity;
+        mLocationUpdateListener = locationUpdateListener;
         mFusedLocationProviderApi = LocationServices.FusedLocationApi;
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setFastestInterval(500)
@@ -72,6 +74,7 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
             case LocationSettingsStatusCodes.SUCCESS:
                 Log.d(LOG_TAG, "LocationSettingsStatusCodes.SUCCESS");
                 requestLocationUpdates();
+//                getLastKnownLocation();
                 break;
             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                 Log.d(LOG_TAG, "LocationSettingsStatusCodes.RESOLUTION_REQUIRED");
@@ -101,10 +104,14 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
 
     public void disconnect() {
         Log.i(LOG_TAG, "Disconnect");
-        if (mApiClient != null && mApiClient.isConnected() || mApiClient.isConnecting()) {
-            mApiClient.disconnect();
-            if (mFusedLocationProviderApi != null) {
-                mFusedLocationProviderApi.removeLocationUpdates(mApiClient, this);
+        if (mApiClient != null && (mApiClient.isConnected() || mApiClient.isConnecting())) {
+            try {
+                mApiClient.disconnect();
+                if (mFusedLocationProviderApi != null) {
+                    mFusedLocationProviderApi.removeLocationUpdates(mApiClient, this);
+                }
+            } catch (IllegalStateException e) {
+                Log.d(LOG_TAG, "IllegalStateException with mApiClient.disconnect: " + e.getMessage());
             }
         }
     }
@@ -117,6 +124,18 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
             Log.d(LOG_TAG, "Security Exception with location permission: " + e.getMessage());
         } catch (Exception e) {
             Log.d(LOG_TAG, "Exception with requestLocationUpdates: " + e.getMessage());
+        }
+    }
+
+    public void getLastKnownLocation() {
+        Log.i(LOG_TAG, "getLastKnownLocation");
+        try {
+            Location lastLocation = mFusedLocationProviderApi.getLastLocation(mApiClient);
+            mLocationUpdateListener.sendLocation(lastLocation);
+        } catch (SecurityException e) {
+            Log.d(LOG_TAG, "Security Exception with location permission: " + e.getMessage());
+        } catch (Exception e) {
+            Log.d(LOG_TAG, "Exception with getLastKnownLocation: " + e.getMessage());
         }
     }
 
@@ -139,14 +158,10 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
     @Override
     public void onLocationChanged(Location location) {
         Log.i(LOG_TAG, "onLocationChanged");
-        sendLocation(location);
+        mLocationUpdateListener.sendLocation(location);
     }
 
-    private void sendLocation(Location location) {
-        Log.i(LOG_TAG, "sendLocation");
-        Intent locationIntent = new Intent(AppConstants.LOCATION_FETCHED);
-        locationIntent.putExtra(AppConstants.USER_LOCATION_LAT, location.getLatitude());
-        locationIntent.putExtra(AppConstants.USER_LOCATION_LNG, location.getLongitude());
-        LocalBroadcastManager.getInstance(mActivityContext).sendBroadcast(locationIntent);
+    public interface LocationUpdateListener {
+        void sendLocation(Location location);
     }
 }

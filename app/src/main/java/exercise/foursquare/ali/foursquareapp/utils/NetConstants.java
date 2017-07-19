@@ -9,7 +9,8 @@ public class NetConstants {
     // Foursquare APi
     public static final String FS_AUTHORITY = "api.foursquare.com";
     public static final String FS_API_V2 = "v2";
-    public static final String FS_PATH_VENUES_SEARCH = "venues/search";
+    public static final String FS_PATH_VENUES = "venues";
+    public static final String FS_PATH_SEARCH = "search";
 
     // params
     public static final String FS_CLIENT_ID = "client_id";
