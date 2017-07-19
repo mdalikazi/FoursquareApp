@@ -73,8 +73,8 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
         switch (status.getStatusCode()) {
             case LocationSettingsStatusCodes.SUCCESS:
                 Log.d(LOG_TAG, "LocationSettingsStatusCodes.SUCCESS");
-//                requestLocationUpdates();
-                getLastKnownLocation();
+                requestLocationUpdates();
+//                getLastKnownLocation();
                 break;
             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                 Log.d(LOG_TAG, "LocationSettingsStatusCodes.RESOLUTION_REQUIRED");
@@ -107,24 +107,10 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
         if (mApiClient != null && (mApiClient.isConnected() || mApiClient.isConnecting())) {
             try {
                 mApiClient.disconnect();
+                removeLocationUpdates();
             } catch (IllegalStateException e) {
                 Log.d(LOG_TAG, "IllegalStateException with mApiClient.disconnect: " + e.getMessage());
-//                mApiClient.reconnect();
-                /*mApiClient = null;
-                mApiClient = new GoogleApiClient.Builder(mActivityContext)
-                        .addConnectionCallbacks(this)
-                        .addOnConnectionFailedListener(this)
-                        .addApi(LocationServices.API)
-                        .build();
-                if (!mApiClient.isConnected() || !mApiClient.isConnecting()) {
-                    mApiClient.connect();
-                }*/
             }
-        }
-
-        if (mFusedLocationProviderApi != null) {
-            mFusedLocationProviderApi.flushLocations(mApiClient);
-            mFusedLocationProviderApi.removeLocationUpdates(mApiClient, this);
         }
     }
 
@@ -148,6 +134,14 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
             Log.d(LOG_TAG, "Security Exception with location permission: " + e.getMessage());
         } catch (Exception e) {
             Log.d(LOG_TAG, "Exception with getLastKnownLocation: " + e.getMessage());
+        }
+    }
+
+    private void removeLocationUpdates() {
+        Log.i(LOG_TAG, "removeLocationUpdates");
+        if (mFusedLocationProviderApi != null) {
+            mFusedLocationProviderApi.flushLocations(mApiClient);
+            mFusedLocationProviderApi.removeLocationUpdates(mApiClient, this);
         }
     }
 

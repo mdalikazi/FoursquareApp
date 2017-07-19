@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements
     private boolean mSearchSubmitted;
     private String mSearchQuery;
     private VenueAdapter mVenueAdapter;
-    private FsLocationManager mLocationManager;
+    private FsLocationManager mFsLocationManager;
     private RequestsProcessor mRequestsProcessor;
 
     // Views
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onStart() {
         super.onStart();
         Log.i(LOG_TAG, "onStart");
-        mLocationManager = new FsLocationManager(this, this);
+        mFsLocationManager = new FsLocationManager(this, this);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements
                     @Override
                     public void onClick(View v) {
                         mGettingLocationSnackbar.dismiss();
-                        mLocationManager.disconnect();
+                        mFsLocationManager.disconnect();
                     }
                 });
 
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onStop() {
         super.onStop();
         Log.i(LOG_TAG, "onStop");
-        mLocationManager.disconnect();
+        mFsLocationManager.disconnect();
     }
 
     private void setupSearchViewRevealToolbar() {
@@ -232,6 +232,7 @@ public class MainActivity extends AppCompatActivity implements
                 mProgressBar.setVisibility(View.GONE);
                 mVenueAdapter.setSearchResponse(searchResponse);
                 mRecyclerView.setAdapter(mVenueAdapter);
+                mFsLocationManager.disconnect();
             }
         });
     }
@@ -245,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements
                 mEmptyListMessage.setText("Sorry, your search did not return any results. Please try again.");
                 showEmptyMesssage(true);
                 mProgressBar.setVisibility(View.GONE);
-                mLocationManager.disconnect();
+                mFsLocationManager.disconnect();
             }
         });
     }
@@ -264,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements
         Log.i(LOG_TAG, "checkLocationPermissionAndConnect");
         if(ContextCompat.checkSelfPermission(this, Manifest.permission_group.LOCATION) ==
                 PackageManager.PERMISSION_GRANTED) {
-            mLocationManager.connect();
+            mFsLocationManager.connect();
         } else {
             if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 showLocationPermissionExplanation();
@@ -277,7 +278,12 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onBackPressed() {
         Log.i(LOG_TAG, "onBackPressed");
-        // TODO: 17/7/17 close searchreveal with backpress then exit app 
+        // TODO: 17/7/17 close searchreveal with backpress then exit app
+        if (mSearchViewRevealAppBar.getVisibility() == View.VISIBLE) {
+            animateSearchView(false);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     private void showLocationPermissionExplanation() {
@@ -307,10 +313,10 @@ public class MainActivity extends AppCompatActivity implements
         switch (requestCode) {
             case AppConstants.PERMISSION_ACCESS_FINE_LOCATION:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mLocationManager.connect();
+                    mFsLocationManager.connect();
                 } else {
                     mGettingLocationSnackbar.dismiss();
-                    mLocationManager.disconnect();
+                    mFsLocationManager.disconnect();
                 }
                 break;
         }
@@ -323,11 +329,11 @@ public class MainActivity extends AppCompatActivity implements
         if (requestCode == AppConstants.ENABLE_LOCATION_SETTINGS_DIALOG) {
             if (resultCode == Activity.RESULT_OK) {
                 Log.d(LOG_TAG, "RESULT_OK. Location enabled.");
-//                mLocationManager.requestLocationUpdates();
-                mLocationManager.getLastKnownLocation();
+//                mFsLocationManager.requestLocationUpdates();
+                mFsLocationManager.getLastKnownLocation();
             } else {
                 Log.d(LOG_TAG, "RESULT_CANCELED. Location disabled :(");
-                mLocationManager.disconnect();
+                mFsLocationManager.disconnect();
             }
         }
     }
