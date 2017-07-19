@@ -28,5 +28,5 @@ public class NetConstants {
     public static final String SCHEME_HTTPS = "https";
     public static final int RESPONSE_CODE_OK = 200;
     public static final int RESPONSE_CODE_ERROR = 404;
-    public static final int REQUEST_CONNECTION_TIMEOUT = 15000;
+    public static final int REQUEST_CONNECTION_TIMEOUT = 10000;
 }

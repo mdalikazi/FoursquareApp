@@ -73,8 +73,8 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
         switch (status.getStatusCode()) {
             case LocationSettingsStatusCodes.SUCCESS:
                 Log.d(LOG_TAG, "LocationSettingsStatusCodes.SUCCESS");
-                requestLocationUpdates();
-//                getLastKnownLocation();
+//                requestLocationUpdates();
+                getLastKnownLocation();
                 break;
             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                 Log.d(LOG_TAG, "LocationSettingsStatusCodes.RESOLUTION_REQUIRED");
@@ -97,7 +97,7 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
 
     public void connect() {
         Log.i(LOG_TAG, "Connect");
-        if(!mApiClient.isConnected() || !mApiClient.isConnecting()) {
+        if (!mApiClient.isConnected() || !mApiClient.isConnecting()) {
             mApiClient.connect();
         }
     }
@@ -107,12 +107,24 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
         if (mApiClient != null && (mApiClient.isConnected() || mApiClient.isConnecting())) {
             try {
                 mApiClient.disconnect();
-                if (mFusedLocationProviderApi != null) {
-                    mFusedLocationProviderApi.removeLocationUpdates(mApiClient, this);
-                }
             } catch (IllegalStateException e) {
                 Log.d(LOG_TAG, "IllegalStateException with mApiClient.disconnect: " + e.getMessage());
+//                mApiClient.reconnect();
+                /*mApiClient = null;
+                mApiClient = new GoogleApiClient.Builder(mActivityContext)
+                        .addConnectionCallbacks(this)
+                        .addOnConnectionFailedListener(this)
+                        .addApi(LocationServices.API)
+                        .build();
+                if (!mApiClient.isConnected() || !mApiClient.isConnecting()) {
+                    mApiClient.connect();
+                }*/
             }
+        }
+
+        if (mFusedLocationProviderApi != null) {
+            mFusedLocationProviderApi.flushLocations(mApiClient);
+            mFusedLocationProviderApi.removeLocationUpdates(mApiClient, this);
         }
     }
 
@@ -131,7 +143,7 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
         Log.i(LOG_TAG, "getLastKnownLocation");
         try {
             Location lastLocation = mFusedLocationProviderApi.getLastLocation(mApiClient);
-            mLocationUpdateListener.sendLocation(lastLocation);
+            mLocationUpdateListener.onLocationUpdate(lastLocation);
         } catch (SecurityException e) {
             Log.d(LOG_TAG, "Security Exception with location permission: " + e.getMessage());
         } catch (Exception e) {
@@ -157,11 +169,11 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.i(LOG_TAG, "onLocationChanged");
-        mLocationUpdateListener.sendLocation(location);
+        Log.i(LOG_TAG, "onLocationUpdate");
+        mLocationUpdateListener.onLocationUpdate(location);
     }
 
     public interface LocationUpdateListener {
-        void sendLocation(Location location);
+        void onLocationUpdate(Location location);
     }
 }
