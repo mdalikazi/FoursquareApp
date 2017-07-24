@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements
                     }
                 });
 
+        mLocationFab.setVisibility(View.GONE);
         mLocationFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

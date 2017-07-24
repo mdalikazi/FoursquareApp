@@ -71,6 +71,7 @@ public class RequestsProcessor {
                             mInputStreamReader = new InputStreamReader(mBufferedInputStream);
                             Gson gson =  new Gson();
                             SearchResponse searchResponse = gson.fromJson(mInputStreamReader, SearchResponse.class);
+
                             mBufferedInputStream.close();
                             mInputStreamReader.close();
                             return searchResponse;

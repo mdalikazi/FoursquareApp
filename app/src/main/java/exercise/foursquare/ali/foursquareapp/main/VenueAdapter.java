@@ -57,6 +57,10 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
         mMenuUrls = searchResponse.getMenuMobileUrls();
     }
 
+    private void sortByDistance() {
+
+    }
+
     @Override
     public VenueViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.list_item, parent, false);

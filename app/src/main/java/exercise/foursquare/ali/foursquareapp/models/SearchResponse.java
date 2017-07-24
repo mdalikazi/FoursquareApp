@@ -3,6 +3,8 @@ package exercise.foursquare.ali.foursquareapp.models;
 import android.location.LocationManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -171,6 +173,20 @@ public class SearchResponse {
 
     private List<Venues> getVenues() {
         Response response = getResponse();
+
+        Collections.sort(response.venues, new Comparator<Venues>() {
+            @Override
+            public int compare(Venues venue1, Venues venue2) {
+                if (venue1.location.distance < venue2.location.distance) {
+                    return -1;
+                } else if (venue1.location.distance > venue2.location.distance) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+
         return response.venues;
     }
 
