@@ -122,6 +122,29 @@ public class SearchResponse {
 
     //PRIVATE GETTERS
 
+    private Response getResponse() {
+        return response;
+    }
+
+    private List<Venues> getVenues() {
+        Response response = getResponse();
+
+        Collections.sort(response.venues, new Comparator<Venues>() {
+            @Override
+            public int compare(Venues venue1, Venues venue2) {
+                if (venue1.location.distance < venue2.location.distance) {
+                    return -1;
+                } else if (venue1.location.distance > venue2.location.distance) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+
+        return response.venues;
+    }
+
     private String getName(int i) {
         return getVenues().get(i).name;
     }
@@ -161,36 +184,13 @@ public class SearchResponse {
 
     private String getMenuMobileUrl(int i) {
         if(getHasMenu(i)) {
-            return getVenues().get(i).menu.mobileUrl;
+            return getVenues().get(i).menu.url;
         } else {
             return null;
         }
     }
 
-    private Response getResponse() {
-        return response;
-    }
-
-    private List<Venues> getVenues() {
-        Response response = getResponse();
-
-        Collections.sort(response.venues, new Comparator<Venues>() {
-            @Override
-            public int compare(Venues venue1, Venues venue2) {
-                if (venue1.location.distance < venue2.location.distance) {
-                    return -1;
-                } else if (venue1.location.distance > venue2.location.distance) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            }
-        });
-
-        return response.venues;
-    }
-
-    // GETTERS
+    // PUBLIC GETTERS
 
     public LinkedList<String> getNames() {
         LinkedList<String> names = new LinkedList<>();
