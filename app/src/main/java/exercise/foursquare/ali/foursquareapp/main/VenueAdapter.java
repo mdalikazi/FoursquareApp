@@ -59,12 +59,22 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
 
     @Override
     public VenueViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.list_item, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.venue_list_item, parent, false);
         return new VenueViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(VenueViewHolder holder, int position) {
+    public void onBindViewHolder(final VenueViewHolder holder, int position) {
+        holder.getVenueItemContainer().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (holder.getVenueMap().getVisibility() == View.VISIBLE) {
+                    holder.getVenueMap().setVisibility(View.GONE);
+                } else {
+                    holder.getVenueMap().setVisibility(View.VISIBLE);
+                }
+            }
+        });
         holder.getVenueTitle().setText(mNames.get(position));
         holder.getVenueDistance().setText(String.valueOf(mDistances.get(position)));
         holder.getVenueAddress().setText(mAddresses.get(position));

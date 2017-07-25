@@ -54,14 +54,14 @@ public class MainActivity extends AppCompatActivity implements
     private RequestsProcessor mRequestsProcessor;
 
     // Views
+    private MenuItem mSearchMenuItem;
+    private Toolbar mSearchViewRevealToolbar;
+    private AppBarLayout mSearchViewRevealAppBar;
     private FloatingActionButton mLocationFab;
     private Snackbar mGettingLocationSnackbar;
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
     private TextView mEmptyListMessage;
-    private Toolbar mSearchViewRevealToolbar;
-    private AppBarLayout mSearchViewRevealAppBar;
-    private MenuItem mSearchMenuItem;
 
     @Override
     protected void onStart() {
