@@ -9,13 +9,6 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_main">
 
-    <ProgressBar
-        android:id="@+id/main_activity_progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone"/>
-
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,8 +20,16 @@
         android:id="@+id/main_activity_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
         android:scrollbarSize="@dimen/recycler_view_scrollbar_size"
         android:scrollbarStyle="insideInset"/>
+
+    <ProgressBar
+        android:id="@+id/main_activity_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/main_activity_empty_message"

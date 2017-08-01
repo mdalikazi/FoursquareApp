@@ -34,6 +34,7 @@ import android.widget.TextView;
 import exercise.foursquare.ali.foursquareapp.R;
 import exercise.foursquare.ali.foursquareapp.models.SearchResponse;
 import exercise.foursquare.ali.foursquareapp.network.RequestsProcessor;
+import exercise.foursquare.ali.foursquareapp.utils.AnimationUtils;
 import exercise.foursquare.ali.foursquareapp.utils.AppConstants;
 import exercise.foursquare.ali.foursquareapp.utils.FsLocationManager;
 

@@ -16,7 +16,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true">
 
         <TextView
             android:id="@+id/venue_title"
@@ -66,6 +67,7 @@
             android:layout_marginTop="10dp"
             android:layout_below="@+id/venue_phone"
             android:src="@mipmap/ic_launcher"
+            android:clickable="false"
             android:visibility="gone"/>
 
         <!--<FrameLayout

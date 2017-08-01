@@ -1,12 +1,14 @@
-package exercise.foursquare.ali.foursquareapp.main;
+package exercise.foursquare.ali.foursquareapp.utils;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.view.ViewGroup;
 
 import exercise.foursquare.ali.foursquareapp.R;
 
@@ -15,6 +17,10 @@ import exercise.foursquare.ali.foursquareapp.R;
  */
 
 public class AnimationUtils {
+
+    public AnimationUtils() {
+        super();
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static void circleReveal(Context context, final View myView, int posFromRight, boolean containsOverflow, final boolean isShow) {
@@ -55,5 +61,21 @@ public class AnimationUtils {
         }
 
         anim.start();
+    }
+
+    public static ValueAnimator valueAnimator(int start, int end, final View view) {
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(start, end);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                //Update Height
+                int value = (Integer) valueAnimator.getAnimatedValue();
+                ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+                layoutParams.height = value;
+                view.setLayoutParams(layoutParams);
+            }
+        });
+
+        return valueAnimator;
     }
 }

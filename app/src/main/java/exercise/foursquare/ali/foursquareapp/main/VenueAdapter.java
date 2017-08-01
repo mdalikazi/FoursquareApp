@@ -1,16 +1,20 @@
 package exercise.foursquare.ali.foursquareapp.main;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.location.Location;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import java.util.LinkedList;
 
 import exercise.foursquare.ali.foursquareapp.R;
 import exercise.foursquare.ali.foursquareapp.models.SearchResponse;
+import exercise.foursquare.ali.foursquareapp.utils.AnimationUtils;
 import exercise.foursquare.ali.foursquareapp.utils.AppConstants;
 
 /**
@@ -21,6 +25,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
     private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
 
     private Context mContext;
+    private int mInitialCardHeight;
     private LinkedList<String> mNames;
     private LinkedList<String> mPhones;
     private LinkedList<String> mAddresses;
@@ -55,6 +60,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
         mLocations = searchResponse.getLocations();
         mHaveMenus = searchResponse.getHaveMenus();
         mMenuUrls = searchResponse.getMenuMobileUrls();
+
     }
 
     @Override
@@ -68,13 +74,14 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
         holder.getVenueItemContainer().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (holder.getVenueMap().getVisibility() == View.VISIBLE) {
-                    holder.getVenueMap().setVisibility(View.GONE);
+                if (holder.getVenueMap().getVisibility() == View.GONE) {
+                    expandCard(v, holder.getVenueMap());
                 } else {
-                    holder.getVenueMap().setVisibility(View.VISIBLE);
+                    collapseCard(v, holder.getVenueMap());
                 }
             }
         });
+
         holder.getVenueTitle().setText(mNames.get(position));
         holder.getVenueDistance().setText(String.valueOf(mDistances.get(position)));
         holder.getVenueAddress().setText(mAddresses.get(position));
@@ -85,4 +92,46 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
     public int getItemCount() {
         return mNames.size();
     }
+
+    private void expandCard(final View view, final ImageView map) {
+        final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        view.measure(widthSpec, heightSpec);
+
+        mInitialCardHeight = view.getHeight();
+
+        map.setVisibility(View.VISIBLE);
+        ValueAnimator valueAnimator = AnimationUtils.valueAnimator(view.getHeight(), 1000, view);
+        valueAnimator.start();
+    }
+
+    private void collapseCard(final View view, final ImageView imageView) {
+        ValueAnimator valueAnimator = AnimationUtils.valueAnimator(view.getHeight(), mInitialCardHeight, view);
+
+        valueAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                //Height=0, but it set visibility to GONE
+                imageView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+
+        valueAnimator.start();
+    }
+
 }
