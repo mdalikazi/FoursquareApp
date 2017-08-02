@@ -8,7 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 
 import java.util.LinkedList;
 
@@ -20,7 +22,7 @@ import exercise.foursquare.ali.foursquareapp.utils.AppConstants;
 /**
  * Created by kazi_ on 8/4/2016.
  */
-public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
+public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implements OnMapReadyCallback {
 
     private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
 
@@ -60,7 +62,6 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
         mLocations = searchResponse.getLocations();
         mHaveMenus = searchResponse.getHaveMenus();
         mMenuUrls = searchResponse.getMenuMobileUrls();
-
     }
 
     @Override
@@ -93,20 +94,25 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
         return mNames.size();
     }
 
-    private void expandCard(final View view, final ImageView map) {
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+    }
+
+    private void expandCard(final View cardView, final View mapView) {
         final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        view.measure(widthSpec, heightSpec);
+        cardView.measure(widthSpec, heightSpec);
 
-        mInitialCardHeight = view.getHeight();
+        mInitialCardHeight = cardView.getHeight();
 
-        map.setVisibility(View.VISIBLE);
-        ValueAnimator valueAnimator = AnimationUtils.valueAnimator(view.getHeight(), 1000, view);
+        mapView.setVisibility(View.VISIBLE);
+        ValueAnimator valueAnimator = AnimationUtils.valueAnimator(cardView.getHeight(), 1000, cardView);
         valueAnimator.start();
     }
 
-    private void collapseCard(final View view, final ImageView imageView) {
-        ValueAnimator valueAnimator = AnimationUtils.valueAnimator(view.getHeight(), mInitialCardHeight, view);
+    private void collapseCard(final View cardView, final View mapView) {
+        ValueAnimator valueAnimator = AnimationUtils.valueAnimator(cardView.getHeight(), mInitialCardHeight, cardView);
 
         valueAnimator.addListener(new Animator.AnimatorListener() {
             @Override
@@ -117,7 +123,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> {
             @Override
             public void onAnimationEnd(Animator animator) {
                 //Height=0, but it set visibility to GONE
-                imageView.setVisibility(View.GONE);
+                mapView.setVisibility(View.GONE);
             }
 
             @Override

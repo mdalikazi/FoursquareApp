@@ -31,6 +31,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+
 import exercise.foursquare.ali.foursquareapp.R;
 import exercise.foursquare.ali.foursquareapp.models.SearchResponse;
 import exercise.foursquare.ali.foursquareapp.network.RequestsProcessor;
@@ -263,6 +266,13 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        Log.i(LOG_TAG, "onMapReady");
+
+
+    }
+
     public void checkLocationPermissionAndConnect() {
         Log.i(LOG_TAG, "checkLocationPermissionAndConnect");
         if(ContextCompat.checkSelfPermission(this, Manifest.permission_group.LOCATION) ==
@@ -274,17 +284,6 @@ public class MainActivity extends AppCompatActivity implements
             } else {
                 requestLocationPermission();
             }
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        Log.i(LOG_TAG, "onBackPressed");
-        // TODO: 17/7/17 close searchreveal with backpress then exit app
-        if (mSearchViewRevealAppBar.getVisibility() == View.VISIBLE) {
-            animateSearchView(false);
-        } else {
-            super.onBackPressed();
         }
     }
 
@@ -337,6 +336,17 @@ public class MainActivity extends AppCompatActivity implements
                 Log.d(LOG_TAG, "RESULT_CANCELED. Location disabled :(");
                 mFsLocationManager.disconnect();
             }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.i(LOG_TAG, "onBackPressed");
+        // TODO: 17/7/17 close searchreveal with backpress then exit app
+        if (mSearchViewRevealAppBar.getVisibility() == View.VISIBLE) {
+            animateSearchView(false);
+        } else {
+            super.onBackPressed();
         }
     }
 }
