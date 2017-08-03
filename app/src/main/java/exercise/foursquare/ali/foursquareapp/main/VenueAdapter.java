@@ -2,15 +2,19 @@ package exercise.foursquare.ali.foursquareapp.main;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
-import android.content.Context;
+import android.app.Activity;
 import android.location.Location;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.LinkedList;
 
@@ -26,7 +30,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
 
     private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
 
-    private Context mContext;
+    private Activity mActivity;
     private int mInitialCardHeight;
     private LinkedList<String> mNames;
     private LinkedList<String> mPhones;
@@ -36,8 +40,8 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
     private LinkedList<Boolean> mHaveMenus;
     private LinkedList<String> mMenuUrls;
 
-    public VenueAdapter(Context context) {
-        mContext = context;
+    public VenueAdapter(Activity activity) {
+        mActivity = activity;
         mNames = new LinkedList<>();
         mDistances = new LinkedList<>();
         mAddresses = new LinkedList<>();
@@ -66,7 +70,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
 
     @Override
     public VenueViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.venue_list_item, parent, false);
+        View view = LayoutInflater.from(mActivity).inflate(R.layout.venue_list_item, parent, false);
         return new VenueViewHolder(view);
     }
 
@@ -87,6 +91,8 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
         holder.getVenueDistance().setText(String.valueOf(mDistances.get(position)));
         holder.getVenueAddress().setText(mAddresses.get(position));
         holder.getVenuePhone().setText(mPhones.get(position));
+        holder.getVenueMap().onCreate(null);
+        holder.getVenueMap().getMapAsync(this);
     }
 
     @Override
@@ -96,7 +102,13 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
+        Log.i(LOG_TAG, "onMapReady");
+        // Add a marker in Sydney, Australia,
+        // and move the map's camera to the same location.
+        LatLng sydney = new LatLng(-33.852, 151.211);
+        googleMap.addMarker(new MarkerOptions().position(sydney)
+                .title("Marker in Sydney"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
     private void expandCard(final View cardView, final View mapView) {
@@ -105,7 +117,6 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
         cardView.measure(widthSpec, heightSpec);
 
         mInitialCardHeight = cardView.getHeight();
-
         mapView.setVisibility(View.VISIBLE);
         ValueAnimator valueAnimator = AnimationUtils.valueAnimator(cardView.getHeight(), 1000, cardView);
         valueAnimator.start();

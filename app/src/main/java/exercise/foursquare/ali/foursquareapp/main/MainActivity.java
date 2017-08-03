@@ -45,7 +45,8 @@ import static exercise.foursquare.ali.foursquareapp.R.id.main_activity_empty_mes
 
 public class MainActivity extends AppCompatActivity implements
         FsLocationManager.LocationUpdateListener,
-        RequestsProcessor.RequestResponseListener {
+        RequestsProcessor.RequestResponseListener,
+        OnMapReadyCallback {
 
     private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
 
@@ -266,13 +267,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        Log.i(LOG_TAG, "onMapReady");
-
-
-    }
-
     public void checkLocationPermissionAndConnect() {
         Log.i(LOG_TAG, "checkLocationPermissionAndConnect");
         if(ContextCompat.checkSelfPermission(this, Manifest.permission_group.LOCATION) ==
@@ -348,5 +342,10 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        Log.i(LOG_TAG, "onMapReady");
     }
 }
