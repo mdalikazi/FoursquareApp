@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -39,6 +40,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
     private LinkedList<Integer> mDistances;
     private LinkedList<Boolean> mHaveMenus;
     private LinkedList<String> mMenuUrls;
+    private MapView mMapView;
 
     public VenueAdapter(Activity activity) {
         mActivity = activity;
@@ -93,6 +95,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
         holder.getVenuePhone().setText(mPhones.get(position));
         holder.getVenueMap().onCreate(null);
         holder.getVenueMap().getMapAsync(this);
+        holder.getVenueMap().onResume();
     }
 
     @Override
@@ -106,8 +109,10 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
         // Add a marker in Sydney, Australia,
         // and move the map's camera to the same location.
         LatLng sydney = new LatLng(-33.852, 151.211);
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
         googleMap.addMarker(new MarkerOptions().position(sydney)
                 .title("Marker in Sydney"));
+        googleMap.animateCamera(CameraUpdateFactory.zoomIn());
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 

@@ -21,7 +21,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbarSize="@dimen/recycler_view_scrollbar_size"
-        android:scrollbarStyle="insideInset"/>
+        android:scrollbarStyle="insideInset"
+        android:nestedScrollingEnabled="true"/>
 
     <ProgressBar
         android:id="@+id/main_activity_progress_bar"

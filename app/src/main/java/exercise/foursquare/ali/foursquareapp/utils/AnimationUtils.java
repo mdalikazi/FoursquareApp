@@ -44,7 +44,7 @@ public class AnimationUtils {
             anim = ViewAnimationUtils.createCircularReveal(myView, cx, cy, (float) width, 0);
         }
 
-        anim.setDuration(400);
+        anim.setDuration(250);
         // make the view invisible when the animation is done
         anim.addListener(new AnimatorListenerAdapter() {
             @Override
