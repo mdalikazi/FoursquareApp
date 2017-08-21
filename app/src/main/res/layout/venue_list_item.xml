@@ -11,8 +11,7 @@
     android:animateLayoutChanges="true"
     android:orientation="vertical"
     app:cardUseCompatPadding="true"
-    app:cardElevation="@dimen/cardview_default_elevation"
-    app:contentPadding="@dimen/card_view_content_padding">
+    app:cardElevation="@dimen/cardview_default_elevation">
 
     <LinearLayout
         android:id="@+id/venue_details"
@@ -71,7 +70,7 @@
         <com.google.android.gms.maps.MapView
             android:id="@+id/venue_map"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="200dp"
             android:visibility="gone"/>
 
         <!--<Button

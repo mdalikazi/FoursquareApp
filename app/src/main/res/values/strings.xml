@@ -1,6 +1,7 @@
 <resources>
 
-    <string name="app_name">FoursquareApp</string>
+    <string name="app_name_release">FoursquareApp</string>
+    <string name="app_name_debug">FoursquareApp-DEBUG</string>
     <string name="param_lat_lang">%1$.1f,%2$.1f</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
