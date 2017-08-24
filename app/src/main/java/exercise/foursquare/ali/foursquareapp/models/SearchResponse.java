@@ -27,7 +27,7 @@ public class SearchResponse {
 
     public class Venues {
         String id;
-        public String name;
+        String name;
         Contact contact;
         Location location;
         List<Categories> categories = new ArrayList<>();

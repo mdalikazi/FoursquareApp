@@ -22,7 +22,6 @@ android {
         release {
             minifyEnabled false
             signingConfig signingConfigs.config
-            resValue "string", "app_name", "FoursquareApp"
             resValue "string", "google_maps_api_key", "AIzaSyC31ruACxBD52grhTZ0YhT31SuG5vFsNm8"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -30,7 +29,6 @@ android {
             minifyEnabled false
             applicationIdSuffix '.debug'
             versionNameSuffix '-DEBUG'
-            resValue "string", "app_name", "FoursquareApp-DEBUG"
             resValue "string", "google_maps_api_key", "AIzaSyC7TNrqUViaYtWE2Nykh0d9jIMmZdtmJs4"
         }
     }

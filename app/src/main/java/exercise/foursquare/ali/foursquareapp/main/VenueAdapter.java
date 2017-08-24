@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -33,6 +32,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
 
     private Activity mActivity;
     private int mInitialCardHeight;
+    private int mAdapterPosition;
     private LinkedList<String> mNames;
     private LinkedList<String> mPhones;
     private LinkedList<String> mAddresses;
@@ -40,7 +40,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
     private LinkedList<Integer> mDistances;
     private LinkedList<Boolean> mHaveMenus;
     private LinkedList<String> mMenuUrls;
-    private MapView mMapView;
+    private LinkedList<LatLng> mLatLngs;
 
     public VenueAdapter(Activity activity) {
         mActivity = activity;
@@ -51,6 +51,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
         mLocations = new LinkedList<>();
         mHaveMenus = new LinkedList<>();
         mMenuUrls = new LinkedList<>();
+        mLatLngs = new LinkedList<>();
     }
 
     public void setSearchResponse(SearchResponse searchResponse) {
@@ -61,6 +62,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
         mLocations.clear();
         mHaveMenus.clear();
         mMenuUrls.clear();
+        mLatLngs.clear();
         mNames = searchResponse.getNames();
         mDistances = searchResponse.getDistances();
         mAddresses = searchResponse.getFormattedAddresses();
@@ -78,6 +80,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
 
     @Override
     public void onBindViewHolder(final VenueViewHolder holder, int position) {
+        mAdapterPosition = holder.getAdapterPosition();
         holder.getVenueItemContainer().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,10 +92,15 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
             }
         });
 
-        holder.getVenueTitle().setText(mNames.get(position));
-        holder.getVenueDistance().setText(String.valueOf(mDistances.get(position)));
-        holder.getVenueAddress().setText(mAddresses.get(position));
-        holder.getVenuePhone().setText(mPhones.get(position));
+        holder.getVenueTitle().setText(mNames.get(mAdapterPosition));
+        holder.getVenueDistance().setText(String.valueOf(mDistances.get(mAdapterPosition)));
+        holder.getVenueAddress().setText(mAddresses.get(mAdapterPosition));
+        holder.getVenuePhone().setText(mPhones.get(mAdapterPosition));
+
+        double lat = mLocations.get(mAdapterPosition).getLatitude();
+        double lng = mLocations.get(mAdapterPosition).getLongitude();
+        mLatLngs.add(new LatLng(lat, lng));
+
         holder.getVenueMap().onCreate(null);
         holder.getVenueMap().getMapAsync(this);
         holder.getVenueMap().onResume();
@@ -106,14 +114,12 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.i(LOG_TAG, "onMapReady");
-        // Add a marker in Sydney, Australia,
-        // and move the map's camera to the same location.
-        LatLng sydney = new LatLng(-33.852, 151.211);
-        googleMap.getUiSettings().setZoomControlsEnabled(true);
-        googleMap.addMarker(new MarkerOptions().position(sydney)
-                .title("Marker in Sydney"));
+//        LatLng sydney = new LatLng(-33.852, 151.211);
+        LatLng locationMark = mLatLngs.get(mAdapterPosition);
+        googleMap.setMinZoomPreference(1);
+        googleMap.addMarker(new MarkerOptions().position(locationMark));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(locationMark));
         googleMap.animateCamera(CameraUpdateFactory.zoomIn());
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
     private void expandCard(final View cardView, final View mapView) {
