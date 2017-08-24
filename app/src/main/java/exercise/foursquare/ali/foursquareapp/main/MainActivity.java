@@ -16,7 +16,6 @@ import android.support.design.widget.Snackbar;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,9 +30,6 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-
 import exercise.foursquare.ali.foursquareapp.R;
 import exercise.foursquare.ali.foursquareapp.models.SearchResponse;
 import exercise.foursquare.ali.foursquareapp.network.RequestsProcessor;
@@ -46,7 +42,7 @@ import static exercise.foursquare.ali.foursquareapp.R.id.main_activity_empty_mes
 public class MainActivity extends AppCompatActivity implements
         FsLocationManager.LocationUpdateListener,
         RequestsProcessor.RequestResponseListener,
-        OnMapReadyCallback {
+        MenuItem.OnActionExpandListener {
 
     private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
 
@@ -168,19 +164,6 @@ public class MainActivity extends AppCompatActivity implements
                 return false;
             }
         });
-
-        MenuItemCompat.setOnActionExpandListener(mSearchMenuItem, new MenuItemCompat.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                animateSearchView(false);
-                return true;
-            }
-        });
     }
 
     @Override
@@ -197,6 +180,17 @@ public class MainActivity extends AppCompatActivity implements
                 mSearchMenuItem.expandActionView();
                 break;
         }
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionExpand(MenuItem menuItem) {
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+        animateSearchView(false);
         return true;
     }
 
@@ -342,10 +336,5 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        Log.i(LOG_TAG, "onMapReady");
     }
 }
