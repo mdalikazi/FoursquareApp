@@ -5,15 +5,15 @@ package exercise.foursquare.ali.foursquareapp.utils;
  */
 public class AppConstants {
 
-    //Foursquare
+    // Foursquare
     public static final String CLIENT_ID = "L31DQPOQFTTFD5VBCADTCUJDAVMA42XHJR0WDPYABXHX03N2";
     public static final String CLIENT_SECRET = "AKGCIU1ZSGLTF31R20O3DCUNJAT5IRMOPGPRK5FAEJ1LG4Y4";
     public static final String VERSION_PARAMTER = "20130815";
 
-    //Log tags
+    // Log tags
     public static final String LOG_TAG_QUERY = "Query";
 
-    //Permission requestCodes
+    // Permission requestCodes
     public static final int PERMISSION_ACCESS_FINE_LOCATION = 1;
     public static final int ENABLE_LOCATION_SETTINGS_DIALOG = 2;
 }

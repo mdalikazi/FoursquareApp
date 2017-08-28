@@ -16,7 +16,6 @@ import android.support.design.widget.Snackbar;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,6 +33,7 @@ import android.widget.TextView;
 import exercise.foursquare.ali.foursquareapp.R;
 import exercise.foursquare.ali.foursquareapp.models.SearchResponse;
 import exercise.foursquare.ali.foursquareapp.network.RequestsProcessor;
+import exercise.foursquare.ali.foursquareapp.utils.AnimationUtils;
 import exercise.foursquare.ali.foursquareapp.utils.AppConstants;
 import exercise.foursquare.ali.foursquareapp.utils.FsLocationManager;
 
@@ -41,7 +41,8 @@ import static exercise.foursquare.ali.foursquareapp.R.id.main_activity_empty_mes
 
 public class MainActivity extends AppCompatActivity implements
         FsLocationManager.LocationUpdateListener,
-        RequestsProcessor.RequestResponseListener {
+        RequestsProcessor.RequestResponseListener,
+        MenuItem.OnActionExpandListener {
 
     private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
 
@@ -54,14 +55,14 @@ public class MainActivity extends AppCompatActivity implements
     private RequestsProcessor mRequestsProcessor;
 
     // Views
+    private MenuItem mSearchMenuItem;
+    private Toolbar mSearchViewRevealToolbar;
+    private AppBarLayout mSearchViewRevealAppBar;
     private FloatingActionButton mLocationFab;
     private Snackbar mGettingLocationSnackbar;
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
     private TextView mEmptyListMessage;
-    private Toolbar mSearchViewRevealToolbar;
-    private AppBarLayout mSearchViewRevealAppBar;
-    private MenuItem mSearchMenuItem;
 
     @Override
     protected void onStart() {
@@ -163,19 +164,6 @@ public class MainActivity extends AppCompatActivity implements
                 return false;
             }
         });
-
-        MenuItemCompat.setOnActionExpandListener(mSearchMenuItem, new MenuItemCompat.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                animateSearchView(false);
-                return true;
-            }
-        });
     }
 
     @Override
@@ -192,6 +180,17 @@ public class MainActivity extends AppCompatActivity implements
                 mSearchMenuItem.expandActionView();
                 break;
         }
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionExpand(MenuItem menuItem) {
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+        animateSearchView(false);
         return true;
     }
 
@@ -276,17 +275,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        Log.i(LOG_TAG, "onBackPressed");
-        // TODO: 17/7/17 close searchreveal with backpress then exit app
-        if (mSearchViewRevealAppBar.getVisibility() == View.VISIBLE) {
-            animateSearchView(false);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
     private void showLocationPermissionExplanation() {
         Log.i(LOG_TAG, "showLocationPermissionExplanation");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -336,6 +324,17 @@ public class MainActivity extends AppCompatActivity implements
                 Log.d(LOG_TAG, "RESULT_CANCELED. Location disabled :(");
                 mFsLocationManager.disconnect();
             }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.i(LOG_TAG, "onBackPressed");
+        // TODO: 17/7/17 close searchreveal with backpress then exit app
+        if (mSearchViewRevealAppBar.getVisibility() == View.VISIBLE) {
+            animateSearchView(false);
+        } else {
+            super.onBackPressed();
         }
     }
 }

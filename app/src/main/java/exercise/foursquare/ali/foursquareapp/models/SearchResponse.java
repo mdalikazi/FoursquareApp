@@ -1,6 +1,6 @@
 package exercise.foursquare.ali.foursquareapp.models;
 
-import android.location.LocationManager;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +27,7 @@ public class SearchResponse {
 
     public class Venues {
         String id;
-        public String name;
+        String name;
         Contact contact;
         Location location;
         List<Categories> categories = new ArrayList<>();
@@ -216,14 +216,11 @@ public class SearchResponse {
         return formattedAddresses;
     }
 
-    public LinkedList<android.location.Location> getLocations() {
-        LinkedList<android.location.Location> latLangs =  new LinkedList<>();
-        android.location.Location eachLocation = new android.location.Location(LocationManager.GPS_PROVIDER);
+    public LinkedList<LatLng> getLocations() {
+        LinkedList<LatLng> latLangs =  new LinkedList<>();
         for(int i = 0; i < getVenues().size(); i++) {
-            eachLocation.setLatitude(getLat(i));
-            eachLocation.setLongitude(getLang(i));
+            LatLng eachLocation = new LatLng(getLat(i), getLang(i));
             latLangs.add(eachLocation);
-            eachLocation.reset();
         }
         return latLangs;
     }

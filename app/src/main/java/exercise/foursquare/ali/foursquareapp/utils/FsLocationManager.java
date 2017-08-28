@@ -55,6 +55,10 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
                 .build();
     }
 
+    /*private void checkGooglePlayServices() {
+        GooglePlayServicesNotAvailableException
+    }*/
+
     public void checkLocationSettings() {
         Log.i(LOG_TAG, "checkLocationSettings");
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
