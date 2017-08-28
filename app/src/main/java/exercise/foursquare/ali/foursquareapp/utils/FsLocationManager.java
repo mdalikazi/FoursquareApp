@@ -6,6 +6,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -37,6 +38,7 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
     private LocationRequest mLocationRequest;
     private FusedLocationProviderApi mFusedLocationProviderApi;
     private LocationUpdateListener mLocationUpdateListener;
+    private Snackbar mSnackbar;
 
     public FsLocationManager(Activity activity, LocationUpdateListener locationUpdateListener) {
         Log.i(LOG_TAG, "new FsLocationManager");
@@ -53,6 +55,10 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+    }
+
+    public void setSnackbar(Snackbar snackbar) {
+        mSnackbar = snackbar;
     }
 
     /*private void checkGooglePlayServices() {
@@ -110,6 +116,9 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
         Log.i(LOG_TAG, "Disconnect");
         if (mApiClient != null && (mApiClient.isConnected() || mApiClient.isConnecting())) {
             try {
+                if (mSnackbar.isShown()) {
+                    mSnackbar.dismiss();
+                }
                 mApiClient.disconnect();
                 removeLocationUpdates();
             } catch (IllegalStateException e) {
@@ -121,6 +130,9 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
     public void requestLocationUpdates() {
         Log.i(LOG_TAG, "requestLocationUpdates");
         try {
+            if (!mSnackbar.isShown()) {
+                mSnackbar.show();
+            }
             mFusedLocationProviderApi.requestLocationUpdates(mApiClient, mLocationRequest, this);
         } catch (SecurityException e) {
             Log.d(LOG_TAG, "Security Exception with location permission: " + e.getMessage());
@@ -168,6 +180,9 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
     @Override
     public void onLocationChanged(Location location) {
         Log.i(LOG_TAG, "onLocationUpdate");
+        if (mSnackbar.isShown()) {
+            mSnackbar.dismiss();
+        }
         mLocationUpdateListener.onLocationUpdate(location);
     }
 

@@ -4,7 +4,7 @@
     <string name="param_lat_lang">%1$.1f,%2$.1f</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
-    <string name="snackbar_message_getting_your_location">Getting your location...</string>
+    <string name="snackbar_message_fetching_your_location">Fetching your location...</string>
     <string name="snackbar_message_location_unavailable">Location not available!</string>
     <string name="menu_search_title">Search</string>
     <string name="menu_search_hint">Coffee, pizza, chinese?</string>

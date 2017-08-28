@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.ActivityCompat;
@@ -58,8 +57,7 @@ public class MainActivity extends AppCompatActivity implements
     private MenuItem mSearchMenuItem;
     private Toolbar mSearchViewRevealToolbar;
     private AppBarLayout mSearchViewRevealAppBar;
-    private FloatingActionButton mLocationFab;
-    private Snackbar mGettingLocationSnackbar;
+//    private FloatingActionButton mLocationFab;
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
     private TextView mEmptyListMessage;
@@ -69,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onStart();
         Log.i(LOG_TAG, "onStart");
         mFsLocationManager = new FsLocationManager(this, this);
+        initSnackbar();
     }
 
     @Override
@@ -79,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mLocationFab = (FloatingActionButton) findViewById(R.id.fab_location);
+//        mLocationFab = (FloatingActionButton) findViewById(R.id.fab_location);
         mRecyclerView = (RecyclerView) findViewById(R.id.main_activity_recycler_view);
         mEmptyListMessage = (TextView) findViewById(main_activity_empty_message);
         mProgressBar = (ProgressBar) findViewById(R.id.main_activity_progress_bar);
@@ -93,25 +92,23 @@ public class MainActivity extends AppCompatActivity implements
         mRecyclerView.setAdapter(mVenueAdapter);
         showEmptyMesssage(true);
 
-        mGettingLocationSnackbar = Snackbar.make(mLocationFab, getString(R.string.snackbar_message_getting_your_location), Snackbar.LENGTH_INDEFINITE)
-                .setAction(getString(R.string.cancel), new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mGettingLocationSnackbar.dismiss();
-                        mFsLocationManager.disconnect();
-                    }
-                });
+        mRequestsProcessor = new RequestsProcessor(this, this);
+    }
 
-        mLocationFab.setVisibility(View.GONE);
-        mLocationFab.setOnClickListener(new View.OnClickListener() {
+    private void initSnackbar() {
+        final Snackbar gettingLocationSnackbar = Snackbar.make(
+                mRecyclerView,
+                getString(R.string.snackbar_message_fetching_your_location),
+                Snackbar.LENGTH_INDEFINITE);
+
+        gettingLocationSnackbar.setAction(getString(R.string.cancel), new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mGettingLocationSnackbar.show();
-                checkLocationPermissionAndConnect();
+                gettingLocationSnackbar.dismiss();
             }
         });
 
-        mRequestsProcessor = new RequestsProcessor(this, this);
+        mFsLocationManager.setSnackbar(gettingLocationSnackbar);
     }
 
     private void showEmptyMesssage(boolean show) {
@@ -253,7 +250,6 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLocationUpdate(Location location) {
-        mGettingLocationSnackbar.dismiss();
         mUserLocationLat = location.getLatitude();
         mUserLocationLng = location.getLongitude();
         if (mSearchSubmitted && mSearchQuery != null && !mSearchQuery.isEmpty()) {
@@ -304,7 +300,6 @@ public class MainActivity extends AppCompatActivity implements
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mFsLocationManager.connect();
                 } else {
-                    mGettingLocationSnackbar.dismiss();
                     mFsLocationManager.disconnect();
                 }
                 break;
@@ -318,8 +313,8 @@ public class MainActivity extends AppCompatActivity implements
         if (requestCode == AppConstants.ENABLE_LOCATION_SETTINGS_DIALOG) {
             if (resultCode == Activity.RESULT_OK) {
                 Log.d(LOG_TAG, "RESULT_OK. Location enabled.");
-//                mFsLocationManager.requestLocationUpdates();
-                mFsLocationManager.getLastKnownLocation();
+                mFsLocationManager.requestLocationUpdates();
+//                mFsLocationManager.getLastKnownLocation();
             } else {
                 Log.d(LOG_TAG, "RESULT_CANCELED. Location disabled :(");
                 mFsLocationManager.disconnect();
