@@ -3,9 +3,8 @@ package exercise.foursquare.ali.foursquareapp.main;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
-import android.location.Location;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +35,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
     private LinkedList<String> mNames;
     private LinkedList<String> mPhones;
     private LinkedList<String> mAddresses;
-    private LinkedList<Location> mLocations;
+    private LinkedList<LatLng> mLocations;
     private LinkedList<Integer> mDistances;
     private LinkedList<Boolean> mHaveMenus;
     private LinkedList<String> mMenuUrls;
@@ -94,16 +93,29 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
 
         holder.getVenueTitle().setText(mNames.get(mAdapterPosition));
         holder.getVenueDistance().setText(String.valueOf(mDistances.get(mAdapterPosition)));
-        holder.getVenueAddress().setText(mAddresses.get(mAdapterPosition));
-        holder.getVenuePhone().setText(mPhones.get(mAdapterPosition));
 
-        double lat = mLocations.get(mAdapterPosition).getLatitude();
-        double lng = mLocations.get(mAdapterPosition).getLongitude();
-        mLatLngs.add(new LatLng(lat, lng));
+        if (mAddresses.get(mAdapterPosition) != null) {
+            holder.getVenueAddress().setText(mAddresses.get(mAdapterPosition));
+        } else {
+            holder.getVenueAddress().setVisibility(View.GONE);
+        }
 
-        holder.getVenueMap().onCreate(null);
-        holder.getVenueMap().getMapAsync(this);
-        holder.getVenueMap().onResume();
+        if (mPhones.get(mAdapterPosition) != null) {
+            holder.getVenuePhone().setText(mPhones.get(mAdapterPosition));
+        } else {
+            holder.getVenueMap().setVisibility(View.GONE);
+        }
+
+        if (mLocations.get(mAdapterPosition) != null) {
+            double lat = mLocations.get(mAdapterPosition).latitude;
+            double lng = mLocations.get(mAdapterPosition).longitude;
+            mLatLngs.add(new LatLng(lat, lng));
+            holder.getVenueMap().onCreate(null);
+            holder.getVenueMap().getMapAsync(this);
+            holder.getVenueMap().onResume();
+        } else {
+            Snackbar.make(holder.getVenueItemContainer(), R.string.snackbar_message_location_unavailable, Snackbar.LENGTH_SHORT);
+        }
     }
 
     @Override
@@ -113,13 +125,13 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.i(LOG_TAG, "onMapReady");
 //        LatLng sydney = new LatLng(-33.852, 151.211);
         LatLng locationMark = mLatLngs.get(mAdapterPosition);
-        googleMap.setMinZoomPreference(1);
+        googleMap.setMinZoomPreference(15);
+//        googleMap.setMyLocationEnabled(true);
         googleMap.addMarker(new MarkerOptions().position(locationMark));
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(20));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(locationMark));
-        googleMap.animateCamera(CameraUpdateFactory.zoomIn());
     }
 
     private void expandCard(final View cardView, final View mapView) {
