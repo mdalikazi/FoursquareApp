@@ -1,6 +1,8 @@
 package exercise.foursquare.ali.foursquareapp.utils;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.location.Location;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -55,15 +58,30 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+        checkGooglePlayServices();
     }
 
     public void setSnackbar(Snackbar snackbar) {
         mSnackbar = snackbar;
     }
 
-    /*private void checkGooglePlayServices() {
-        GooglePlayServicesNotAvailableException
-    }*/
+    private void checkGooglePlayServices() {
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int googlePlayServicesStatus = googleApiAvailability.isGooglePlayServicesAvailable(mActivityContext);
+        if (googlePlayServicesStatus == ConnectionResult.SUCCESS) {
+            Log.d(LOG_TAG, "googlePlayServicesStatus == ConnectionResult.SUCCESS");
+        } else {
+            Dialog updateDialog = googleApiAvailability.getErrorDialog(mActivityContext, googlePlayServicesStatus, 0);
+            updateDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialogInterface) {
+                    dialogInterface.dismiss();
+                    mActivityContext.finish();
+                }
+            });
+            updateDialog.show();
+        }
+    }
 
     public void checkLocationSettings() {
         Log.i(LOG_TAG, "checkLocationSettings");
@@ -174,7 +192,7 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.i(LOG_TAG, "onConnectionFailed. result: " + connectionResult.getErrorMessage());
+        Log.w(LOG_TAG, "onConnectionFailed. result: " + connectionResult.getErrorMessage());
     }
 
     @Override
