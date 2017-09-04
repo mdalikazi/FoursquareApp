@@ -1,6 +1,7 @@
 package exercise.foursquare.ali.foursquareapp.utils;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.location.Location;
@@ -70,12 +71,15 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
         if (googlePlayServicesStatus == ConnectionResult.SUCCESS) {
             Log.d(LOG_TAG, "googlePlayServicesStatus == ConnectionResult.SUCCESS");
         } else {
-            googleApiAvailability.showErrorDialogFragment(mActivityContext, googlePlayServicesStatus, 0, new DialogInterface.OnCancelListener() {
+            Dialog updateDialog = googleApiAvailability.getErrorDialog(mActivityContext, googlePlayServicesStatus, 0);
+            updateDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialogInterface) {
                     dialogInterface.dismiss();
+                    mActivityContext.finish();
                 }
             });
+            updateDialog.show();
         }
     }
 
