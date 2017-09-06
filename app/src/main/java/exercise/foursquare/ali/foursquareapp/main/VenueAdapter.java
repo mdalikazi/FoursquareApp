@@ -3,7 +3,6 @@ package exercise.foursquare.ali.foursquareapp.main;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
-import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -34,7 +33,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
 
     private Activity mActivity;
     private int mInitialCardHeight;
-    private int mAdapterPosition;
+    private LatLng mLatLngLocationMark;
     private LinkedList<String> mNames;
     private LinkedList<String> mPhones;
     private LinkedList<String> mAddresses;
@@ -82,11 +81,11 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
 
     @Override
     public void onBindViewHolder(final VenueViewHolder holder, int position) {
-        mAdapterPosition = holder.getAdapterPosition();
+        int adapterPosition = holder.getAdapterPosition();
 
-        if (mLocations.get(mAdapterPosition) != null) {
-            double lat = mLocations.get(mAdapterPosition).latitude;
-            double lng = mLocations.get(mAdapterPosition).longitude;
+        if (mLocations.get(adapterPosition) != null) {
+            double lat = mLocations.get(adapterPosition).latitude;
+            double lng = mLocations.get(adapterPosition).longitude;
             mLatLngs.add(new LatLng(lat, lng));
         } else {
             Snackbar.make(holder.getVenueItemContainer(), R.string.snackbar_message_location_unavailable, Snackbar.LENGTH_SHORT);
@@ -96,24 +95,24 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
             @Override
             public void onClick(View v) {
                 if (holder.getVenueMap().getVisibility() == View.GONE) {
-                    expandCard(v, holder.getVenueMap(), mLatLngs.get(mAdapterPosition));
+                    expandCard(v, holder.getVenueMap(), mLatLngs.get(holder.getLayoutPosition()));
                 } else {
                     collapseCard(v, holder.getVenueMap());
                 }
             }
         });
 
-        holder.getVenueTitle().setText(mNames.get(mAdapterPosition));
-        holder.getVenueDistance().setText(String.valueOf(mDistances.get(mAdapterPosition)));
+        holder.getVenueTitle().setText(mNames.get(adapterPosition));
+        holder.getVenueDistance().setText(String.valueOf(mDistances.get(adapterPosition)));
 
-        if (mAddresses.get(mAdapterPosition) != null) {
-            holder.getVenueAddress().setText(mAddresses.get(mAdapterPosition));
+        if (mAddresses.get(adapterPosition) != null) {
+            holder.getVenueAddress().setText(mAddresses.get(adapterPosition));
         } else {
             holder.getVenueAddress().setVisibility(View.GONE);
         }
 
-        if (mPhones.get(mAdapterPosition) != null) {
-            holder.getVenuePhone().setText(mPhones.get(mAdapterPosition));
+        if (mPhones.get(adapterPosition) != null) {
+            holder.getVenuePhone().setText(mPhones.get(adapterPosition));
         } else {
             holder.getVenuePhone().setVisibility(View.GONE);
         }
@@ -127,15 +126,16 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.i(LOG_TAG, "onMapReady");
-        LatLng locationMark = mLatLngs.get(mAdapterPosition);
         googleMap.setMinZoomPreference(15);
+//         TODO needs location permission check
 //        googleMap.setMyLocationEnabled(true);
-        googleMap.addMarker(new MarkerOptions().position(locationMark));
+        googleMap.addMarker(new MarkerOptions().position(mLatLngLocationMark));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(20));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(locationMark));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(mLatLngLocationMark));
     }
 
     private void expandCard(final View cardView, final MapView mapView, final LatLng latLng) {
+        mLatLngLocationMark = latLng;
         final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         cardView.measure(widthSpec, heightSpec);
@@ -151,9 +151,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
 
             @Override
             public void onAnimationEnd(Animator animator) {
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("Location", latLng);
-                mapView.onCreate(bundle);
+                mapView.onCreate(null);
                 mapView.getMapAsync(VenueAdapter.this);
                 mapView.onResume();
             }
