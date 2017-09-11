@@ -10,5 +10,8 @@
     <string name="menu_search_hint">Coffee, pizza, chinese?</string>
     <string name="main_activity_empty_list_message">What are you looking for?\nCoffee, lunch or pizza - whatever it is search and see results in your area.</string>
     <string name="permission_message_location">Please allow Location services to use this app.</string>
+    <string name="venue_list_item_placeholder_address">Address is missing</string>
+    <string name="venue_list_item_placeholder_phone">Phone is missing</string>
+    <string name="venue_list_item_placeholder_coordinates">Co-ordindates are missing</string>
 
 </resources>

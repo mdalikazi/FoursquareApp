@@ -5,12 +5,14 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -31,7 +33,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
 
     private Activity mActivity;
     private int mInitialCardHeight;
-    private int mAdapterPosition;
+    private LatLng mLatLngLocationMark;
     private LinkedList<String> mNames;
     private LinkedList<String> mPhones;
     private LinkedList<String> mAddresses;
@@ -79,42 +81,45 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
 
     @Override
     public void onBindViewHolder(final VenueViewHolder holder, int position) {
-        mAdapterPosition = holder.getAdapterPosition();
+        int adapterPosition = holder.getAdapterPosition();
+
+        if (mLocations.get(adapterPosition) != null) {
+            double lat = mLocations.get(adapterPosition).latitude;
+            double lng = mLocations.get(adapterPosition).longitude;
+            mLatLngs.add(new LatLng(lat, lng));
+        } else {
+            Snackbar.make(holder.getVenueItemContainer(), R.string.snackbar_message_location_unavailable, Snackbar.LENGTH_SHORT);
+        }
+
         holder.getVenueItemContainer().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (holder.getVenueMap().getVisibility() == View.GONE) {
-                    expandCard(v, holder.getVenueMap());
+                    expandCard(v, holder.getVenueMap(), mLatLngs.get(holder.getLayoutPosition()));
                 } else {
                     collapseCard(v, holder.getVenueMap());
                 }
             }
         });
 
-        holder.getVenueTitle().setText(mNames.get(mAdapterPosition));
-        holder.getVenueDistance().setText(String.valueOf(mDistances.get(mAdapterPosition)));
+        holder.getVenueTitle().setText(mNames.get(adapterPosition));
+        holder.getVenueDistance().setText(String.valueOf(mDistances.get(adapterPosition)));
 
-        if (mAddresses.get(mAdapterPosition) != null) {
-            holder.getVenueAddress().setText(mAddresses.get(mAdapterPosition));
-        } else {
-            holder.getVenueAddress().setVisibility(View.GONE);
+        if (mAddresses.get(adapterPosition) != null) {
+            holder.getVenueAddress().setText(mAddresses.get(adapterPosition));
         }
 
-        if (mPhones.get(mAdapterPosition) != null) {
-            holder.getVenuePhone().setText(mPhones.get(mAdapterPosition));
-        } else {
-            holder.getVenueMap().setVisibility(View.GONE);
+        if (mPhones.get(adapterPosition) != null) {
+            holder.getVenuePhone().setText(mPhones.get(adapterPosition));
         }
 
-        if (mLocations.get(mAdapterPosition) != null) {
-            double lat = mLocations.get(mAdapterPosition).latitude;
-            double lng = mLocations.get(mAdapterPosition).longitude;
+        if (mLocations.get(adapterPosition) != null) {
+            holder.getVenueMapPlaceholder().setVisibility(View.GONE);
+            double lat = mLocations.get(adapterPosition).latitude;
+            double lng = mLocations.get(adapterPosition).longitude;
             mLatLngs.add(new LatLng(lat, lng));
-            holder.getVenueMap().onCreate(null);
-            holder.getVenueMap().getMapAsync(this);
-            holder.getVenueMap().onResume();
         } else {
-            Snackbar.make(holder.getVenueItemContainer(), R.string.snackbar_message_location_unavailable, Snackbar.LENGTH_SHORT);
+            holder.getVenueMapPlaceholder().setVisibility(View.VISIBLE);
         }
     }
 
@@ -125,16 +130,17 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-//        LatLng sydney = new LatLng(-33.852, 151.211);
-        LatLng locationMark = mLatLngs.get(mAdapterPosition);
+        Log.i(LOG_TAG, "onMapReady");
         googleMap.setMinZoomPreference(15);
+//         TODO needs location permission check
 //        googleMap.setMyLocationEnabled(true);
-        googleMap.addMarker(new MarkerOptions().position(locationMark));
+        googleMap.addMarker(new MarkerOptions().position(mLatLngLocationMark));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(20));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(locationMark));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(mLatLngLocationMark));
     }
 
-    private void expandCard(final View cardView, final View mapView) {
+    private void expandCard(final View cardView, final MapView mapView, final LatLng latLng) {
+        mLatLngLocationMark = latLng;
         final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         cardView.measure(widthSpec, heightSpec);
@@ -142,6 +148,29 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
         mInitialCardHeight = cardView.getHeight();
         mapView.setVisibility(View.VISIBLE);
         ValueAnimator valueAnimator = AnimationUtils.valueAnimator(cardView.getHeight(), 1000, cardView);
+        valueAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                mapView.onCreate(null);
+                mapView.getMapAsync(VenueAdapter.this);
+                mapView.onResume();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
         valueAnimator.start();
     }
 

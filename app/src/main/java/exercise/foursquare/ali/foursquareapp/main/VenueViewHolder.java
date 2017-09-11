@@ -19,6 +19,7 @@ public class VenueViewHolder extends RecyclerView.ViewHolder {
     private TextView mVenueAddress;
     private TextView mVenuePhone;
     private MapView mVenueMap;
+    private TextView mVenueMapPlaceholder;
     //private Button mGetDirections;
 
     public VenueViewHolder(View itemView) {
@@ -30,6 +31,7 @@ public class VenueViewHolder extends RecyclerView.ViewHolder {
         mVenueAddress = (TextView) itemView.findViewById(R.id.venue_address);
         mVenuePhone = (TextView) itemView.findViewById(R.id.venue_phone);
         mVenueMap = (MapView) itemView.findViewById(R.id.venue_map);
+        mVenueMapPlaceholder = (TextView) itemView.findViewById(R.id.venue_map_placeholder);
         //mGetDirections = (Button) itemView.findViewById(R.id.btn_get_directions);
     }
 
@@ -55,6 +57,10 @@ public class VenueViewHolder extends RecyclerView.ViewHolder {
 
     public MapView getVenueMap() {
         return mVenueMap;
+    }
+
+    public TextView getVenueMapPlaceholder() {
+        return mVenueMapPlaceholder;
     }
 
     /*public Button getButtonDirections() {
