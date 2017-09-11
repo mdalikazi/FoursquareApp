@@ -107,14 +107,19 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
 
         if (mAddresses.get(adapterPosition) != null) {
             holder.getVenueAddress().setText(mAddresses.get(adapterPosition));
-        } else {
-            holder.getVenueAddress().setVisibility(View.GONE);
         }
 
         if (mPhones.get(adapterPosition) != null) {
             holder.getVenuePhone().setText(mPhones.get(adapterPosition));
+        }
+
+        if (mLocations.get(adapterPosition) != null) {
+            holder.getVenueMapPlaceholder().setVisibility(View.GONE);
+            double lat = mLocations.get(adapterPosition).latitude;
+            double lng = mLocations.get(adapterPosition).longitude;
+            mLatLngs.add(new LatLng(lat, lng));
         } else {
-            holder.getVenuePhone().setVisibility(View.GONE);
+            holder.getVenueMapPlaceholder().setVisibility(View.VISIBLE);
         }
     }
 
