@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements
     private MenuItem mSearchMenuItem;
     private Toolbar mSearchViewRevealToolbar;
     private AppBarLayout mSearchViewRevealAppBar;
-//    private FloatingActionButton mLocationFab;
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
     private TextView mEmptyListMessage;
@@ -78,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        mLocationFab = (FloatingActionButton) findViewById(R.id.fab_location);
         mRecyclerView = (RecyclerView) findViewById(R.id.main_activity_recycler_view);
         mEmptyListMessage = (TextView) findViewById(main_activity_empty_message);
         mProgressBar = (ProgressBar) findViewById(R.id.main_activity_progress_bar);
@@ -304,7 +302,6 @@ public class MainActivity extends AppCompatActivity implements
                 }
                 break;
         }
-
     }
 
     @Override

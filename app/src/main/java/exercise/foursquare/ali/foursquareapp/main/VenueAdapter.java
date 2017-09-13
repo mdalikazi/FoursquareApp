@@ -129,6 +129,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
             @Override
             public void onClick(View view) {
                 Log.i(LOG_TAG, "getButtonDirections onClick");
+                
             }
         });
     }
