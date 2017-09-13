@@ -2,6 +2,7 @@ package exercise.foursquare.ali.foursquareapp.main;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.MapView;
@@ -20,7 +21,7 @@ public class VenueViewHolder extends RecyclerView.ViewHolder {
     private TextView mVenuePhone;
     private MapView mVenueMap;
     private TextView mVenueMapPlaceholder;
-    //private Button mGetDirections;
+    private Button mGetDirections;
 
     public VenueViewHolder(View itemView) {
         super(itemView);
@@ -32,7 +33,7 @@ public class VenueViewHolder extends RecyclerView.ViewHolder {
         mVenuePhone = (TextView) itemView.findViewById(R.id.venue_phone);
         mVenueMap = (MapView) itemView.findViewById(R.id.venue_map);
         mVenueMapPlaceholder = (TextView) itemView.findViewById(R.id.venue_map_placeholder);
-        //mGetDirections = (Button) itemView.findViewById(R.id.btn_get_directions);
+        mGetDirections = (Button) itemView.findViewById(R.id.venue_get_directions);
     }
 
     public View getVenueItemContainer() {
@@ -63,7 +64,7 @@ public class VenueViewHolder extends RecyclerView.ViewHolder {
         return mVenueMapPlaceholder;
     }
 
-    /*public Button getButtonDirections() {
+    public Button getButtonDirections() {
         return mGetDirections;
-    }*/
+    }
 }

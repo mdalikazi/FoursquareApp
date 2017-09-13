@@ -87,18 +87,18 @@
                 android:text="@string/venue_list_item_placeholder_coordinates"
                 android:visibility="gone"/>
 
+            <Button
+                android:id="@+id/venue_get_directions"
+                style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:text="@string/venue_list_item_button_get_directions"
+                android:visibility="gone"/>
+
         </RelativeLayout>
-
-
-        <!--<Button
-            android:id="@+id/venue_get_directions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|right"
-            android:text="Get Directions"
-            android:textSize="10dp"
-            android:padding="0dp"
-            style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"/>-->
 
     </LinearLayout>
 
