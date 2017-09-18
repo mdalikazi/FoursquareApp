@@ -13,5 +13,6 @@
     <string name="venue_list_item_placeholder_address">Address is missing</string>
     <string name="venue_list_item_placeholder_phone">Phone is missing</string>
     <string name="venue_list_item_placeholder_coordinates">Co-ordindates are missing</string>
+    <string name="venue_list_item_button_get_directions">Get Directions</string>
 
 </resources>

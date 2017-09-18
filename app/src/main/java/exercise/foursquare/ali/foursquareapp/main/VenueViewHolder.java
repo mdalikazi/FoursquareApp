@@ -20,19 +20,17 @@ public class VenueViewHolder extends RecyclerView.ViewHolder {
     private TextView mVenuePhone;
     private MapView mVenueMap;
     private TextView mVenueMapPlaceholder;
-    //private Button mGetDirections;
 
     public VenueViewHolder(View itemView) {
         super(itemView);
 
         mVenueItemContainer = itemView;
-        mVenueTitle = (TextView) itemView.findViewById(R.id.venue_title);
-        mVenueDistance = (TextView) itemView.findViewById(R.id.venue_distance);
-        mVenueAddress = (TextView) itemView.findViewById(R.id.venue_address);
-        mVenuePhone = (TextView) itemView.findViewById(R.id.venue_phone);
-        mVenueMap = (MapView) itemView.findViewById(R.id.venue_map);
-        mVenueMapPlaceholder = (TextView) itemView.findViewById(R.id.venue_map_placeholder);
-        //mGetDirections = (Button) itemView.findViewById(R.id.btn_get_directions);
+        mVenueTitle = itemView.findViewById(R.id.venue_title);
+        mVenueDistance = itemView.findViewById(R.id.venue_distance);
+        mVenueAddress = itemView.findViewById(R.id.venue_address);
+        mVenuePhone = itemView.findViewById(R.id.venue_phone);
+        mVenueMap = itemView.findViewById(R.id.venue_map);
+        mVenueMapPlaceholder = itemView.findViewById(R.id.venue_map_placeholder);
     }
 
     public View getVenueItemContainer() {
@@ -62,8 +60,4 @@ public class VenueViewHolder extends RecyclerView.ViewHolder {
     public TextView getVenueMapPlaceholder() {
         return mVenueMapPlaceholder;
     }
-
-    /*public Button getButtonDirections() {
-        return mGetDirections;
-    }*/
 }

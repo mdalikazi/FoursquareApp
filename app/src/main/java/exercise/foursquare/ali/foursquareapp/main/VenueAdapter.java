@@ -120,6 +120,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
             mLatLngs.add(new LatLng(lat, lng));
         } else {
             holder.getVenueMapPlaceholder().setVisibility(View.VISIBLE);
+            holder.getVenueMap().setVisibility(View.GONE);
         }
     }
 
@@ -131,12 +132,14 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.i(LOG_TAG, "onMapReady");
-        googleMap.setMinZoomPreference(15);
+        googleMap.setMinZoomPreference(8);
 //         TODO needs location permission check
 //        googleMap.setMyLocationEnabled(true);
+        googleMap.getUiSettings().setMapToolbarEnabled(true);
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
         googleMap.addMarker(new MarkerOptions().position(mLatLngLocationMark));
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(20));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(mLatLngLocationMark));
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(20));
     }
 
     private void expandCard(final View cardView, final MapView mapView, final LatLng latLng) {
@@ -156,9 +159,13 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
 
             @Override
             public void onAnimationEnd(Animator animator) {
-                mapView.onCreate(null);
-                mapView.getMapAsync(VenueAdapter.this);
-                mapView.onResume();
+//                getDirections.setVisibility(View.VISIBLE);
+                if (!mapView.isActivated()) {
+                    mapView.onCreate(null);
+                    mapView.getMapAsync(VenueAdapter.this);
+                    mapView.onResume();
+                    mapView.setActivated(true);
+                }
             }
 
             @Override
@@ -174,7 +181,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
         valueAnimator.start();
     }
 
-    private void collapseCard(final View cardView, final View mapView) {
+    private void collapseCard(final View cardView, final MapView mapView) {
         ValueAnimator valueAnimator = AnimationUtils.valueAnimator(cardView.getHeight(), mInitialCardHeight, cardView);
 
         valueAnimator.addListener(new Animator.AnimatorListener() {
@@ -187,6 +194,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
             public void onAnimationEnd(Animator animator) {
                 //Height=0, but it set visibility to GONE
                 mapView.setVisibility(View.GONE);
+//                getDirections.setVisibility(View.GONE);
             }
 
             @Override
@@ -203,4 +211,8 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
         valueAnimator.start();
     }
 
+    @Override
+    public void onViewDetachedFromWindow(VenueViewHolder holder) {
+        holder.getVenueMap().setActivated(false);
+    }
 }
