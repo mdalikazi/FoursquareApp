@@ -159,7 +159,6 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
 
             @Override
             public void onAnimationEnd(Animator animator) {
-//                getDirections.setVisibility(View.VISIBLE);
                 if (!mapView.isActivated()) {
                     mapView.onCreate(null);
                     mapView.getMapAsync(VenueAdapter.this);
@@ -194,7 +193,6 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
             public void onAnimationEnd(Animator animator) {
                 //Height=0, but it set visibility to GONE
                 mapView.setVisibility(View.GONE);
-//                getDirections.setVisibility(View.GONE);
             }
 
             @Override
@@ -214,5 +212,8 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
     @Override
     public void onViewDetachedFromWindow(VenueViewHolder holder) {
         holder.getVenueMap().setActivated(false);
+        if (holder.getVenueMap().getVisibility() == View.VISIBLE) {
+            collapseCard(holder.getVenueItemContainer(), holder.getVenueMap());
+        }
     }
 }
