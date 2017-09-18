@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -96,9 +95,9 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
             @Override
             public void onClick(View v) {
                 if (holder.getVenueMap().getVisibility() == View.GONE) {
-                    expandCard(v, holder.getVenueMap(), holder.getButtonDirections(), mLatLngs.get(holder.getLayoutPosition()));
+                    expandCard(v, holder.getVenueMap(), mLatLngs.get(holder.getLayoutPosition()));
                 } else {
-                    collapseCard(v, holder.getVenueMap(), holder.getButtonDirections());
+                    collapseCard(v, holder.getVenueMap());
                 }
             }
         });
@@ -122,16 +121,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
         } else {
             holder.getVenueMapPlaceholder().setVisibility(View.VISIBLE);
             holder.getVenueMap().setVisibility(View.GONE);
-            holder.getButtonDirections().setVisibility(View.GONE);
         }
-
-        holder.getButtonDirections().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i(LOG_TAG, "getButtonDirections onClick");
-
-            }
-        });
     }
 
     @Override
@@ -142,16 +132,17 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.i(LOG_TAG, "onMapReady");
-        googleMap.setMinZoomPreference(15);
+        googleMap.setMinZoomPreference(8);
 //         TODO needs location permission check
 //        googleMap.setMyLocationEnabled(true);
-        googleMap.getUiSettings().setCompassEnabled(true);
+        googleMap.getUiSettings().setMapToolbarEnabled(true);
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
         googleMap.addMarker(new MarkerOptions().position(mLatLngLocationMark));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(mLatLngLocationMark));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(20));
     }
 
-    private void expandCard(final View cardView, final MapView mapView, final Button getDirections, final LatLng latLng) {
+    private void expandCard(final View cardView, final MapView mapView, final LatLng latLng) {
         mLatLngLocationMark = latLng;
         final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
@@ -168,7 +159,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
 
             @Override
             public void onAnimationEnd(Animator animator) {
-                getDirections.setVisibility(View.VISIBLE);
+//                getDirections.setVisibility(View.VISIBLE);
                 if (!mapView.isActivated()) {
                     mapView.onCreate(null);
                     mapView.getMapAsync(VenueAdapter.this);
@@ -190,7 +181,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
         valueAnimator.start();
     }
 
-    private void collapseCard(final View cardView, final MapView mapView, final Button getDirections) {
+    private void collapseCard(final View cardView, final MapView mapView) {
         ValueAnimator valueAnimator = AnimationUtils.valueAnimator(cardView.getHeight(), mInitialCardHeight, cardView);
 
         valueAnimator.addListener(new Animator.AnimatorListener() {
@@ -203,7 +194,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
             public void onAnimationEnd(Animator animator) {
                 //Height=0, but it set visibility to GONE
                 mapView.setVisibility(View.GONE);
-                getDirections.setVisibility(View.GONE);
+//                getDirections.setVisibility(View.GONE);
             }
 
             @Override
