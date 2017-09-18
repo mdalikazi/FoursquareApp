@@ -29,6 +29,10 @@
                 style="@style/TextAppearance.AppCompat.Menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:drawablePadding="5dp"
+                android:drawableStart="@mipmap/ic_location"
+                android:drawableLeft="@mipmap/ic_location"
+                android:drawableTint="@color/place_autocomplete_prediction_secondary_text"
                 android:text="Cafe 1"/>
 
             <TextView
@@ -37,16 +41,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/venue_title"
-                android:text="123"/>
-
-            <TextView
-                android:id="@+id/venue_distance_km_away"
-                style="@style/TextAppearance.AppCompat.Caption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/venue_title"
-                android:layout_toRightOf="@+id/venue_distance"
-                android:text=" km away"/>
+                android:gravity="center_vertical"
+                android:drawablePadding="5dp"
+                android:drawableStart="@mipmap/ic_near_me"
+                android:drawableLeft="@mipmap/ic_near_me"
+                android:drawableTint="@color/place_autocomplete_prediction_secondary_text"
+                android:text="123 km away"/>
 
             <TextView
                 android:id="@+id/venue_address"
@@ -55,6 +55,11 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/venue_distance"
                 android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:drawablePadding="5dp"
+                android:drawableStart="@mipmap/ic_map"
+                android:drawableLeft="@mipmap/ic_map"
+                android:drawableTint="@color/place_autocomplete_prediction_secondary_text"
                 android:hint="@string/venue_list_item_placeholder_address"/>
 
             <TextView
@@ -63,6 +68,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/venue_address"
+                android:gravity="center_vertical"
+                android:drawablePadding="5dp"
+                android:drawableStart="@mipmap/ic_local_phone"
+                android:drawableLeft="@mipmap/ic_local_phone"
+                android:drawableTint="@color/place_autocomplete_prediction_secondary_text"
                 android:hint="@string/venue_list_item_placeholder_phone"/>
 
         </RelativeLayout>
