@@ -129,7 +129,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
             @Override
             public void onClick(View view) {
                 Log.i(LOG_TAG, "getButtonDirections onClick");
-                
+
             }
         });
     }
@@ -169,9 +169,12 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
             @Override
             public void onAnimationEnd(Animator animator) {
                 getDirections.setVisibility(View.VISIBLE);
-                mapView.onCreate(null);
-                mapView.getMapAsync(VenueAdapter.this);
-                mapView.onResume();
+                if (!mapView.isActivated()) {
+                    mapView.onCreate(null);
+                    mapView.getMapAsync(VenueAdapter.this);
+                    mapView.onResume();
+                    mapView.setActivated(true);
+                }
             }
 
             @Override
@@ -187,7 +190,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
         valueAnimator.start();
     }
 
-    private void collapseCard(final View cardView, final View mapView, final Button getDirections) {
+    private void collapseCard(final View cardView, final MapView mapView, final Button getDirections) {
         ValueAnimator valueAnimator = AnimationUtils.valueAnimator(cardView.getHeight(), mInitialCardHeight, cardView);
 
         valueAnimator.addListener(new Animator.AnimatorListener() {
@@ -217,4 +220,8 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
         valueAnimator.start();
     }
 
+    @Override
+    public void onViewDetachedFromWindow(VenueViewHolder holder) {
+        holder.getVenueMap().setActivated(false);
+    }
 }
