@@ -14,5 +14,6 @@
     <string name="venue_list_item_placeholder_phone">Phone is missing</string>
     <string name="venue_list_item_placeholder_coordinates">Co-ordindates are missing</string>
     <string name="venue_list_item_button_get_directions">Get Directions</string>
+    <string name="venue_list_item_distance_text">%1$d km away</string>
 
 </resources>

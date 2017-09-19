@@ -103,7 +103,8 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
         });
 
         holder.getVenueTitle().setText(mNames.get(adapterPosition));
-        holder.getVenueDistance().setText(String.valueOf(mDistances.get(adapterPosition)));
+        String distanceText = mActivity.getString(R.string.venue_list_item_distance_text, mDistances.get(adapterPosition));
+        holder.getVenueDistance().setText(distanceText);
 
         if (mAddresses.get(adapterPosition) != null) {
             holder.getVenueAddress().setText(mAddresses.get(adapterPosition));

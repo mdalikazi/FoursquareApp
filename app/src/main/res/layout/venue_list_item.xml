@@ -30,7 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:drawablePadding="5dp"
+                android:drawablePadding="@dimen/text_view_drawable_padding"
                 android:drawableStart="@mipmap/ic_business"
                 android:drawableTint="@color/place_autocomplete_prediction_secondary_text"
                 android:text="Cafe 1"/>
@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/venue_title"
                 android:gravity="center_vertical"
-                android:drawablePadding="5dp"
+                android:drawablePadding="@dimen/text_view_drawable_padding"
                 android:drawableStart="@mipmap/ic_near_me"
                 android:drawableTint="@color/place_autocomplete_prediction_secondary_text"
                 android:text="123 km away"/>
@@ -55,7 +55,7 @@
                 android:layout_below="@+id/venue_distance"
                 android:layout_marginTop="10dp"
                 android:gravity="center_vertical"
-                android:drawablePadding="5dp"
+                android:drawablePadding="@dimen/text_view_drawable_padding"
                 android:drawableStart="@mipmap/ic_map"
                 android:drawableTint="@color/place_autocomplete_prediction_secondary_text"
                 android:hint="@string/venue_list_item_placeholder_address"/>
@@ -67,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/venue_address"
                 android:gravity="center_vertical"
-                android:drawablePadding="5dp"
+                android:drawablePadding="@dimen/text_view_drawable_padding"
                 android:drawableStart="@mipmap/ic_phone"
                 android:drawableTint="@color/place_autocomplete_prediction_secondary_text"
                 android:hint="@string/venue_list_item_placeholder_phone"/>
