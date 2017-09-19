@@ -40,8 +40,7 @@ import static exercise.foursquare.ali.foursquareapp.R.id.main_activity_empty_mes
 
 public class MainActivity extends AppCompatActivity implements
         FsLocationManager.LocationUpdateListener,
-        RequestsProcessor.RequestResponseListener,
-        MenuItem.OnActionExpandListener {
+        RequestsProcessor.RequestResponseListener {
 
     private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
 
@@ -174,29 +173,24 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_home_search_icon:
-                animateSearchView(true);
+                Log.i(LOG_TAG, "onOptionsItemSelected");
+                animateSearchView(mSearchViewRevealAppBar.getVisibility() != View.VISIBLE);
+//                animateSearchView(true);
                 mSearchMenuItem.expandActionView();
                 break;
+            case android.R.id.home:
+                Log.i(LOG_TAG, "onOptionsItemSelected");
+                animateSearchView(mSearchViewRevealAppBar.getVisibility() != View.VISIBLE);
+//                animateSearchView(true);
         }
         return true;
     }
 
-    @Override
-    public boolean onMenuItemActionExpand(MenuItem menuItem) {
-        return true;
-    }
-
-    @Override
-    public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-        animateSearchView(false);
-        return true;
-    }
-
     private void animateSearchView(boolean reveal) {
+        Log.i(LOG_TAG, "animateSearchView");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             AnimationUtils.circleReveal(this, mSearchViewRevealAppBar, 0, true, reveal);
         } else {
-            // TODO: 11/7/17 Test this
             TransitionManager.beginDelayedTransition((ViewGroup) findViewById(R.id.toolbar));
             mSearchViewRevealAppBar.setVisibility(reveal ? View.VISIBLE : View.INVISIBLE);
         }
@@ -325,7 +319,6 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onBackPressed() {
         Log.i(LOG_TAG, "onBackPressed");
-        // TODO: 17/7/17 close searchreveal with backpress then exit app
         if (mSearchViewRevealAppBar.getVisibility() == View.VISIBLE) {
             animateSearchView(false);
         } else {
