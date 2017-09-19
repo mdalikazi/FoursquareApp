@@ -84,6 +84,9 @@ public class MainActivity extends AppCompatActivity implements
         mSearchViewRevealAppBar = (AppBarLayout) findViewById(R.id.search_view_reveal_appbar_layout);
         setupSearchViewRevealToolbar();
 
+//        TranslateAnimation translateAnimation = new TranslateAnimation(0, 0, 100, 0);
+//        mRecyclerView.setLayoutAnimation(new LayoutAnimationController(translateAnimation));
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
         mVenueAdapter = new VenueAdapter(MainActivity.this);

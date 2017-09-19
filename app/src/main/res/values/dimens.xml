@@ -5,4 +5,5 @@
     <dimen name="recycler_view_scrollbar_size">2dp</dimen>
     <dimen name="card_view_margin">5dp</dimen>
     <dimen name="card_view_content_padding">5dp</dimen>
+    <dimen name="text_view_drawable_padding">8dp</dimen>
 </resources>
