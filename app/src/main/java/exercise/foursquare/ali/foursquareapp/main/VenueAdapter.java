@@ -9,6 +9,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.TranslateAnimation;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -33,6 +36,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
 
     private Activity mActivity;
     private int mInitialCardHeight;
+    private boolean mAnimationLocked;
     private LatLng mLatLngLocationMark;
     private LinkedList<String> mNames;
     private LinkedList<String> mPhones;
@@ -81,6 +85,7 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
 
     @Override
     public void onBindViewHolder(final VenueViewHolder holder, int position) {
+        aniamteList(holder.itemView);
         int adapterPosition = holder.getAdapterPosition();
 
         if (mLocations.get(adapterPosition) != null) {
@@ -216,5 +221,32 @@ public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implemen
         if (holder.getVenueMap().getVisibility() == View.VISIBLE) {
             collapseCard(holder.getVenueItemContainer(), holder.getVenueMap());
         }
+    }
+
+    private void aniamteList(View view) {
+        if (!mAnimationLocked) {
+            TranslateAnimation translateAnimation = new TranslateAnimation(0, 0, 300, 0);
+            translateAnimation.setDuration(600);
+            translateAnimation.setInterpolator(new DecelerateInterpolator());
+            translateAnimation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    mAnimationLocked = true;
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+
+            view.startAnimation(translateAnimation);
+        }
+
     }
 }

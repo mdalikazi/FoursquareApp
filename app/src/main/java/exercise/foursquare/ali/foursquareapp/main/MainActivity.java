@@ -40,7 +40,8 @@ import static exercise.foursquare.ali.foursquareapp.R.id.main_activity_empty_mes
 
 public class MainActivity extends AppCompatActivity implements
         FsLocationManager.LocationUpdateListener,
-        RequestsProcessor.RequestResponseListener {
+        RequestsProcessor.RequestResponseListener,
+        MenuItem.OnActionExpandListener {
 
     private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
 
@@ -82,9 +83,6 @@ public class MainActivity extends AppCompatActivity implements
         mSearchViewRevealToolbar = (Toolbar) findViewById(R.id.search_view_reveal_toolbar);
         mSearchViewRevealAppBar = (AppBarLayout) findViewById(R.id.search_view_reveal_appbar_layout);
         setupSearchViewRevealToolbar();
-
-//        TranslateAnimation translateAnimation = new TranslateAnimation(0, 0, 100, 0);
-//        mRecyclerView.setLayoutAnimation(new LayoutAnimationController(translateAnimation));
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -173,16 +171,23 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_home_search_icon:
-                Log.i(LOG_TAG, "onOptionsItemSelected");
                 animateSearchView(mSearchViewRevealAppBar.getVisibility() != View.VISIBLE);
-//                animateSearchView(true);
                 mSearchMenuItem.expandActionView();
                 break;
-            case android.R.id.home:
-                Log.i(LOG_TAG, "onOptionsItemSelected");
-                animateSearchView(mSearchViewRevealAppBar.getVisibility() != View.VISIBLE);
-//                animateSearchView(true);
         }
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionExpand(MenuItem menuItem) {
+        Log.i(LOG_TAG, "onMenuItemActionExpand");
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+        Log.i(LOG_TAG, "onMenuItemActionCollapse");
+        animateSearchView(false);
         return true;
     }
 
