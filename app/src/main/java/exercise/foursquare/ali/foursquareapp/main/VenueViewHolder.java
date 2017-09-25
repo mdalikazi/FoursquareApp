@@ -4,6 +4,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.MapView;
+
 import exercise.foursquare.ali.foursquareapp.R;
 
 /**
@@ -11,20 +13,28 @@ import exercise.foursquare.ali.foursquareapp.R;
  */
 public class VenueViewHolder extends RecyclerView.ViewHolder {
 
+    private View mVenueItemContainer;
     private TextView mVenueTitle;
     private TextView mVenueDistance;
     private TextView mVenueAddress;
     private TextView mVenuePhone;
-    //private Button mGetDirections;
+    private MapView mVenueMap;
+    private TextView mVenueMapPlaceholder;
 
     public VenueViewHolder(View itemView) {
         super(itemView);
 
-        mVenueTitle = (TextView) itemView.findViewById(R.id.venue_title);
-        mVenueDistance = (TextView) itemView.findViewById(R.id.venue_distance);
-        mVenueAddress = (TextView) itemView.findViewById(R.id.venue_address);
-        mVenuePhone = (TextView) itemView.findViewById(R.id.venue_phone);
-        //mGetDirections = (Button) itemView.findViewById(R.id.btn_get_directions);
+        mVenueItemContainer = itemView;
+        mVenueTitle = itemView.findViewById(R.id.venue_title);
+        mVenueDistance = itemView.findViewById(R.id.venue_distance);
+        mVenueAddress = itemView.findViewById(R.id.venue_address);
+        mVenuePhone = itemView.findViewById(R.id.venue_phone);
+        mVenueMap = itemView.findViewById(R.id.venue_map);
+        mVenueMapPlaceholder = itemView.findViewById(R.id.venue_map_placeholder);
+    }
+
+    public View getVenueItemContainer() {
+        return mVenueItemContainer;
     }
 
     public TextView getVenueTitle() {
@@ -43,7 +53,11 @@ public class VenueViewHolder extends RecyclerView.ViewHolder {
         return mVenuePhone;
     }
 
-    /*public Button getButtonDirections() {
-        return mGetDirections;
-    }*/
+    public MapView getVenueMap() {
+        return mVenueMap;
+    }
+
+    public TextView getVenueMapPlaceholder() {
+        return mVenueMapPlaceholder;
+    }
 }

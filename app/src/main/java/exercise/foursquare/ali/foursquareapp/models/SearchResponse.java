@@ -1,8 +1,10 @@
 package exercise.foursquare.ali.foursquareapp.models;
 
-import android.location.LocationManager;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class SearchResponse {
 
     public class Venues {
         String id;
-        public String name;
+        String name;
         Contact contact;
         Location location;
         List<Categories> categories = new ArrayList<>();
@@ -120,6 +122,29 @@ public class SearchResponse {
 
     //PRIVATE GETTERS
 
+    private Response getResponse() {
+        return response;
+    }
+
+    private List<Venues> getVenues() {
+        Response response = getResponse();
+
+        Collections.sort(response.venues, new Comparator<Venues>() {
+            @Override
+            public int compare(Venues venue1, Venues venue2) {
+                if (venue1.location.distance < venue2.location.distance) {
+                    return -1;
+                } else if (venue1.location.distance > venue2.location.distance) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+
+        return response.venues;
+    }
+
     private String getName(int i) {
         return getVenues().get(i).name;
     }
@@ -159,22 +184,13 @@ public class SearchResponse {
 
     private String getMenuMobileUrl(int i) {
         if(getHasMenu(i)) {
-            return getVenues().get(i).menu.mobileUrl;
+            return getVenues().get(i).menu.url;
         } else {
             return null;
         }
     }
 
-    private Response getResponse() {
-        return response;
-    }
-
-    private List<Venues> getVenues() {
-        Response response = getResponse();
-        return response.venues;
-    }
-
-    // GETTERS
+    // PUBLIC GETTERS
 
     public LinkedList<String> getNames() {
         LinkedList<String> names = new LinkedList<>();
@@ -200,14 +216,11 @@ public class SearchResponse {
         return formattedAddresses;
     }
 
-    public LinkedList<android.location.Location> getLocations() {
-        LinkedList<android.location.Location> latLangs =  new LinkedList<>();
-        android.location.Location eachLocation = new android.location.Location(LocationManager.GPS_PROVIDER);
+    public LinkedList<LatLng> getLocations() {
+        LinkedList<LatLng> latLangs =  new LinkedList<>();
         for(int i = 0; i < getVenues().size(); i++) {
-            eachLocation.setLatitude(getLat(i));
-            eachLocation.setLongitude(getLang(i));
+            LatLng eachLocation = new LatLng(getLat(i), getLang(i));
             latLangs.add(eachLocation);
-            eachLocation.reset();
         }
         return latLangs;
     }

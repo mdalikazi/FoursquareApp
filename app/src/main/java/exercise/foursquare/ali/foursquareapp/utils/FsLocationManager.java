@@ -1,14 +1,18 @@
 package exercise.foursquare.ali.foursquareapp.utils;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -37,6 +41,7 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
     private LocationRequest mLocationRequest;
     private FusedLocationProviderApi mFusedLocationProviderApi;
     private LocationUpdateListener mLocationUpdateListener;
+    private Snackbar mSnackbar;
 
     public FsLocationManager(Activity activity, LocationUpdateListener locationUpdateListener) {
         Log.i(LOG_TAG, "new FsLocationManager");
@@ -53,6 +58,29 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+        checkGooglePlayServices();
+    }
+
+    public void setSnackbar(Snackbar snackbar) {
+        mSnackbar = snackbar;
+    }
+
+    private void checkGooglePlayServices() {
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int googlePlayServicesStatus = googleApiAvailability.isGooglePlayServicesAvailable(mActivityContext);
+        if (googlePlayServicesStatus == ConnectionResult.SUCCESS) {
+            Log.d(LOG_TAG, "googlePlayServicesStatus == ConnectionResult.SUCCESS");
+        } else {
+            Dialog updateDialog = googleApiAvailability.getErrorDialog(mActivityContext, googlePlayServicesStatus, 0);
+            updateDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialogInterface) {
+                    dialogInterface.dismiss();
+                    mActivityContext.finish();
+                }
+            });
+            updateDialog.show();
+        }
     }
 
     public void checkLocationSettings() {
@@ -73,8 +101,8 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
         switch (status.getStatusCode()) {
             case LocationSettingsStatusCodes.SUCCESS:
                 Log.d(LOG_TAG, "LocationSettingsStatusCodes.SUCCESS");
-//                requestLocationUpdates();
-                getLastKnownLocation();
+                requestLocationUpdates();
+//                getLastKnownLocation();
                 break;
             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                 Log.d(LOG_TAG, "LocationSettingsStatusCodes.RESOLUTION_REQUIRED");
@@ -106,31 +134,23 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
         Log.i(LOG_TAG, "Disconnect");
         if (mApiClient != null && (mApiClient.isConnected() || mApiClient.isConnecting())) {
             try {
+                if (mSnackbar.isShown()) {
+                    mSnackbar.dismiss();
+                }
                 mApiClient.disconnect();
+                removeLocationUpdates();
             } catch (IllegalStateException e) {
                 Log.d(LOG_TAG, "IllegalStateException with mApiClient.disconnect: " + e.getMessage());
-//                mApiClient.reconnect();
-                /*mApiClient = null;
-                mApiClient = new GoogleApiClient.Builder(mActivityContext)
-                        .addConnectionCallbacks(this)
-                        .addOnConnectionFailedListener(this)
-                        .addApi(LocationServices.API)
-                        .build();
-                if (!mApiClient.isConnected() || !mApiClient.isConnecting()) {
-                    mApiClient.connect();
-                }*/
             }
-        }
-
-        if (mFusedLocationProviderApi != null) {
-            mFusedLocationProviderApi.flushLocations(mApiClient);
-            mFusedLocationProviderApi.removeLocationUpdates(mApiClient, this);
         }
     }
 
     public void requestLocationUpdates() {
         Log.i(LOG_TAG, "requestLocationUpdates");
         try {
+            if (!mSnackbar.isShown()) {
+                mSnackbar.show();
+            }
             mFusedLocationProviderApi.requestLocationUpdates(mApiClient, mLocationRequest, this);
         } catch (SecurityException e) {
             Log.d(LOG_TAG, "Security Exception with location permission: " + e.getMessage());
@@ -151,6 +171,14 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
         }
     }
 
+    private void removeLocationUpdates() {
+        Log.i(LOG_TAG, "removeLocationUpdates");
+        if (mFusedLocationProviderApi != null) {
+            mFusedLocationProviderApi.flushLocations(mApiClient);
+            mFusedLocationProviderApi.removeLocationUpdates(mApiClient, this);
+        }
+    }
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.i(LOG_TAG, "onConnected");
@@ -164,12 +192,15 @@ public class FsLocationManager implements GoogleApiClient.ConnectionCallbacks,
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.i(LOG_TAG, "onConnectionFailed. result: " + connectionResult.getErrorMessage());
+        Log.w(LOG_TAG, "onConnectionFailed. result: " + connectionResult.getErrorMessage());
     }
 
     @Override
     public void onLocationChanged(Location location) {
         Log.i(LOG_TAG, "onLocationUpdate");
+        if (mSnackbar.isShown()) {
+            mSnackbar.dismiss();
+        }
         mLocationUpdateListener.onLocationUpdate(location);
     }
 

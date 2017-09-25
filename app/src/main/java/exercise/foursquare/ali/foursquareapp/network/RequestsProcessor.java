@@ -71,14 +71,13 @@ public class RequestsProcessor {
                             mInputStreamReader = new InputStreamReader(mBufferedInputStream);
                             Gson gson =  new Gson();
                             SearchResponse searchResponse = gson.fromJson(mInputStreamReader, SearchResponse.class);
-                            mBufferedInputStream.close();
                             mInputStreamReader.close();
+                            mBufferedInputStream.close();
                             return searchResponse;
                         }
                     }
                 } catch (Exception e) {
-                    Log.d(LOG_TAG, "Exception with get. getLocalizedMessage " + e.getLocalizedMessage());
-                    Log.d(LOG_TAG, "Exception with get. getCause: " + e.getCause());
+                    Log.d(LOG_TAG, "doInBackground e: " + e.toString());
                 }
                 return null;
             }

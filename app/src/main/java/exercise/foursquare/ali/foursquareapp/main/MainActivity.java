@@ -11,12 +11,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,6 +32,7 @@ import android.widget.TextView;
 import exercise.foursquare.ali.foursquareapp.R;
 import exercise.foursquare.ali.foursquareapp.models.SearchResponse;
 import exercise.foursquare.ali.foursquareapp.network.RequestsProcessor;
+import exercise.foursquare.ali.foursquareapp.utils.AnimationUtils;
 import exercise.foursquare.ali.foursquareapp.utils.AppConstants;
 import exercise.foursquare.ali.foursquareapp.utils.FsLocationManager;
 
@@ -41,7 +40,8 @@ import static exercise.foursquare.ali.foursquareapp.R.id.main_activity_empty_mes
 
 public class MainActivity extends AppCompatActivity implements
         FsLocationManager.LocationUpdateListener,
-        RequestsProcessor.RequestResponseListener {
+        RequestsProcessor.RequestResponseListener,
+        MenuItem.OnActionExpandListener {
 
     private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
 
@@ -50,24 +50,23 @@ public class MainActivity extends AppCompatActivity implements
     private boolean mSearchSubmitted;
     private String mSearchQuery;
     private VenueAdapter mVenueAdapter;
-    private FsLocationManager mLocationManager;
+    private FsLocationManager mFsLocationManager;
     private RequestsProcessor mRequestsProcessor;
 
     // Views
-    private FloatingActionButton mLocationFab;
-    private Snackbar mGettingLocationSnackbar;
+    private MenuItem mSearchMenuItem;
+    private Toolbar mSearchViewRevealToolbar;
+    private AppBarLayout mSearchViewRevealAppBar;
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
     private TextView mEmptyListMessage;
-    private Toolbar mSearchViewRevealToolbar;
-    private AppBarLayout mSearchViewRevealAppBar;
-    private MenuItem mSearchMenuItem;
 
     @Override
     protected void onStart() {
         super.onStart();
         Log.i(LOG_TAG, "onStart");
-        mLocationManager = new FsLocationManager(this, this);
+        mFsLocationManager = new FsLocationManager(this, this);
+        initSnackbar();
     }
 
     @Override
@@ -78,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mLocationFab = (FloatingActionButton) findViewById(R.id.fab_location);
         mRecyclerView = (RecyclerView) findViewById(R.id.main_activity_recycler_view);
         mEmptyListMessage = (TextView) findViewById(main_activity_empty_message);
         mProgressBar = (ProgressBar) findViewById(R.id.main_activity_progress_bar);
@@ -92,24 +90,23 @@ public class MainActivity extends AppCompatActivity implements
         mRecyclerView.setAdapter(mVenueAdapter);
         showEmptyMesssage(true);
 
-        mGettingLocationSnackbar = Snackbar.make(mLocationFab, getString(R.string.snackbar_message_getting_your_location), Snackbar.LENGTH_INDEFINITE)
-                .setAction(getString(R.string.cancel), new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mGettingLocationSnackbar.dismiss();
-                        mLocationManager.disconnect();
-                    }
-                });
+        mRequestsProcessor = new RequestsProcessor(this, this);
+    }
 
-        mLocationFab.setOnClickListener(new View.OnClickListener() {
+    private void initSnackbar() {
+        final Snackbar gettingLocationSnackbar = Snackbar.make(
+                mRecyclerView,
+                getString(R.string.snackbar_message_fetching_your_location),
+                Snackbar.LENGTH_INDEFINITE);
+
+        gettingLocationSnackbar.setAction(getString(R.string.cancel), new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mGettingLocationSnackbar.show();
-                checkLocationPermissionAndConnect();
+                gettingLocationSnackbar.dismiss();
             }
         });
 
-        mRequestsProcessor = new RequestsProcessor(this, this);
+        mFsLocationManager.setSnackbar(gettingLocationSnackbar);
     }
 
     private void showEmptyMesssage(boolean show) {
@@ -138,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onStop() {
         super.onStop();
         Log.i(LOG_TAG, "onStop");
-        mLocationManager.disconnect();
+        mFsLocationManager.disconnect();
     }
 
     private void setupSearchViewRevealToolbar() {
@@ -162,19 +159,6 @@ public class MainActivity extends AppCompatActivity implements
                 return false;
             }
         });
-
-        MenuItemCompat.setOnActionExpandListener(mSearchMenuItem, new MenuItemCompat.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                animateSearchView(false);
-                return true;
-            }
-        });
     }
 
     @Override
@@ -187,18 +171,31 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_home_search_icon:
-                animateSearchView(true);
+                animateSearchView(mSearchViewRevealAppBar.getVisibility() != View.VISIBLE);
                 mSearchMenuItem.expandActionView();
                 break;
         }
         return true;
     }
 
+    @Override
+    public boolean onMenuItemActionExpand(MenuItem menuItem) {
+        Log.i(LOG_TAG, "onMenuItemActionExpand");
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+        Log.i(LOG_TAG, "onMenuItemActionCollapse");
+        animateSearchView(false);
+        return true;
+    }
+
     private void animateSearchView(boolean reveal) {
+        Log.i(LOG_TAG, "animateSearchView");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             AnimationUtils.circleReveal(this, mSearchViewRevealAppBar, 0, true, reveal);
         } else {
-            // TODO: 11/7/17 Test this
             TransitionManager.beginDelayedTransition((ViewGroup) findViewById(R.id.toolbar));
             mSearchViewRevealAppBar.setVisibility(reveal ? View.VISIBLE : View.INVISIBLE);
         }
@@ -232,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements
                 mProgressBar.setVisibility(View.GONE);
                 mVenueAdapter.setSearchResponse(searchResponse);
                 mRecyclerView.setAdapter(mVenueAdapter);
+                mFsLocationManager.disconnect();
             }
         });
     }
@@ -245,14 +243,13 @@ public class MainActivity extends AppCompatActivity implements
                 mEmptyListMessage.setText("Sorry, your search did not return any results. Please try again.");
                 showEmptyMesssage(true);
                 mProgressBar.setVisibility(View.GONE);
-                mLocationManager.disconnect();
+                mFsLocationManager.disconnect();
             }
         });
     }
 
     @Override
     public void onLocationUpdate(Location location) {
-        mGettingLocationSnackbar.dismiss();
         mUserLocationLat = location.getLatitude();
         mUserLocationLng = location.getLongitude();
         if (mSearchSubmitted && mSearchQuery != null && !mSearchQuery.isEmpty()) {
@@ -264,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements
         Log.i(LOG_TAG, "checkLocationPermissionAndConnect");
         if(ContextCompat.checkSelfPermission(this, Manifest.permission_group.LOCATION) ==
                 PackageManager.PERMISSION_GRANTED) {
-            mLocationManager.connect();
+            mFsLocationManager.connect();
         } else {
             if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 showLocationPermissionExplanation();
@@ -272,12 +269,6 @@ public class MainActivity extends AppCompatActivity implements
                 requestLocationPermission();
             }
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        Log.i(LOG_TAG, "onBackPressed");
-        // TODO: 17/7/17 close searchreveal with backpress then exit app 
     }
 
     private void showLocationPermissionExplanation() {
@@ -307,14 +298,12 @@ public class MainActivity extends AppCompatActivity implements
         switch (requestCode) {
             case AppConstants.PERMISSION_ACCESS_FINE_LOCATION:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mLocationManager.connect();
+                    mFsLocationManager.connect();
                 } else {
-                    mGettingLocationSnackbar.dismiss();
-                    mLocationManager.disconnect();
+                    mFsLocationManager.disconnect();
                 }
                 break;
         }
-
     }
 
     @Override
@@ -323,12 +312,22 @@ public class MainActivity extends AppCompatActivity implements
         if (requestCode == AppConstants.ENABLE_LOCATION_SETTINGS_DIALOG) {
             if (resultCode == Activity.RESULT_OK) {
                 Log.d(LOG_TAG, "RESULT_OK. Location enabled.");
-//                mLocationManager.requestLocationUpdates();
-                mLocationManager.getLastKnownLocation();
+                mFsLocationManager.requestLocationUpdates();
+//                mFsLocationManager.getLastKnownLocation();
             } else {
                 Log.d(LOG_TAG, "RESULT_CANCELED. Location disabled :(");
-                mLocationManager.disconnect();
+                mFsLocationManager.disconnect();
             }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.i(LOG_TAG, "onBackPressed");
+        if (mSearchViewRevealAppBar.getVisibility() == View.VISIBLE) {
+            animateSearchView(false);
+        } else {
+            super.onBackPressed();
         }
     }
 }
