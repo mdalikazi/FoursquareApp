@@ -15,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -40,8 +41,7 @@ import static exercise.foursquare.ali.foursquareapp.R.id.main_activity_empty_mes
 
 public class MainActivity extends AppCompatActivity implements
         FsLocationManager.LocationUpdateListener,
-        RequestsProcessor.RequestResponseListener,
-        MenuItem.OnActionExpandListener {
+        RequestsProcessor.RequestResponseListener {
 
     private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
 
@@ -159,6 +159,20 @@ public class MainActivity extends AppCompatActivity implements
                 return false;
             }
         });
+
+        MenuItemCompat.setOnActionExpandListener(mSearchMenuItem, new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                animateSearchView(true);
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                animateSearchView(false);
+                return false;
+            }
+        });
     }
 
     @Override
@@ -175,19 +189,6 @@ public class MainActivity extends AppCompatActivity implements
                 mSearchMenuItem.expandActionView();
                 break;
         }
-        return true;
-    }
-
-    @Override
-    public boolean onMenuItemActionExpand(MenuItem menuItem) {
-        Log.i(LOG_TAG, "onMenuItemActionExpand");
-        return true;
-    }
-
-    @Override
-    public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-        Log.i(LOG_TAG, "onMenuItemActionCollapse");
-        animateSearchView(false);
         return true;
     }
 

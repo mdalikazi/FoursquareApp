@@ -25,12 +25,13 @@ public class VenueViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
 
         mVenueItemContainer = itemView;
-        mVenueTitle = itemView.findViewById(R.id.venue_title);
-        mVenueDistance = itemView.findViewById(R.id.venue_distance);
-        mVenueAddress = itemView.findViewById(R.id.venue_address);
-        mVenuePhone = itemView.findViewById(R.id.venue_phone);
-        mVenueMap = itemView.findViewById(R.id.venue_map);
-        mVenueMapPlaceholder = itemView.findViewById(R.id.venue_map_placeholder);
+        mVenueTitle = (TextView) itemView.findViewById(R.id.venue_title);
+        mVenueDistance = (TextView) itemView.findViewById(R.id.venue_distance);
+        mVenueAddress = (TextView) itemView.findViewById(R.id.venue_address);
+        mVenuePhone = (TextView) itemView.findViewById(R.id.venue_phone);
+        mVenueMap = (MapView) itemView.findViewById(R.id.venue_map);
+        mVenueMap = (MapView) itemView.findViewById(R.id.venue_map);
+        mVenueMapPlaceholder = (TextView) itemView.findViewById(R.id.venue_map_placeholder);
     }
 
     public View getVenueItemContainer() {
