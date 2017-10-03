@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void run() {
                 Log.i(LOG_TAG, "responseError");
-                mEmptyListMessage.setText("Sorry, your search did not return any results. Please try again.");
+                mEmptyListMessage.setText(getString(R.string.empty_list_message_search_result));
                 showEmptyMesssage(true);
                 mProgressBar.setVisibility(View.GONE);
                 mFsLocationManager.disconnect();

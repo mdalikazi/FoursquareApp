@@ -41,7 +41,7 @@
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
         android:paddingStart="24dp"
-        android:text="@string/main_activity_empty_list_message"
+        android:text="@string/empty_list_message_default"
         android:textSize="18sp"/>
 
 </RelativeLayout>
