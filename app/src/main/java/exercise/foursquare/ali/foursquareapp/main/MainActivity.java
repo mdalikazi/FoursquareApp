@@ -15,7 +15,6 @@ import android.support.design.widget.Snackbar;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -74,14 +73,14 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         Log.i(LOG_TAG, "onCreate");
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.main_activity_recycler_view);
-        mEmptyListMessage = (TextView) findViewById(main_activity_empty_message);
-        mProgressBar = (ProgressBar) findViewById(R.id.main_activity_progress_bar);
-        mSearchViewRevealToolbar = (Toolbar) findViewById(R.id.search_view_reveal_toolbar);
-        mSearchViewRevealAppBar = (AppBarLayout) findViewById(R.id.search_view_reveal_appbar_layout);
+        mRecyclerView = findViewById(R.id.main_activity_recycler_view);
+        mEmptyListMessage = findViewById(main_activity_empty_message);
+        mProgressBar = findViewById(R.id.main_activity_progress_bar);
+        mSearchViewRevealToolbar = findViewById(R.id.search_view_reveal_toolbar);
+        mSearchViewRevealAppBar = findViewById(R.id.search_view_reveal_appbar_layout);
         setupSearchViewRevealToolbar();
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -160,15 +159,15 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
-        MenuItemCompat.setOnActionExpandListener(mSearchMenuItem, new MenuItemCompat.OnActionExpandListener() {
+        mSearchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
+            public boolean onMenuItemActionExpand(MenuItem menuItem) {
                 animateSearchView(true);
                 return true;
             }
 
             @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
+            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
                 animateSearchView(false);
                 return false;
             }
