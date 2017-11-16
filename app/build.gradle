@@ -23,7 +23,7 @@ android {
             minifyEnabled true
             signingConfig signingConfigs.config
             resValue "string", "google_maps_api_key", "YOUR_GOOGLE_AP_KEY_HERE"
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFile '/Users/alikazi/Documents/Android/foursquareapp/app/proguard-rules.pro'
         }
         debug {
             minifyEnabled false
@@ -32,16 +32,18 @@ android {
             resValue "string", "google_maps_api_key", "YOUR_GOOGLE_AP_KEY_HERE"
         }
     }
+    productFlavors {
+    }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.google.code.gson:gson:2.8.1'
-    compile 'com.android.support:appcompat-v7:26+'
-    compile 'com.android.support:design:26+'
-    compile 'com.android.support:cardview-v7:26+'
-    compile 'com.google.android.gms:play-services-location:11+'
-    compile 'com.google.android.gms:play-services-maps:11+'
-    compile 'com.google.android.gms:play-services-places:11+'
+    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.android.support:design:26.1.0'
+    compile 'com.android.support:cardview-v7:26.1.0'
+    compile 'com.google.android.gms:play-services-location:11.6.0'
+    compile 'com.google.android.gms:play-services-maps:11.6.0'
+    compile 'com.google.android.gms:play-services-places:11.6.0'
 }
