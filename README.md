@@ -1,5 +1,9 @@
 # README #
 
+### Sample ###
+
+Download sample from Google drive - http://bit.ly/appFSalikazi
+
 ### What is this repository for? ###
 
 * Simple app based on a coding challenge that uses Foursquare API to search for user's query and user's location.
@@ -12,7 +16,8 @@
 
 ### How do I get set up? ###
 
-* You need to use your own Google API keys for debug and release. My keys are restricted to use with my keystore.
+* You need to use your own Google API keys for debug and release.
+* Use your own keystore to sign the APK.
 
 ### Who do I talk to? ###
 
