@@ -32,7 +32,7 @@ import exercise.foursquare.ali.foursquareapp.utils.AppConstants;
  */
 public class VenueAdapter extends RecyclerView.Adapter<VenueViewHolder> implements OnMapReadyCallback {
 
-    private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
+    private static final String LOG_TAG = AppConstants.LOG_TAG_FS_APP;
 
     private Activity mActivity;
     private int mInitialCardHeight;

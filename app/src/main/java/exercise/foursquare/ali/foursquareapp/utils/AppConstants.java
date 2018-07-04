@@ -11,7 +11,7 @@ public class AppConstants {
     public static final String VERSION_PARAMTER = "20130815";
 
     // Log tags
-    public static final String LOG_TAG_QUERY = "Query";
+    public static final String LOG_TAG_FS_APP = "FS_APP";
 
     // Permission requestCodes
     public static final int PERMISSION_ACCESS_FINE_LOCATION = 1;

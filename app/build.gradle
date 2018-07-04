@@ -1,25 +1,25 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     defaultConfig {
         applicationId "exercise.foursquare.ali.foursquareapp"
         minSdkVersion 19
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 2
         versionName "2.0"
     }
     buildTypes {
         release {
             minifyEnabled true
-            resValue "string", "google_maps_api_key", "YOUR_RELEASE_GOOGLE_API_KEY_HERE"
-            proguardFile '/Users/alikazi/Documents/Android/foursquareapp/app/proguard-rules.pro'
+            resValue "string", "google_maps_api_key", "AIzaSyC31ruACxBD52grhTZ0YhT31SuG5vFsNm8"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
             minifyEnabled false
             applicationIdSuffix '.debug'
             versionNameSuffix '-DEBUG'
-            resValue "string", "google_maps_api_key", "YOUR_DEBUG_GOOGLE_API_KEY_HERE"
+            resValue "string", "google_maps_api_key", "AIzaSyC7TNrqUViaYtWE2Nykh0d9jIMmZdtmJs4"
         }
     }
     productFlavors {
@@ -29,11 +29,16 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
-    implementation 'com.google.code.gson:gson:2.8.1'
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support:design:26.1.0'
-    implementation 'com.android.support:cardview-v7:26.1.0'
-    implementation 'com.google.android.gms:play-services-location:11.6.0'
-    implementation 'com.google.android.gms:play-services-maps:11.6.0'
-    implementation 'com.google.android.gms:play-services-places:11.6.0'
+    // Support
+    implementation 'com.android.support:appcompat-v7:' + rootProject.supportVersion
+    implementation 'com.android.support:design:' + rootProject.supportVersion
+    implementation 'com.android.support:cardview-v7:' + rootProject.supportVersion
+    // Google Play Services
+    implementation 'com.google.android.gms:play-services-location:' + rootProject.gpsVersion
+    implementation 'com.google.android.gms:play-services-maps:' + rootProject.gpsVersion
+    implementation 'com.google.android.gms:play-services-places:' + rootProject.gpsVersion
+    // GSON
+    implementation 'com.google.code.gson:gson:2.8.2'
+    // Volley
+    implementation 'com.android.volley:volley:1.1.0'
 }

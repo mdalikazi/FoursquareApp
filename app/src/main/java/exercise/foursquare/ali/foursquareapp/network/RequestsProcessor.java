@@ -24,7 +24,7 @@ import exercise.foursquare.ali.foursquareapp.utils.NetConstants;
 public class RequestsProcessor {
     //https://api.foursquare.com/v2/venues/search?client_id=CLIENT_ID&client_secret=CLIENT_SECRET&v=20130815&ll=40.7,-74&query=sushi
 
-    private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
+    private static final String LOG_TAG = AppConstants.LOG_TAG_FS_APP;
 
     private Context mContext;
     private Uri.Builder mUriBuilder;
@@ -73,6 +73,7 @@ public class RequestsProcessor {
                             SearchResponse searchResponse = gson.fromJson(mInputStreamReader, SearchResponse.class);
                             mInputStreamReader.close();
                             mBufferedInputStream.close();
+                            connection.disconnect();
                             return searchResponse;
                         }
                     }

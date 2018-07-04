@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements
         FsLocationManager.LocationUpdateListener,
         RequestsProcessor.RequestResponseListener {
 
-    private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
+    private static final String LOG_TAG = AppConstants.LOG_TAG_FS_APP;
 
     private double mUserLocationLat;
     private double mUserLocationLng;

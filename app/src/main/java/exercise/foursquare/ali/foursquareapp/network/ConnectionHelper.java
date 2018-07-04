@@ -16,7 +16,7 @@ import exercise.foursquare.ali.foursquareapp.utils.NetConstants;
 
 public class ConnectionHelper {
 
-    public static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
+    public static final String LOG_TAG = AppConstants.LOG_TAG_FS_APP;
 
     private Context mContext;
     private HttpsURLConnection mConnection;
@@ -34,14 +34,17 @@ public class ConnectionHelper {
             mConnection.setRequestMethod(NetConstants.REQUEST_METHOD_GET);
             mConnection.setConnectTimeout(NetConstants.REQUEST_CONNECTION_TIMEOUT);
             mConnection.connect();
+            Log.i(LOG_TAG, "mConnection");
             return mConnection;
         } catch(Exception e) {
-            return mConnection;
-        } finally {
-            if(mConnection != null) {
-                mConnection.disconnect();
-            }
+            Log.d(LOG_TAG, "Exception with get: " + e.toString());
+            return null;
         }
+//        finally {
+//            if (mConnection != null) {
+//                mConnection.disconnect();
+//            }
+//        }
     }
 
     public HttpsURLConnection post(URL url) {
