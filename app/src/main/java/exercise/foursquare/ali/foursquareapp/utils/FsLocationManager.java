@@ -30,15 +30,12 @@ import com.google.android.gms.tasks.Task;
  * Created by kazi_ on 8/25/2016.
  */
 public class FsLocationManager implements
-//        GoogleApiClient.ConnectionCallbacks,
-//        GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
         OnCompleteListener<LocationSettingsResponse> {
 
     private static final String LOG_TAG = AppConstants.LOG_TAG_FS_APP;
 
     private Activity mActivityContext;
-//    private GoogleApiClient mApiClient;
     private LocationRequest mLocationRequest;
     private LocationCallback mLocationCallback;
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -67,11 +64,6 @@ public class FsLocationManager implements
                 .setInterval(12000)
                 .setMaxWaitTime(5000)
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        /*mApiClient = new GoogleApiClient.Builder(mActivityContext)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();*/
         checkGooglePlayServices();
     }
 
@@ -142,17 +134,12 @@ public class FsLocationManager implements
 
     public void connect() {
         Log.i(LOG_TAG, "Connect");
-//        if (!mApiClient.isConnected() || !mApiClient.isConnecting()) {
-//            mApiClient.connect();
-//        }
         checkLocationSettings();
     }
 
     public void disconnect() {
         Log.i(LOG_TAG, "Disconnect");
-//        if (mApiClient != null && (mApiClient.isConnected() || mApiClient.isConnecting())) {
             try {
-//                mApiClient.disconnect();
                 if (mSnackbar.isShown()) {
                     mSnackbar.dismiss();
                 }
@@ -160,7 +147,6 @@ public class FsLocationManager implements
             } catch (IllegalStateException e) {
                 Log.d(LOG_TAG, "IllegalStateException with mApiClient.disconnect: " + e.getMessage());
             }
-//        }
     }
 
     public void requestLocationUpdates() {
@@ -200,22 +186,6 @@ public class FsLocationManager implements
             mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
         }
     }
-
-    /*@Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Log.i(LOG_TAG, "onConnected");
-        checkLocationSettings();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.i(LOG_TAG, "onConnectionSuspended");
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.w(LOG_TAG, "onConnectionFailed. result: " + connectionResult.getErrorMessage());
-    }*/
 
     @Override
     public void onLocationChanged(Location location) {
