@@ -24,7 +24,7 @@ import exercise.foursquare.ali.foursquareapp.utils.NetConstants;
 public class RequestsProcessor {
     //https://api.foursquare.com/v2/venues/search?client_id=CLIENT_ID&client_secret=CLIENT_SECRET&v=20130815&ll=40.7,-74&query=sushi
 
-    private static final String LOG_TAG = AppConstants.LOG_TAG_QUERY;
+    private static final String LOG_TAG = AppConstants.LOG_TAG_FS_APP;
 
     private Context mContext;
     private Uri.Builder mUriBuilder;
@@ -66,13 +66,19 @@ public class RequestsProcessor {
                     URL url = new URL(mUriBuilder.build().toString());
                     if (mConnectionHelper != null) {
                         HttpsURLConnection connection = mConnectionHelper.get(url);
+                        if (connection != null) {
+                            Log.d(LOG_TAG, "connection.getResponseMessage: " + connection.getResponseMessage());
+                        } else {
+                            Log.d(LOG_TAG, "connection == null");
+                        }
                         if(connection != null && connection.getResponseCode() == NetConstants.RESPONSE_CODE_OK) {
+                            Log.d(LOG_TAG, "connection.getResponseCode: RESPONSE_CODE_OK");
                             mBufferedInputStream = new BufferedInputStream(connection.getInputStream());
                             mInputStreamReader = new InputStreamReader(mBufferedInputStream);
                             Gson gson =  new Gson();
                             SearchResponse searchResponse = gson.fromJson(mInputStreamReader, SearchResponse.class);
-                            mInputStreamReader.close();
-                            mBufferedInputStream.close();
+//                            mInputStreamReader.close();
+//                            mBufferedInputStream.close();
                             return searchResponse;
                         }
                     }
