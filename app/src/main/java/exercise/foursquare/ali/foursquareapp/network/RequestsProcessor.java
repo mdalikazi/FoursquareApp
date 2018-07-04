@@ -66,19 +66,14 @@ public class RequestsProcessor {
                     URL url = new URL(mUriBuilder.build().toString());
                     if (mConnectionHelper != null) {
                         HttpsURLConnection connection = mConnectionHelper.get(url);
-                        if (connection != null) {
-                            Log.d(LOG_TAG, "connection.getResponseMessage: " + connection.getResponseMessage());
-                        } else {
-                            Log.d(LOG_TAG, "connection == null");
-                        }
                         if(connection != null && connection.getResponseCode() == NetConstants.RESPONSE_CODE_OK) {
-                            Log.d(LOG_TAG, "connection.getResponseCode: RESPONSE_CODE_OK");
                             mBufferedInputStream = new BufferedInputStream(connection.getInputStream());
                             mInputStreamReader = new InputStreamReader(mBufferedInputStream);
                             Gson gson =  new Gson();
                             SearchResponse searchResponse = gson.fromJson(mInputStreamReader, SearchResponse.class);
-//                            mInputStreamReader.close();
-//                            mBufferedInputStream.close();
+                            mInputStreamReader.close();
+                            mBufferedInputStream.close();
+                            connection.disconnect();
                             return searchResponse;
                         }
                     }

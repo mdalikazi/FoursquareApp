@@ -39,11 +39,12 @@ public class ConnectionHelper {
         } catch(Exception e) {
             Log.d(LOG_TAG, "Exception with get: " + e.toString());
             return null;
-        } finally {
-            if(mConnection != null) {
-                mConnection.disconnect();
-            }
         }
+//        finally {
+//            if (mConnection != null) {
+//                mConnection.disconnect();
+//            }
+//        }
     }
 
     public HttpsURLConnection post(URL url) {
