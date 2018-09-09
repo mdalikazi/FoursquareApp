@@ -30,7 +30,6 @@ public class VenueViewHolder extends RecyclerView.ViewHolder {
         mVenueAddress = (TextView) itemView.findViewById(R.id.venue_address);
         mVenuePhone = (TextView) itemView.findViewById(R.id.venue_phone);
         mVenueMap = (MapView) itemView.findViewById(R.id.venue_map);
-        mVenueMap = (MapView) itemView.findViewById(R.id.venue_map);
         mVenueMapPlaceholder = (TextView) itemView.findViewById(R.id.venue_map_placeholder);
     }
 
